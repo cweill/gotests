@@ -1,5 +1,3 @@
-package testfiles
+package test10
 
-type Bar struct{}
-
-func (b *Bar) Foo10(i int) error { return nil }
+func Foo10(m map[string]int32) map[string]bool { return nil }

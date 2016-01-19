@@ -5,34 +5,25 @@ type Field struct {
 	Type string
 }
 
-func (f *Field) IsError() bool {
-	return f.Type == "error"
+func (f *Field) IsScalar() bool {
+	switch f.Type {
+	case "uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128", "byte", "rune", "bool", "string":
+		return true
+	default:
+		return false
+	}
 }
 
 type Function struct {
-	Name       string
-	Receiver   *Field
-	Parameters []*Field
-	Results    []*Field
-}
-
-func (f *Function) ReturnsError() bool {
-	for _, r := range f.Results {
-		if r.IsError() {
-			return true
-		}
-	}
-	return false
+	Name         string
+	Receiver     *Field
+	Parameters   []*Field
+	Results      []*Field
+	ReturnsError bool
 }
 
 func (f *Function) ReturnsMultiple() bool {
-	count := 0
-	for _, r := range f.Results {
-		if !r.IsError() {
-			count++
-		}
-	}
-	return count > 1
+	return len(f.Results) > 1
 }
 
 func (f *Function) TestName() string {

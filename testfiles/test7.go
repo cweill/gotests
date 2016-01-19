@@ -1,4 +1,4 @@
-package testfiles
+package test7
 
 type Bar struct{}
 

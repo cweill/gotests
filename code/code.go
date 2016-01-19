@@ -43,7 +43,12 @@ func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	}
 	if fDecl.Type.Results != nil {
 		for _, fi := range fDecl.Type.Results.List {
-			f.Results = append(f.Results, parseField(fi))
+			mf := parseField(fi)
+			if mf.Type == "error" {
+				f.ReturnsError = true
+			} else {
+				f.Results = append(f.Results, mf)
+			}
 		}
 	}
 	return f
@@ -59,7 +64,7 @@ func parseField(f *ast.Field) *models.Field {
 	}
 	switch v := f.Type.(type) {
 	case *ast.StarExpr:
-		t = fmt.Sprintf("* %v", v.X)
+		t = fmt.Sprintf("*%v", v.X)
 	default:
 		t = fmt.Sprintf("%v", v)
 	}

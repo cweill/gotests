@@ -15,27 +15,31 @@ import (
 
 `))
 
-	testCasesTmpl = template.Must(template.New("testcases").Parse(`{{range .Funcs}}{{$multi := .ReturnsMultiple}}func {{.TestName}}(t *testing.T) {
+	testCasesTmpl = template.Must(template.New("testcases").Parse(`{{range .Funcs}}{{$f := .}}func {{.TestName}}(t *testing.T) {
 	tests := []struct {
-		name string{{range .Parameters}}{{if .Name}}
-		{{.Name}} {{.Type}}{{end}}{{end}}{{range .Results}}{{if not .IsError}}{{if and .Name $multi}}	
-		want{{.Name}} {{.Type}}{{else if $multi}}
+		name string{{if .Receiver}}
+		{{.Receiver.Name}} {{.Receiver.Type}}{{end}}{{range $index, $element := .Parameters}}{{if .Name}}
+		{{.Name}} {{.Type}}{{else}}
+		in{{$index}} {{.Type}}{{end}}{{end}}{{range .Results}}{{if and .Name $f.ReturnsMultiple}}	
+		want{{.Name}} {{.Type}}{{else if $f.ReturnsMultiple}}
 		want{{.Type}} {{.Type}}{{else}}
-		want {{.Type}}{{end}}{{end}}{{end}}{{if .ReturnsError}}
+		want {{.Type}}{{end}}{{end}}{{if .ReturnsError}}
 		wantErr bool{{end}}
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t.Logf("Running: %v", tt.name)
-		got{{if .ReturnsError}}, err{{end}} := {{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}tt.{{.Name}}{{end}}){{if .ReturnsError}}
+		{{if or .Results .ReturnsError}}got{{if .ReturnsError}}, err{{end}} := {{end}}{{if .Receiver}}tt.{{.Receiver.Name}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{end}}){{if .ReturnsError}}
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
 			continue
-		}{{end}}
+		}{{end}}{{range .Results}}{{if .IsScalar}}
 		if got != tt.want {
-			t.Errorf("%v. {{.Name}}() = %v, want %v", tt.name, got, tt.want)
-		}
+			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
+		}{{else}}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
+		}{{end}}{{end}}
 	}
 }
 

@@ -1,5 +1,5 @@
-package testfiles
+package test9
 
 type Bar struct{}
 
-func (b *Bar) Foo9(i int) (*Bar, error) { return nil, nil }
+func (b Bar) Foo9() Bar { return nil, nil }
