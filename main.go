@@ -18,7 +18,9 @@ func (l *LogWriter) Write(p []byte) (n int, err error) {
 func main() {
 	for _, path := range []string{"examples/ex1.go"} {
 		w := &LogWriter{}
-		render.TestCases(w, code.Parse(path))
+		info := code.Parse(path)
+		render.Header(w, info)
+		render.TestCases(w, info)
 		fmt.Println(string(w.log))
 	}
 }

@@ -35,6 +35,10 @@ func (f *Function) ReturnsMultiple() bool {
 	return count > 1
 }
 
+func (f *Function) TestName() string {
+	return "Test" + f.Name
+}
+
 type Info struct {
 	Package string
 	Funcs   []*Function
