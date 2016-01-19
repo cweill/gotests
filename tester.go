@@ -23,7 +23,7 @@ func generateTestCases(w io.Writer, path string) {
 }
 
 func main() {
-	for _, path := range []string{"examples/ex1.go"} {
+	for _, path := range []string{"testfiles/test1.go"} {
 		w := &logWriter{}
 		generateTestCases(w, path)
 		fmt.Println(string(w.log))
