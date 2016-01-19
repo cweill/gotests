@@ -6,33 +6,17 @@ import (
 	"go/parser"
 	"go/token"
 	"log"
+	"tester/models"
 )
 
-type Field struct {
-	Name string
-	Type string
-}
-
-type Function struct {
-	Name       string
-	Receiver   *Field
-	Parameters []*Field
-	Results    []*Field
-}
-
-type Info struct {
-	Package string
-	Funcs   []*Function
-}
-
-func Parse(path string) *Info {
+func Parse(path string) *models.Info {
 	fmt.Println(path)
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatalf("Parsing file: %v", err)
 	}
-	info := &Info{
+	info := &models.Info{
 		Package: f.Name.Name,
 	}
 	for _, d := range f.Decls {
@@ -45,8 +29,8 @@ func Parse(path string) *Info {
 	return info
 }
 
-func parseFunc(fDecl *ast.FuncDecl) *Function {
-	f := &Function{
+func parseFunc(fDecl *ast.FuncDecl) *models.Function {
+	f := &models.Function{
 		Name: fDecl.Name.Name,
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
@@ -65,7 +49,7 @@ func parseFunc(fDecl *ast.FuncDecl) *Function {
 	return f
 }
 
-func parseField(f *ast.Field) *Field {
+func parseField(f *ast.Field) *models.Field {
 	if f == nil {
 		return nil
 	}
@@ -76,8 +60,10 @@ func parseField(f *ast.Field) *Field {
 	switch v := f.Type.(type) {
 	case *ast.StarExpr:
 		t = fmt.Sprintf("* %v", v.X)
+	default:
+		t = fmt.Sprintf("%v", v)
 	}
-	return &Field{
+	return &models.Field{
 		Name: n,
 		Type: t,
 	}
