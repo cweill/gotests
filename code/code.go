@@ -58,18 +58,25 @@ func parseField(f *ast.Field) *models.Field {
 	if f == nil {
 		return nil
 	}
-	var n, t string
+	var n string
 	if f.Names != nil {
 		n = f.Names[0].Name
 	}
-	switch v := f.Type.(type) {
-	case *ast.StarExpr:
-		t = fmt.Sprintf("*%v", v.X)
-	default:
-		t = fmt.Sprintf("%v", v)
-	}
 	return &models.Field{
 		Name: n,
-		Type: t,
+		Type: parseExpr(f.Type),
+	}
+}
+
+func parseExpr(e ast.Expr) string {
+	switch v := e.(type) {
+	case *ast.StarExpr:
+		return fmt.Sprintf("*%v", v.X)
+	case *ast.MapType:
+		return fmt.Sprintf("map[%v]%v", parseExpr(v.Key), parseExpr(v.Value))
+	case *ast.ArrayType:
+		return fmt.Sprintf("[]%v", parseExpr(v.Elt))
+	default:
+		return fmt.Sprintf("%v", v)
 	}
 }

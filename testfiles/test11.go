@@ -1,3 +1,5 @@
 package test11
 
-func Foo11(i []string) ([]string, error) { return nil, nil }
+type Bar struct{}
+
+func Foo11(strs []string) ([]*Bar, error) { return nil, nil }

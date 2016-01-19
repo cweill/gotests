@@ -4,11 +4,13 @@ import "testing"
 
 func TestGenerateTestCases(t *testing.T) {
 	tests := []struct {
+		name string
 		in   string
 		want string
 	}{
 		{
-			in: `testfiles/test1.go`,
+			name: "Minimal function",
+			in:   `testfiles/test1.go`,
 			want: `package test1
 
 import (
@@ -28,7 +30,8 @@ func TestFoo1(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test2.go`,
+			name: "Function w/ anonymous argument",
+			in:   `testfiles/test2.go`,
 			want: `package test2
 
 import (
@@ -49,7 +52,8 @@ func TestFoo2(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test3.go`,
+			name: "Function w/ named argument",
+			in:   `testfiles/test3.go`,
 			want: `package test3
 
 import (
@@ -70,7 +74,8 @@ func TestFoo3(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test4.go`,
+			name: "Function w/ return value",
+			in:   `testfiles/test4.go`,
 			want: `package test4
 
 import (
@@ -94,7 +99,8 @@ func TestFoo4(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test5.go`,
+			name: "Function returning an error",
+			in:   `testfiles/test5.go`,
 			want: `package test5
 
 import (
@@ -123,7 +129,8 @@ func TestFoo5(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test6.go`,
+			name: "Function w/ multiple arguments",
+			in:   `testfiles/test6.go`,
 			want: `package test6
 
 import (
@@ -154,7 +161,8 @@ func TestFoo6(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test7.go`,
+			name: "Method on a struct pointer",
+			in:   `testfiles/test7.go`,
 			want: `package test7
 
 import (
@@ -184,7 +192,8 @@ func TestFoo7(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test8.go`,
+			name: "Function w/ struct pointer argument and return type",
+			in:   `testfiles/test8.go`,
 			want: `package test8
 
 import (
@@ -214,7 +223,8 @@ func TestFoo8(t *testing.T) {
 
 `,
 		}, {
-			in: `testfiles/test9.go`,
+			name: "Struct value method w/ struct value return type",
+			in:   `testfiles/test9.go`,
 			want: `package test9
 
 import (
@@ -238,6 +248,63 @@ func TestFoo9(t *testing.T) {
 }
 
 `,
+		}, {
+			name: "Function w/ map argument and return type",
+			in:   `testfiles/test10.go`,
+			want: `package test10
+
+import (
+	"testing"
+)
+
+func TestFoo10(t *testing.T) {
+	tests := []struct {
+		name string
+		m map[string]int32
+		want map[string]*Bar
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got := Foo10(tt.m)
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo10() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+`,
+		}, {
+			name: "Function w/ slice argument and return type",
+			in:   `testfiles/test11.go`,
+			want: `package test11
+
+import (
+	"testing"
+)
+
+func TestFoo11(t *testing.T) {
+	tests := []struct {
+		name string
+		strs []string
+		want []*Bar
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo11(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo11() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo11() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+`,
 		},
 	}
 	for _, tt := range tests {
@@ -245,7 +312,7 @@ func TestFoo9(t *testing.T) {
 		generateTestCases(w, tt.in)
 		got := string(w.log)
 		if got != tt.want {
-			t.Errorf("TestCases(%v) = %v, want %v", tt.in, got, tt.want)
+			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.in, got, tt.want)
 		}
 	}
 }
