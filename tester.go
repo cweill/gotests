@@ -25,6 +25,7 @@ func main() {
 			fmt.Printf("error %v", err)
 			continue
 		}
+		defer f.Close()
 		generateTestCases(f, path)
 	}
 }

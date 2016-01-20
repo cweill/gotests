@@ -330,6 +330,7 @@ func TestFoo12(t *testing.T) {
 			t.Errorf("%v. Creating temp file: %v", tt.name, err)
 			continue
 		}
+		defer f.Close()
 		generateTestCases(f, tt.in)
 		b, err := ioutil.ReadFile(f.Name())
 		if err != nil {
