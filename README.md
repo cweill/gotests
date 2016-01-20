@@ -1,4 +1,4 @@
-# go-gentests
+# go-gentests [![Build Status](https://travis-ci.org/cweill/go-gentests.svg?branch=master)](https://travis-ci.org/cweill/go-gentests)
 Auto-generate boilerplate test code for exported Golang functions and methods.
 
 ## License
