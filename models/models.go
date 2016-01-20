@@ -26,6 +26,10 @@ func (f *Function) ReturnsMultiple() bool {
 	return len(f.Results) > 1
 }
 
+func (f *Function) OnlyReturnsError() bool {
+	return len(f.Results) == 0 && f.ReturnsError
+}
+
 func (f *Function) TestName() string {
 	return "Test" + f.Name
 }

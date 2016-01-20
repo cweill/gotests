@@ -13,9 +13,9 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		{{if .Results}}got{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{if .ReturnsError}}
-		if (err != nil) != tt.wantErr {
+	for _, tt := range tests { {{if not .OnlyReturnsError}}
+		{{if .Results}}got{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
+		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
 		}{{end}}{{range .Results}}{{if .IsScalar}}

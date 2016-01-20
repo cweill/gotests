@@ -315,8 +315,7 @@ func TestFoo12(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		err := Foo12(tt.str)
-		if (err != nil) != tt.wantErr {
+		if err := Foo12(tt.str); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo12() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
 		}
 	}
