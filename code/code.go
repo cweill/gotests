@@ -2,11 +2,11 @@ package code
 
 import (
 	"fmt"
+	"gentests/models"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"log"
-	"tester/models"
 )
 
 func Parse(path string) *models.Info {

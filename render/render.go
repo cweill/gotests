@@ -1,8 +1,8 @@
 package render
 
 import (
+	"gentests/models"
 	"io"
-	"tester/models"
 	"text/template"
 )
 

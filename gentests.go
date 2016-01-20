@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"gentests/code"
+	"gentests/render"
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"tester/code"
-	"tester/render"
 )
 
 func generateTestCases(f *os.File, path string) {
