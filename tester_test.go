@@ -90,8 +90,7 @@ func TestFoo4(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got := Foo4()
-		if got != tt.want {
+		if got := Foo4(); got != tt.want {
 			t.Errorf("%v. Foo4() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
@@ -235,8 +234,7 @@ func TestFoo9(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got := tt.b.Foo9()
-		if !reflect.DeepEqual(got, tt.want) {
+		if got := tt.b.Foo9(); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Foo9() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
@@ -260,8 +258,7 @@ func TestFoo10(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got := Foo10(tt.m)
-		if !reflect.DeepEqual(got, tt.want) {
+		if got := Foo10(tt.m); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Foo10() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

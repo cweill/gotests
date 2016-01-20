@@ -13,18 +13,16 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests { {{if not .OnlyReturnsError}}
+	for _, tt := range tests { {{if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
 		{{if .Results}}got{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
 		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
 		}{{end}}{{range .Results}}{{if .IsScalar}}
-		if got != tt.want {
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got != tt.want { {{else}}
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got, tt.want) { {{end}}
 			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
-		}{{else}}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
-		}{{end}}{{end}}
+		}{{end}}
 	}
 }
 {{end}}
