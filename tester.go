@@ -11,8 +11,14 @@ import (
 
 func generateTestCases(f *os.File, path string) {
 	info := code.Parse(path)
-	render.Header(f, info)
-	render.TestCases(f, info)
+	if err := render.Header(f, info); err != nil {
+		fmt.Printf("error %v", err)
+		return
+	}
+	if err := render.TestCases(f, info); err != nil {
+		fmt.Printf("error %v", err)
+		return
+	}
 	if err := exec.Command("gofmt", "-w", f.Name()).Run(); err != nil {
 		fmt.Printf("error %v", err)
 	}
