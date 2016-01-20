@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"io/ioutil"
+	"testing"
+)
 
 func TestGenerateTestCases(t *testing.T) {
 	tests := []struct {
@@ -21,13 +24,12 @@ func TestFoo1(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		Foo1()
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ anonymous argument",
@@ -41,15 +43,14 @@ import (
 func TestFoo2(t *testing.T) {
 	tests := []struct {
 		name string
-		in0 string
+		in0  string
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		Foo2(tt.in0)
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ named argument",
@@ -63,15 +64,14 @@ import (
 func TestFoo3(t *testing.T) {
 	tests := []struct {
 		name string
-		s string
+		s    string
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		Foo3(tt.s)
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ return value",
@@ -87,7 +87,7 @@ func TestFoo4(t *testing.T) {
 		name string
 		want bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got := Foo4()
@@ -96,7 +96,6 @@ func TestFoo4(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Function returning an error",
@@ -109,11 +108,11 @@ import (
 
 func TestFoo5(t *testing.T) {
 	tests := []struct {
-		name string
-		want string
+		name    string
+		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo5()
@@ -126,7 +125,6 @@ func TestFoo5(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ multiple arguments",
@@ -139,13 +137,13 @@ import (
 
 func TestFoo6(t *testing.T) {
 	tests := []struct {
-		name string
-		i int
-		b bool
-		want string
+		name    string
+		i       int
+		b       bool
+		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo6(tt.i, tt.b)
@@ -158,7 +156,6 @@ func TestFoo6(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Method on a struct pointer",
@@ -171,12 +168,12 @@ import (
 
 func TestFoo7(t *testing.T) {
 	tests := []struct {
-		name string
-		b *Bar
-		want string
+		name    string
+		b       *Bar
+		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := tt.b.Foo7()
@@ -189,7 +186,6 @@ func TestFoo7(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ struct pointer argument and return type",
@@ -202,12 +198,12 @@ import (
 
 func TestFoo8(t *testing.T) {
 	tests := []struct {
-		name string
-		b *Bar
-		want *Bar
+		name    string
+		b       *Bar
+		want    *Bar
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo8(tt.b)
@@ -220,7 +216,6 @@ func TestFoo8(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Struct value method w/ struct value return type",
@@ -234,10 +229,10 @@ import (
 func TestFoo9(t *testing.T) {
 	tests := []struct {
 		name string
-		b Bar
+		b    Bar
 		want Bar
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got := tt.b.Foo9()
@@ -246,7 +241,6 @@ func TestFoo9(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ map argument and return type",
@@ -260,10 +254,10 @@ import (
 func TestFoo10(t *testing.T) {
 	tests := []struct {
 		name string
-		m map[string]int32
+		m    map[string]int32
 		want map[string]*Bar
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got := Foo10(tt.m)
@@ -272,7 +266,6 @@ func TestFoo10(t *testing.T) {
 		}
 	}
 }
-
 `,
 		}, {
 			name: "Function w/ slice argument and return type",
@@ -285,12 +278,12 @@ import (
 
 func TestFoo11(t *testing.T) {
 	tests := []struct {
-		name string
-		strs []string
-		want []*Bar
+		name    string
+		strs    []string
+		want    []*Bar
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo11(tt.strs)
@@ -303,25 +296,48 @@ func TestFoo11(t *testing.T) {
 		}
 	}
 }
+`,
+		}, {
+			name: "Function w/ slice argument and return type",
+			in:   `testfiles/test12.go`,
+			want: `package test12
 
+import (
+	"testing"
+)
+
+func TestFoo12(t *testing.T) {
+	tests := []struct {
+		name    string
+		str     string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		err := Foo12(tt.str)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo12() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
 `,
 		},
 	}
 	for _, tt := range tests {
-		w := &logWriter{}
-		generateTestCases(w, tt.in)
-		got := string(w.log)
-		if got != tt.want {
+		f, err := ioutil.TempFile("", "")
+		if err != nil {
+			t.Errorf("%v. Creating temp file: %v", tt.name, err)
+			continue
+		}
+		generateTestCases(f, tt.in)
+		b, err := ioutil.ReadFile(f.Name())
+		if err != nil {
+			t.Errorf("%v. Reading temp file: %v", tt.name, err)
+			continue
+		}
+		if got := string(b); got != tt.want {
 			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.in, got, tt.want)
 		}
 	}
-}
-
-type fakeWriter struct {
-	got []byte
-}
-
-func (f *fakeWriter) Write(p []byte) (n int, err error) {
-	f.got = append(f.got, p...)
-	return len(p), nil
 }

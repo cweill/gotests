@@ -29,10 +29,10 @@ import (
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		{{if or .Results .ReturnsError}}got{{if .ReturnsError}}, err{{end}} := {{end}}{{if .Receiver}}tt.{{.Receiver.Name}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{end}}){{if .ReturnsError}}
+		{{if .Results}}got{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{if .Receiver}}tt.{{.Receiver.Name}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{end}}){{if .ReturnsError}}
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
-			continue
+			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
+			continue{{end}}
 		}{{end}}{{range .Results}}{{if .IsScalar}}
 		if got != tt.want {
 			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
