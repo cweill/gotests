@@ -295,7 +295,7 @@ func TestFoo11(t *testing.T) {
 }
 `,
 		}, {
-			name: "Function w/ slice argument and return type",
+			name: "Function returning only an error",
 			in:   `testfiles/test12.go`,
 			want: `package test12
 
