@@ -54,7 +54,7 @@ func main() {
 			continue
 		}
 		for _, src := range ps {
-			tests, err := GenerateTests(string(src), src.TestPath(), onlyFlag, exclFlag)
+			tests, err := generateTests(string(src), src.TestPath(), onlyFlag, exclFlag)
 			if err != nil {
 				if err == NoTestsError {
 					fmt.Printf("No tests generated for %v\n", path)

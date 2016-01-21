@@ -8,21 +8,21 @@ import (
 
 func TestGenerateTestCases(t *testing.T) {
 	tests := []struct {
-		name         string
-		in           string
-		onlyFuncs    []string
-		exclFuncs    []string
-		want         string
-		wantNoOutput bool
+		name      string
+		in        string
+		onlyFuncs []string
+		exclFuncs []string
+		want      string
+		wantErr   bool
 	}{
 		{
-			name:         "No funcs",
-			in:           `testfiles/test000.go`,
-			wantNoOutput: true,
+			name:    "No funcs",
+			in:      `testfiles/test000.go`,
+			wantErr: true,
 		}, {
-			name:         "Function w/ neither receiver, parameters, nor results",
-			in:           `testfiles/test001.go`,
-			wantNoOutput: true,
+			name:    "Function w/ neither receiver, parameters, nor results",
+			in:      `testfiles/test001.go`,
+			wantErr: true,
 		}, {
 			name: "Function w/ anonymous argument",
 			in:   `testfiles/test002.go`,
@@ -650,10 +650,10 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
-			name:         "Multiple functions filtering all out",
-			in:           `testfiles/test100.go`,
-			onlyFuncs:    []string{"foo100"},
-			wantNoOutput: true,
+			name:      "Multiple functions filtering all out",
+			in:        `testfiles/test100.go`,
+			onlyFuncs: []string{"foo100"},
+			wantErr:   true,
 		}, {
 			name:      "Multiple functions w/ exclFunc",
 			in:        `testfiles/test100.go`,
@@ -679,10 +679,10 @@ func TestBar100(t *testing.T) {
 }
 `,
 		}, {
-			name:         "Multiple functions excluding all",
-			in:           `testfiles/test100.go`,
-			exclFuncs:    []string{"baz100", "Foo100", "Bar100"},
-			wantNoOutput: true,
+			name:      "Multiple functions excluding all",
+			in:        `testfiles/test100.go`,
+			exclFuncs: []string{"baz100", "Foo100", "Bar100"},
+			wantErr:   true,
 		}, {
 			name:      "Multiple functions w/ both onlyFuncs and exclFunc",
 			in:        `testfiles/test100.go`,
@@ -743,10 +743,13 @@ func TestBar100(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		GenerateTests(tt.in, f.Name(), tt.onlyFuncs, tt.exclFuncs)
+		if _, err := generateTests(tt.in, f.Name(), tt.onlyFuncs, tt.exclFuncs); (err != nil) != tt.wantErr {
+			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
 		b, err := ioutil.ReadFile(f.Name())
-		if (err != nil) != tt.wantNoOutput {
-			t.Errorf("%v. ioutil.ReadFile: %v, wantNoOutput: %v", tt.name, err, tt.wantNoOutput)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. ioutil.ReadFile: %v, wantErr: %v", tt.name, err, tt.wantErr)
 		}
 		if got := string(b); got != tt.want {
 			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.in, got, tt.want)
