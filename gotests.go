@@ -29,7 +29,7 @@ func GenerateTests(srcPath, destPath string, onlyFuncs, exclFuncs []string) ([]s
 		return nil, fmt.Errorf("ioutil.TempFile: %v", err)
 	}
 	defer os.Remove(tf.Name())
-	tests, err := writeTestsToTemp(tf, info, tfs)
+	tests, err := writeTestsToTemp(tf, info.Header, tfs)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +45,9 @@ func GenerateTests(srcPath, destPath string, onlyFuncs, exclFuncs []string) ([]s
 	return tests, nil
 }
 
-func writeTestsToTemp(temp *os.File, info *models.SourceInfo, funcs []*models.Function) ([]string, error) {
+func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function) ([]string, error) {
 	w := bufio.NewWriter(temp)
-	if err := render.Header(w, info); err != nil {
+	if err := render.Header(w, head); err != nil {
 		return nil, fmt.Errorf("render.Header: %v", err)
 	}
 	var tests []string
@@ -55,7 +55,7 @@ func writeTestsToTemp(temp *os.File, info *models.SourceInfo, funcs []*models.Fu
 		if err := render.TestFunction(w, fun); err != nil {
 			return nil, fmt.Errorf("render.TestFunction: %v", err)
 		}
-		tests = append(tests, fmt.Sprintf("%v.%v", info.Package, fun.TestName()))
+		tests = append(tests, fmt.Sprintf("%v.%v", head.Package, fun.TestName()))
 	}
 	if err := w.Flush(); err != nil {
 		return nil, fmt.Errorf("bufio.Flush: %v", err)

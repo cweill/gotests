@@ -16,7 +16,7 @@ func init() {
 	tmpls = template.Must(template.ParseGlob(path.Join(path.Dir(filename), "templates/*.tmpl")))
 }
 
-func Header(w io.Writer, info *models.SourceInfo) error {
+func Header(w io.Writer, info *models.Header) error {
 	return tmpls.ExecuteTemplate(w, "header", info)
 }
 

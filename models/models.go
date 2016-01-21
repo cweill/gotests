@@ -138,14 +138,18 @@ func (f *Function) TestName() string {
 	return "Test" + strings.Title(f.Name)
 }
 
+type Header struct {
+	Package string
+	Imports []*Import
+}
+
 type Import struct {
 	Name, Path string
 }
 
 type SourceInfo struct {
-	Package string
-	Imports []*Import
-	Funcs   []*Function
+	Header *Header
+	Funcs  []*Function
 }
 
 func (i *SourceInfo) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {

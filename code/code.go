@@ -16,8 +16,10 @@ func Parse(path string) (*models.SourceInfo, error) {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
 	info := &models.SourceInfo{
-		Package: parseExpr(f.Name).String(),
-		Imports: parseImports(f.Imports),
+		Header: &models.Header{
+			Package: parseExpr(f.Name).String(),
+			Imports: parseImports(f.Imports),
+		},
 	}
 	for _, d := range f.Decls {
 		fDecl, ok := d.(*ast.FuncDecl)
