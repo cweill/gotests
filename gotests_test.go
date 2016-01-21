@@ -10,11 +10,12 @@ func TestGenerateTestCases(t *testing.T) {
 	tests := []struct {
 		name         string
 		in           string
+		onlyFuncs    []string
 		want         string
 		wantNoOutput bool
 	}{
 		{
-			name:         "Unexported function",
+			name:         "No funcs",
 			in:           `testfiles/test000.go`,
 			wantNoOutput: true,
 		}, {
@@ -512,6 +513,120 @@ func TestFoo21(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Multiple functions",
+			in:   `testfiles/test100.go`,
+			want: `package test100
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+
+func TestBaz100(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:      "Multiple functions w/ onlyFuncs",
+			in:        `testfiles/test100.go`,
+			onlyFuncs: []string{"Foo100", "baz100"},
+			want: `package test100
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBaz100(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:         "Multiple functions filtering all out",
+			in:           `testfiles/test100.go`,
+			onlyFuncs:    []string{"foo100"},
+			wantNoOutput: true,
 		},
 	}
 	for _, tt := range tests {
@@ -522,11 +637,10 @@ func TestFoo21(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		generateTestCases(f.Name(), tt.in)
+		generateTestCases(f.Name(), tt.in, tt.onlyFuncs)
 		b, err := ioutil.ReadFile(f.Name())
 		if (err != nil) != tt.wantNoOutput {
-			t.Errorf("%v. ioutil.ReadFile: %v", tt.name, err)
-			continue
+			t.Errorf("%v. ioutil.ReadFile: %v, wantNoOutput: %v", tt.name, err, tt.wantNoOutput)
 		}
 		if got := string(b); got != tt.want {
 			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.in, got, tt.want)

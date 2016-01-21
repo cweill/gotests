@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -128,7 +129,7 @@ func (f *Function) OnlyReturnsError() bool {
 }
 
 func (f *Function) TestName() string {
-	return "Test" + f.Name
+	return "Test" + strings.Title(f.Name)
 }
 
 type Info struct {
@@ -136,12 +137,19 @@ type Info struct {
 	Funcs   []*Function
 }
 
-func (i *Info) TestableFuncs() []*Function {
+func (i *Info) TestableFuncs(onlyFuncs []string) []*Function {
+	sort.Strings(onlyFuncs)
 	var fs []*Function
 	for _, f := range i.Funcs {
-		if f.IsExported && (f.Receiver != nil || len(f.Parameters) > 0 || len(f.Results) > 0) {
-			fs = append(fs, f)
+		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
+			continue
 		}
+		if len(onlyFuncs) > 0 {
+			if i := sort.SearchStrings(onlyFuncs, f.Name); i >= len(onlyFuncs) || onlyFuncs[i] != f.Name {
+				continue
+			}
+		}
+		fs = append(fs, f)
 	}
 	return fs
 }
