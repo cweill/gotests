@@ -5,16 +5,15 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"log"
 
 	"github.com/cweill/gotests/models"
 )
 
-func Parse(path string) *models.SourceInfo {
+func Parse(path string) (*models.SourceInfo, error) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 	if err != nil {
-		log.Fatalf("Parsing file: %v", err)
+		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
 	info := &models.SourceInfo{
 		Package: parseExpr(f.Name).String(),
@@ -27,7 +26,7 @@ func Parse(path string) *models.SourceInfo {
 		}
 		info.Funcs = append(info.Funcs, parseFunc(fDecl))
 	}
-	return info
+	return info, nil
 }
 
 func parseFunc(fDecl *ast.FuncDecl) *models.Function {

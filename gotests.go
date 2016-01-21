@@ -16,7 +16,10 @@ import (
 var NoTestsError = errors.New("no tests generated")
 
 func GenerateTests(fi *models.FileInfo, onlyFuncs, exclFuncs []string) ([]string, error) {
-	info := code.Parse(fi.SourcePath)
+	info, err := code.Parse(fi.SourcePath)
+	if err != nil {
+		return nil, fmt.Errorf("code.Parse: %v", err)
+	}
 	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(tfs) == 0 {
 		return nil, NoTestsError
