@@ -19,7 +19,7 @@ func (b *Bar) Foo7() (string, error) { return "", nil }
 ```
 Running: 
 ```
-$ gotests testfiles/test007.go
+$ gotests -funcs=Foo7 testfiles/test007.go
 ```
 Generates the following test code:
 ```Go
@@ -54,13 +54,17 @@ Installation:
 ```
 $ go get github.com/cweill/gotests
 ```
-Generating tests for specific files:
+Generating specific tests for a specific file:
 ```
-$ gotests my/source/dir/foo.go my/source/dir/bar.go
+$ gotests -funcs=Foo,fetchBaz my/source/dir/foo.go my/source/dir/bar.go
+```
+Or all tests for specific files:
+```
+$ gotests -all my/source/dir/foo.go my/source/dir/bar.go
 ```
 You can also generate tests for an entire directory:
 ```
-$ gotests my/source/dir
+$ gotests -all .
 ```
 Now get that coverage up! 
 
