@@ -500,6 +500,31 @@ func TestFoo20(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Function w/ interface{} parameter and result",
+			in:   `testfiles/test021.go`,
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo21(t *testing.T) {
+	tests := []struct {
+		name string
+		i    interface{}
+		want interface{}
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo21(tt.i); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo21() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {

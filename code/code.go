@@ -80,6 +80,8 @@ func parseField(f *ast.Field) []*models.Field {
 
 func parseExpr(e ast.Expr) models.Expression {
 	switch v := e.(type) {
+	case *ast.InterfaceType:
+		return &models.InterfaceType{}
 	case *ast.StarExpr:
 		return &models.StarExpr{X: parseExpr(v.X)}
 	case *ast.SelectorExpr:
