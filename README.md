@@ -54,15 +54,15 @@ Installation:
 ```
 $ go get github.com/cweill/gotests
 ```
-Generating specific tests for a specific file:
+Generating only certain tests for specific files:
 ```
-$ gotests -funcs=Foo,fetchBaz my/source/dir/foo.go my/source/dir/bar.go
+$ gotests -funcs=Foo,fetchBaz foo.go bar.go
 ```
-Or all tests for specific files:
+Or all tests:
 ```
-$ gotests -all my/source/dir/foo.go my/source/dir/bar.go
+$ gotests -all foo.go bar.go
 ```
-You can also generate tests for an entire directory:
+Or generating tests for an entire directory:
 ```
 $ gotests -all .
 ```
