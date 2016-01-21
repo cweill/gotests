@@ -8,14 +8,15 @@ import (
 
 func TestGenerateTestCases(t *testing.T) {
 	tests := []struct {
-		name string
-		in   string
-		want string
+		name         string
+		in           string
+		want         string
+		wantNoOutput bool
 	}{
 		{
-			name: "Unexported function",
-			in:   `testfiles/test000.go`,
-			want: ``,
+			name:         "Unexported function",
+			in:           `testfiles/test000.go`,
+			wantNoOutput: true,
 		}, {
 			name: "Minimal function",
 			in:   `testfiles/test001.go`,
@@ -434,16 +435,16 @@ func TestFoo17(t *testing.T) {
 			want: `package testfiles
 
 import (
+	"os"
 	"reflect"
 	"testing"
-	"text/template"
 )
 
 func TestFoo18(t *testing.T) {
 	tests := []struct {
 		name string
-		t    *template.Template
-		want *template.Template
+		t    *os.File
+		want *os.File
 	}{
 	// TODO: Add test cases.
 	}
@@ -533,10 +534,11 @@ func TestFoo21(t *testing.T) {
 			t.Errorf("%v. ioutil.TempFile: %v", tt.name, err)
 			continue
 		}
-		defer os.Remove(f.Name())
-		generateTestCases(f, tt.in)
+		f.Close()
+		os.Remove(f.Name())
+		generateTestCases(f.Name(), tt.in)
 		b, err := ioutil.ReadFile(f.Name())
-		if err != nil {
+		if (err != nil) != tt.wantNoOutput {
 			t.Errorf("%v. ioutil.ReadFile: %v", tt.name, err)
 			continue
 		}

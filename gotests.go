@@ -13,30 +13,43 @@ import (
 	"golang.org/x/tools/imports"
 )
 
-func generateTestCases(f *os.File, path string) {
-	info := code.Parse(path)
+// Generates test cases and returns the number of cases generated.
+func generateTestCases(testPath, src string) {
+	info := code.Parse(src)
 	if len(info.ExportedFuncs()) == 0 {
 		return
 	}
-	w := bufio.NewWriter(f)
-	defer w.Flush()
-	if err := render.Header(w, info); err != nil {
-		fmt.Printf("render.Header: %v\n", err)
+	f, err := os.Create(testPath)
+	if err != nil {
+		fmt.Printf("oc.Create: %v\n", err)
 		return
 	}
+	defer f.Close()
+	w := bufio.NewWriter(f)
+	if err := render.Header(w, info); err != nil {
+		fmt.Printf("render.Header: %v\n", err)
+		os.Remove(f.Name())
+		return
+	}
+	var count int
 	for _, fun := range info.ExportedFuncs() {
 		if err := render.TestCases(w, fun); err != nil {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue
 		}
 		fmt.Printf("Generated test for %v.%v\n", info.Package, fun.Name)
+		count++
 	}
 	if err := w.Flush(); err != nil {
 		fmt.Printf("bufio.Flush: %v\n", err)
+		os.Remove(f.Name())
 		return
 	}
 	if err := processImports(f); err != nil {
 		fmt.Printf("processImports: %v\n", err)
+	}
+	if count == 0 {
+		os.Remove(f.Name())
 	}
 }
 
@@ -63,13 +76,7 @@ func main() {
 	for _, path := range os.Args[1:] {
 		for _, src := range sourceFiles(path) {
 			testPath := strings.Replace(src, ".go", "_test.go", -1)
-			f, err := os.Create(testPath)
-			if err != nil {
-				fmt.Printf("oc.Create: %v\n", err)
-				continue
-			}
-			defer f.Close()
-			generateTestCases(f, src)
+			generateTestCases(testPath, src)
 		}
 	}
 }

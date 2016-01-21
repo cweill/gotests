@@ -1,5 +1,5 @@
 package testfiles
 
-import "html/template"
+import "os"
 
-func Foo18(t *template.Template) *template.Template { return t }
+func Foo18(t *os.File) *os.File { return t }
