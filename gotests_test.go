@@ -12,6 +12,10 @@ func TestGenerateTestCases(t *testing.T) {
 		want string
 	}{
 		{
+			name: "Unexported function",
+			in:   `testfiles/test000.go`,
+			want: ``,
+		}, {
 			name: "Minimal function",
 			in:   `testfiles/test001.go`,
 			want: `package test1

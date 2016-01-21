@@ -32,7 +32,8 @@ func Parse(path string) *models.Info {
 
 func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	f := &models.Function{
-		Name: fDecl.Name.Name,
+		Name:       fDecl.Name.Name,
+		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
 		f.Receiver = parseField(fDecl.Recv.List[0])

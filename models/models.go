@@ -16,6 +16,7 @@ func (f *Field) IsScalar() bool {
 
 type Function struct {
 	Name         string
+	IsExported   bool
 	Receiver     *Field
 	Parameters   []*Field
 	Results      []*Field
@@ -41,6 +42,16 @@ func (f *Function) TestName() string {
 type Info struct {
 	Package string
 	Funcs   []*Function
+}
+
+func (i *Info) ExportedFuncs() []*Function {
+	var fs []*Function
+	for _, f := range i.Funcs {
+		if f.IsExported {
+			fs = append(fs, f)
+		}
+	}
+	return fs
 }
 
 func (i *Info) UsesReflection() bool {

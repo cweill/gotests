@@ -13,11 +13,14 @@ import (
 
 func generateTestCases(f *os.File, path string) {
 	info := code.Parse(path)
+	if len(info.ExportedFuncs()) == 0 {
+		return
+	}
 	if err := render.Header(f, info); err != nil {
 		fmt.Printf("render.Header: %v\n", err)
 		return
 	}
-	for _, fun := range info.Funcs {
+	for _, fun := range info.ExportedFuncs() {
 		if err := render.TestCases(f, fun); err != nil {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue
