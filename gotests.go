@@ -23,7 +23,7 @@ func (f *funcs) String() string {
 
 func (f *funcs) Set(value string) error {
 	if len(*f) > 0 {
-		return errors.New("funcs flag already set")
+		return errors.New("flag already set")
 	}
 	for _, fun := range strings.Split(value, ",") {
 		*f = append(*f, fun)
@@ -32,15 +32,16 @@ func (f *funcs) Set(value string) error {
 }
 
 var (
-	funcsFlag funcs
+	funcsFlag, exclFlag funcs
 
-	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories")
+	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories.")
 )
 
 // Generates test cases and returns the number of cases generated.
-func generateTestCases(testPath, src string, onlyFuncs []string) {
+func generateTestCases(testPath, src string, onlyFuncs, exclFuncs []string) {
 	info := code.Parse(src)
-	if len(info.TestableFuncs(onlyFuncs)) == 0 {
+	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
+	if len(tfs) == 0 {
 		fmt.Println("No tests generated")
 		return
 	}
@@ -57,7 +58,7 @@ func generateTestCases(testPath, src string, onlyFuncs []string) {
 		return
 	}
 	var count int
-	for _, fun := range info.TestableFuncs(onlyFuncs) {
+	for _, fun := range tfs {
 		if err := render.TestCases(w, fun); err != nil {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue
@@ -99,9 +100,10 @@ func processImports(f *os.File) error {
 }
 
 func main() {
-	flag.Var(&funcsFlag, "funcs", "comma-separated list of case-sensitive function names for generating tests")
+	flag.Var(&funcsFlag, "funcs", "comma-separated list of case-sensitive function names for generating tests. Takes precedence over -all.")
+	flag.Var(&exclFlag, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -funcs and -all.")
 	flag.Parse()
-	if len(funcsFlag) == 0 && !*allFlag {
+	if len(funcsFlag) == 0 && len(exclFlag) == 0 && !*allFlag {
 		fmt.Println("Please specify either the -funcs or -all flag")
 		return
 	}
@@ -112,7 +114,7 @@ func main() {
 	for _, path := range flag.Args() {
 		for _, src := range sourceFiles(path) {
 			testPath := strings.Replace(src, ".go", "_test.go", -1)
-			generateTestCases(testPath, src, funcsFlag)
+			generateTestCases(testPath, src, funcsFlag, exclFlag)
 		}
 	}
 }

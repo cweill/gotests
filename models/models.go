@@ -148,17 +148,18 @@ type Info struct {
 	Funcs   []*Function
 }
 
-func (i *Info) TestableFuncs(onlyFuncs []string) []*Function {
+func (i *Info) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 	sort.Strings(onlyFuncs)
 	var fs []*Function
 	for _, f := range i.Funcs {
 		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
 			continue
 		}
-		if len(onlyFuncs) > 0 {
-			if i := sort.SearchStrings(onlyFuncs, f.Name); i >= len(onlyFuncs) || onlyFuncs[i] != f.Name {
-				continue
-			}
+		if len(exclFuncs) > 0 && contains(exclFuncs, f.Name) {
+			continue
+		}
+		if len(onlyFuncs) > 0 && !contains(onlyFuncs, f.Name) {
+			continue
 		}
 		fs = append(fs, f)
 	}
@@ -172,6 +173,13 @@ func (i *Info) UsesReflection() bool {
 				return true
 			}
 		}
+	}
+	return false
+}
+
+func contains(ss []string, s string) bool {
+	if i := sort.SearchStrings(ss, s); i < len(ss) && ss[i] == s {
+		return true
 	}
 	return false
 }
