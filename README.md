@@ -62,6 +62,10 @@ Or all tests:
 ```
 $ gotests -all foo.go bar.go
 ```
+Or most tests excluding a select few:
+```
+$ gotests -excl=fetchBaz foo.go bar.go
+```
 Or generating tests for an entire directory:
 ```
 $ gotests -all .
