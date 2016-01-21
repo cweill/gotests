@@ -746,7 +746,7 @@ func TestBar100(t *testing.T) {
 		f.Close()
 		os.Remove(f.Name())
 		fi := &models.FileInfo{SourcePath: tt.in, TestPath: f.Name()}
-		generateTestCases(fi, tt.onlyFuncs, tt.exclFuncs)
+		generateTests(fi, tt.onlyFuncs, tt.exclFuncs)
 		b, err := ioutil.ReadFile(f.Name())
 		if (err != nil) != tt.wantNoOutput {
 			t.Errorf("%v. ioutil.ReadFile: %v, wantNoOutput: %v", tt.name, err, tt.wantNoOutput)
