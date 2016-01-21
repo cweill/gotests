@@ -19,7 +19,7 @@ func (b *Bar) Foo7() (string, error) { return "", nil }
 ```
 Running: 
 ```
-$ gotests -funcs=Foo7 testfiles/test007.go
+$ gotests -only=Foo7 testfiles/test007.go
 ```
 Generates the following test code:
 ```Go
@@ -54,19 +54,19 @@ Installation:
 ```
 $ go get github.com/cweill/gotests
 ```
-Generating only certain tests for specific files:
+Generating only select tests for specific files:
 ```
-$ gotests -funcs=Foo,fetchBaz foo.go bar.go
+$ gotests -only=Foo,fetchBaz foo.go bar.go
 ```
 Or all tests:
 ```
 $ gotests -all foo.go bar.go
 ```
-Or most tests, excluding a select few:
+Or most tests, excluding a few:
 ```
 $ gotests -excl=fetchBaz foo.go bar.go
 ```
-Or generating tests for an entire directory:
+Generating tests for an entire directory:
 ```
 $ gotests -all .
 ```

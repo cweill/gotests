@@ -32,7 +32,7 @@ func (f *funcs) Set(value string) error {
 }
 
 var (
-	funcsFlag, exclFlag funcs
+	onlyFlag, exclFlag funcs
 
 	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories.")
 )
@@ -100,10 +100,10 @@ func processImports(f *os.File) error {
 }
 
 func main() {
-	flag.Var(&funcsFlag, "funcs", "comma-separated list of case-sensitive function names for generating tests. Takes precedence over -all.")
+	flag.Var(&onlyFlag, "only", "comma-separated list of case-sensitive function names for which tests will be generating exclusively. Takes precedence over -all.")
 	flag.Var(&exclFlag, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -funcs and -all.")
 	flag.Parse()
-	if len(funcsFlag) == 0 && len(exclFlag) == 0 && !*allFlag {
+	if len(onlyFlag) == 0 && len(exclFlag) == 0 && !*allFlag {
 		fmt.Println("Please specify either the -funcs or -all flag")
 		return
 	}
@@ -114,7 +114,7 @@ func main() {
 	for _, path := range flag.Args() {
 		for _, src := range sourceFiles(path) {
 			testPath := strings.Replace(src, ".go", "_test.go", -1)
-			generateTestCases(testPath, src, funcsFlag, exclFlag)
+			generateTestCases(testPath, src, onlyFlag, exclFlag)
 		}
 	}
 }
