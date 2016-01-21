@@ -50,11 +50,11 @@ $ go get github.com/cweill/gotests
 ```
 Generating tests for specific files:
 ```
-$ gotest  my/source/dir/foo.go  my/source/dir/bar.go
+$ gotests  my/source/dir/foo.go  my/source/dir/bar.go
 ```
 You can also generate tests for an entire directory:
 ```
-$ gotest my/source/dir
+$ gotests my/source/dir
 ```
 Now get that coverage up! 
 
