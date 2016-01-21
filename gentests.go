@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"gentests/code"
-	"gentests/render"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/cweill/go-gentests/code"
+	"github.com/cweill/go-gentests/render"
 )
 
 func generateTestCases(f *os.File, path string) {

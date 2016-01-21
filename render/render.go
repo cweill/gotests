@@ -1,9 +1,10 @@
 package render
 
 import (
-	"gentests/models"
 	"io"
 	"text/template"
+
+	"github.com/cweill/go-gentests/models"
 )
 
 var tmpls = template.Must(template.ParseGlob("render/templates/*.tmpl"))
