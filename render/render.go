@@ -20,6 +20,6 @@ func Header(w io.Writer, info *models.Info) error {
 	return tmpls.ExecuteTemplate(w, "header", info)
 }
 
-func TestCases(w io.Writer, info *models.Info) error {
-	return tmpls.ExecuteTemplate(w, "testcases", info)
+func TestCases(w io.Writer, f *models.Function) error {
+	return tmpls.ExecuteTemplate(w, "testcase", f)
 }

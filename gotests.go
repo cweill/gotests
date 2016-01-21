@@ -17,9 +17,12 @@ func generateTestCases(f *os.File, path string) {
 		fmt.Printf("render.Header: %v\n", err)
 		return
 	}
-	if err := render.TestCases(f, info); err != nil {
-		fmt.Printf("render.TestCases: %v\n", err)
-		return
+	for _, fun := range info.Funcs {
+		if err := render.TestCases(f, fun); err != nil {
+			fmt.Printf("render.TestCases: %v\n", err)
+			continue
+		}
+		fmt.Printf("Generated test for %v.%v\n", info.Package, fun.Name)
 	}
 	if err := exec.Command("gofmt", "-w", f.Name()).Run(); err != nil {
 		fmt.Printf("exec.Command: %v\n", err)

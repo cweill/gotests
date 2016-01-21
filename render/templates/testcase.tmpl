@@ -1,5 +1,5 @@
-{{define "testcases"}}
-{{range .Funcs}}{{$f := .}}
+{{define "testcase"}}
+{{$f := .}}
 func {{.TestName}}(t *testing.T) {
 	tests := []struct {
 		name string{{if .Receiver}}
@@ -25,5 +25,4 @@ func {{.TestName}}(t *testing.T) {
 		}{{end}}
 	}
 }
-{{end}}
 {{end}}
