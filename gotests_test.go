@@ -21,9 +21,7 @@ func TestGenerateTestCases(t *testing.T) {
 			in:   `testfiles/test001.go`,
 			want: `package test1
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo1(t *testing.T) {
 	tests := []struct {
@@ -41,9 +39,7 @@ func TestFoo1(t *testing.T) {
 			in:   `testfiles/test002.go`,
 			want: `package test2
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo2(t *testing.T) {
 	tests := []struct {
@@ -62,9 +58,7 @@ func TestFoo2(t *testing.T) {
 			in:   `testfiles/test003.go`,
 			want: `package test3
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo3(t *testing.T) {
 	tests := []struct {
@@ -83,9 +77,7 @@ func TestFoo3(t *testing.T) {
 			in:   `testfiles/test004.go`,
 			want: `package test4
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo4(t *testing.T) {
 	tests := []struct {
@@ -106,9 +98,7 @@ func TestFoo4(t *testing.T) {
 			in:   `testfiles/test005.go`,
 			want: `package test5
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo5(t *testing.T) {
 	tests := []struct {
@@ -135,9 +125,7 @@ func TestFoo5(t *testing.T) {
 			in:   `testfiles/test006.go`,
 			want: `package test6
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo6(t *testing.T) {
 	tests := []struct {
@@ -166,9 +154,7 @@ func TestFoo6(t *testing.T) {
 			in:   `testfiles/test007.go`,
 			want: `package test7
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo7(t *testing.T) {
 	tests := []struct {
@@ -308,9 +294,7 @@ func TestFoo11(t *testing.T) {
 			in:   `testfiles/test012.go`,
 			want: `package test12
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo12(t *testing.T) {
 	tests := []struct {
@@ -332,9 +316,7 @@ func TestFoo12(t *testing.T) {
 			in:   `testfiles/test013.go`,
 			want: `package test13
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo13(t *testing.T) {
 	tests := []struct {
@@ -356,9 +338,7 @@ func TestFoo13(t *testing.T) {
 			in:   `testfiles/test014.go`,
 			want: `package test14
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo14(t *testing.T) {
 	tests := []struct {
@@ -380,9 +360,7 @@ func TestFoo14(t *testing.T) {
 			in:   `testfiles/test015.go`,
 			want: `package test15
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestFoo15(t *testing.T) {
 	tests := []struct {
