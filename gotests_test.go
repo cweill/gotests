@@ -398,6 +398,47 @@ func TestFoo15(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Function w/ interface receiver, parameter, and result",
+			in:   `testfiles/test016.go`,
+			want: `package test16
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestBaz(t *testing.T) {
+	tests := []struct {
+		name string
+		b    *baz
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := tt.b.Baz(); got != tt.want {
+			t.Errorf("%v. Baz() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestFoo16(t *testing.T) {
+	tests := []struct {
+		name string
+		i    Bazzar
+		in   Bazzar
+		want Bazzar
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := tt.i.Foo16(tt.in); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo16() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {
