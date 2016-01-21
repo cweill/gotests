@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/cweill/go-gentests/code"
-	"github.com/cweill/go-gentests/render"
+	"github.com/cweill/gotests/code"
+	"github.com/cweill/gotests/render"
 )
 
 func generateTestCases(f *os.File, path string) {

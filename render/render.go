@@ -4,7 +4,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/cweill/go-gentests/models"
+	"github.com/cweill/gotests/models"
 )
 
 var tmpls = template.Must(template.ParseGlob("render/templates/*.tmpl"))

@@ -7,7 +7,7 @@ import (
 	"go/token"
 	"log"
 
-	"github.com/cweill/go-gentests/models"
+	"github.com/cweill/gotests/models"
 )
 
 func Parse(path string) *models.Info {
