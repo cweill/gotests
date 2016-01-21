@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/cweill/gotests/code"
+	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/render"
 	"github.com/cweill/gotests/source"
 	"golang.org/x/tools/imports"
@@ -37,14 +38,14 @@ var (
 	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories.")
 )
 
-func generateTestCases(srcPath, testPath string, onlyFuncs, exclFuncs []string) {
-	info := code.Parse(srcPath)
+func generateTestCases(fi *models.FileInfo, onlyFuncs, exclFuncs []string) {
+	info := code.Parse(fi.SourcePath)
 	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(tfs) == 0 {
 		fmt.Println("No tests generated")
 		return
 	}
-	f, err := os.Create(testPath)
+	f, err := os.Create(fi.TestPath)
 	if err != nil {
 		fmt.Printf("oc.Create: %v\n", err)
 		return
@@ -111,8 +112,8 @@ func main() {
 		return
 	}
 	for _, path := range flag.Args() {
-		for _, srcPath := range source.Files(path) {
-			generateTestCases(srcPath, source.TestPath(srcPath), onlyFlag, exclFlag)
+		for _, info := range source.Files(path) {
+			generateTestCases(info, onlyFlag, exclFlag)
 		}
 	}
 }

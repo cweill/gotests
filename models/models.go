@@ -142,13 +142,13 @@ type Import struct {
 	Name, Path string
 }
 
-type Info struct {
+type SourceInfo struct {
 	Package string
 	Imports []*Import
 	Funcs   []*Function
 }
 
-func (i *Info) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
+func (i *SourceInfo) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 	sort.Strings(onlyFuncs)
 	sort.Strings(exclFuncs)
 	var fs []*Function
@@ -167,7 +167,7 @@ func (i *Info) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 	return fs
 }
 
-func (i *Info) UsesReflection() bool {
+func (i *SourceInfo) UsesReflection() bool {
 	for _, f := range i.Funcs {
 		for _, fi := range f.Results {
 			if !fi.IsScalar() {
@@ -183,4 +183,8 @@ func contains(ss []string, s string) bool {
 		return true
 	}
 	return false
+}
+
+type FileInfo struct {
+	SourcePath, TestPath string
 }

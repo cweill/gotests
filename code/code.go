@@ -10,13 +10,13 @@ import (
 	"github.com/cweill/gotests/models"
 )
 
-func Parse(path string) *models.Info {
+func Parse(path string) *models.SourceInfo {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatalf("Parsing file: %v", err)
 	}
-	info := &models.Info{
+	info := &models.SourceInfo{
 		Package: parseExpr(f.Name).String(),
 		Imports: parseImports(f.Imports),
 	}
