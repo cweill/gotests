@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"log"
+	"strings"
 
 	"github.com/cweill/gotests/models"
 )
@@ -71,11 +72,27 @@ func parseField(f *ast.Field) *models.Field {
 func parseExpr(e ast.Expr) string {
 	switch v := e.(type) {
 	case *ast.StarExpr:
-		return fmt.Sprintf("*%v", v.X)
+		return fmt.Sprintf("*%v", parseExpr(v.X))
 	case *ast.MapType:
 		return fmt.Sprintf("map[%v]%v", parseExpr(v.Key), parseExpr(v.Value))
 	case *ast.ArrayType:
 		return fmt.Sprintf("[]%v", parseExpr(v.Elt))
+	case *ast.FuncType:
+		var ps, rs []string
+		if v.Params != nil {
+			for _, p := range v.Params.List {
+				ps = append(ps, parseExpr(p.Type))
+			}
+		}
+		if v.Results != nil {
+			for _, r := range v.Results.List {
+				rs = append(rs, parseExpr(r.Type))
+			}
+		}
+		if len(rs) < 2 {
+			return fmt.Sprintf("func(%v) %v", strings.Join(ps, ","), strings.Join(rs, ""))
+		}
+		return fmt.Sprintf("func(%v) (%v)", strings.Join(ps, ","), strings.Join(rs, ","))
 	default:
 		return fmt.Sprintf("%v", v)
 	}

@@ -1,5 +1,3 @@
 package test14
 
-func Foo14(f func(string)) func(int) {
-	return func(int) {}
-}
+func Foo14(f func(string, int) string) error { return nil }

@@ -322,6 +322,78 @@ func TestFoo12(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Function w/ a function parameter",
+			in:   `testfiles/test013.go`,
+			want: `package test13
+
+import (
+	"testing"
+)
+
+func TestFoo13(t *testing.T) {
+	tests := []struct {
+		name    string
+		f       func()
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := Foo13(tt.f); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo13() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name: "Function w/ a function parameter w/ its own parameters and result",
+			in:   `testfiles/test014.go`,
+			want: `package test14
+
+import (
+	"testing"
+)
+
+func TestFoo14(t *testing.T) {
+	tests := []struct {
+		name    string
+		f       func(string, int) string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := Foo14(tt.f); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo14() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name: "Function w/ a function parameter that returns two results",
+			in:   `testfiles/test015.go`,
+			want: `package test15
+
+import (
+	"testing"
+)
+
+func TestFoo15(t *testing.T) {
+	tests := []struct {
+		name    string
+		f       func(string) (string, error)
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := Foo15(tt.f); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo15() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {
