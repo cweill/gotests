@@ -150,6 +150,7 @@ type Info struct {
 
 func (i *Info) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 	sort.Strings(onlyFuncs)
+	sort.Strings(exclFuncs)
 	var fs []*Function
 	for _, f := range i.Funcs {
 		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {

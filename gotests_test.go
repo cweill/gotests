@@ -654,6 +654,85 @@ func TestBaz100(t *testing.T) {
 			in:           `testfiles/test100.go`,
 			onlyFuncs:    []string{"foo100"},
 			wantNoOutput: true,
+		}, {
+			name:      "Multiple functions w/ exclFunc",
+			in:        `testfiles/test100.go`,
+			exclFuncs: []string{"Foo100", "baz100"},
+			want: `package testfiles
+
+import "testing"
+
+func TestBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:         "Multiple functions excluding all",
+			in:           `testfiles/test100.go`,
+			exclFuncs:    []string{"baz100", "Foo100", "Bar100"},
+			wantNoOutput: true,
+		}, {
+			name:      "Multiple functions w/ both onlyFuncs and exclFunc",
+			in:        `testfiles/test100.go`,
+			onlyFuncs: []string{"Bar100"},
+			exclFuncs: []string{"Foo100"},
+			want: `package testfiles
+
+import "testing"
+
+func TestBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:      "Multiple functions w/ onlyFuncs and exclFunc competing",
+			in:        `testfiles/test100.go`,
+			onlyFuncs: []string{"Foo100", "Bar100"},
+			exclFuncs: []string{"Foo100", "baz100"},
+			want: `package testfiles
+
+import "testing"
+
+func TestBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {

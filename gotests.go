@@ -63,7 +63,7 @@ func generateTestCases(testPath, src string, onlyFuncs, exclFuncs []string) {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue
 		}
-		fmt.Printf("Generated test for %v.%v\n", info.Package, fun.Name)
+		fmt.Printf("Generated %v.%v\n", info.Package, fun.TestName())
 		count++
 	}
 	if err := w.Flush(); err != nil {
