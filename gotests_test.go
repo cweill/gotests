@@ -470,6 +470,30 @@ func TestFoo18(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Function w/ imported struct receiver, parameter, and result",
+			in:   `testfiles/test019.go`,
+			want: `package test19
+
+import "testing"
+
+func TestFoo19(t *testing.T) {
+	tests := []struct {
+		name string
+		in1  string
+		in2  string
+		in3  string
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo19(tt.in1, tt.in2, tt.in3); got != tt.want {
+			t.Errorf("%v. Foo19() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {

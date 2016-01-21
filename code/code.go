@@ -36,38 +36,47 @@ func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
-		f.Receiver = parseField(fDecl.Recv.List[0])
+		f.Receiver = parseField(fDecl.Recv.List[0])[0]
 	}
 	if fDecl.Type.Params != nil {
 		for _, fi := range fDecl.Type.Params.List {
-			f.Parameters = append(f.Parameters, parseField(fi))
+			for _, pf := range parseField(fi) {
+				f.Parameters = append(f.Parameters, pf)
+			}
 		}
 	}
 	if fDecl.Type.Results != nil {
 		for _, fi := range fDecl.Type.Results.List {
-			mf := parseField(fi)
-			if mf.Type == "error" {
-				f.ReturnsError = true
-			} else {
-				f.Results = append(f.Results, mf)
+			for _, mf := range parseField(fi) {
+				if mf.Type == "error" {
+					f.ReturnsError = true
+				} else {
+					f.Results = append(f.Results, mf)
+				}
 			}
 		}
 	}
 	return f
 }
 
-func parseField(f *ast.Field) *models.Field {
+func parseField(f *ast.Field) []*models.Field {
 	if f == nil {
 		return nil
 	}
-	var n string
-	if f.Names != nil {
-		n = f.Names[0].Name
+	t := parseExpr(f.Type)
+	if len(f.Names) == 0 {
+		return []*models.Field{{
+			Type: t,
+		}}
 	}
-	return &models.Field{
-		Name: n,
-		Type: parseExpr(f.Type),
+	var fs []*models.Field
+	for _, n := range f.Names {
+		fs = append(fs, &models.Field{
+			Name: n.Name,
+			Type: t,
+		})
 	}
+	return fs
 }
 
 func parseExpr(e ast.Expr) string {
