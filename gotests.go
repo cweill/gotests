@@ -38,8 +38,8 @@ var (
 )
 
 // Generates test cases and returns the number of cases generated.
-func generateTestCases(testPath, src string, onlyFuncs, exclFuncs []string) {
-	info := code.Parse(src)
+func generateTestCases(srcPath, testPath string, onlyFuncs, exclFuncs []string) {
+	info := code.Parse(srcPath)
 	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(tfs) == 0 {
 		fmt.Println("No tests generated")
@@ -112,15 +112,15 @@ func main() {
 		return
 	}
 	for _, path := range flag.Args() {
-		for _, src := range sourceFiles(path) {
-			testPath := strings.Replace(src, ".go", "_test.go", -1)
-			generateTestCases(testPath, src, onlyFlag, exclFlag)
+		for _, srcPath := range sourceFiles(path) {
+			testPath := strings.Replace(srcPath, ".go", "_test.go", -1)
+			generateTestCases(srcPath, testPath, onlyFlag, exclFlag)
 		}
 	}
 }
 
 func sourceFiles(path string) []string {
-	var srcs []string
+	var srcPaths []string
 	path, err := filepath.Abs(path)
 	if err != nil {
 		fmt.Printf("filepath.Abs: %v\n", err)
@@ -134,15 +134,15 @@ func sourceFiles(path string) []string {
 		}
 		for _, p := range ps {
 			if !isTestFile(p) {
-				srcs = append(srcs, p)
+				srcPaths = append(srcPaths, p)
 			}
 		}
 	} else if filepath.Ext(path) == ".go" {
 		if !isTestFile(path) {
-			srcs = append(srcs, path)
+			srcPaths = append(srcPaths, path)
 		}
 	}
-	return srcs
+	return srcPaths
 }
 
 func isTestFile(path string) bool {
