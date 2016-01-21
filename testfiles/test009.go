@@ -1,5 +1,3 @@
-package test9
+package testfiles
 
-type Bar struct{}
-
-func (b Bar) Foo9() Bar { return nil, nil }
+func (b Bar) Foo9() Bar { return Bar{} }

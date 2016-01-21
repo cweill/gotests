@@ -1,4 +1,4 @@
-package test17
+package testfiles
 
 import "io"
 

@@ -1,3 +1,3 @@
-package test0
+package testfiles
 
 func foo0(s string) (string, error) { return "", nil }

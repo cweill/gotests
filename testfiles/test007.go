@@ -1,5 +1,3 @@
-package test7
-
-type Bar struct{}
+package testfiles
 
 func (b *Bar) Foo7() (string, error) { return "", nil }

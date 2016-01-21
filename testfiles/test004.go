@@ -1,3 +1,3 @@
-package test4
+package testfiles
 
 func Foo4() bool { return false }

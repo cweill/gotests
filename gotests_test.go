@@ -19,7 +19,7 @@ func TestGenerateTestCases(t *testing.T) {
 		}, {
 			name: "Minimal function",
 			in:   `testfiles/test001.go`,
-			want: `package test1
+			want: `package testfiles
 
 import "testing"
 
@@ -37,7 +37,7 @@ func TestFoo1(t *testing.T) {
 		}, {
 			name: "Function w/ anonymous argument",
 			in:   `testfiles/test002.go`,
-			want: `package test2
+			want: `package testfiles
 
 import "testing"
 
@@ -56,7 +56,7 @@ func TestFoo2(t *testing.T) {
 		}, {
 			name: "Function w/ named argument",
 			in:   `testfiles/test003.go`,
-			want: `package test3
+			want: `package testfiles
 
 import "testing"
 
@@ -75,7 +75,7 @@ func TestFoo3(t *testing.T) {
 		}, {
 			name: "Function w/ return value",
 			in:   `testfiles/test004.go`,
-			want: `package test4
+			want: `package testfiles
 
 import "testing"
 
@@ -96,7 +96,7 @@ func TestFoo4(t *testing.T) {
 		}, {
 			name: "Function returning an error",
 			in:   `testfiles/test005.go`,
-			want: `package test5
+			want: `package testfiles
 
 import "testing"
 
@@ -123,7 +123,7 @@ func TestFoo5(t *testing.T) {
 		}, {
 			name: "Function w/ multiple arguments",
 			in:   `testfiles/test006.go`,
-			want: `package test6
+			want: `package testfiles
 
 import "testing"
 
@@ -152,7 +152,7 @@ func TestFoo6(t *testing.T) {
 		}, {
 			name: "Method on a struct pointer",
 			in:   `testfiles/test007.go`,
-			want: `package test7
+			want: `package testfiles
 
 import "testing"
 
@@ -180,7 +180,7 @@ func TestFoo7(t *testing.T) {
 		}, {
 			name: "Function w/ struct pointer argument and return type",
 			in:   `testfiles/test008.go`,
-			want: `package test8
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -211,7 +211,7 @@ func TestFoo8(t *testing.T) {
 		}, {
 			name: "Struct value method w/ struct value return type",
 			in:   `testfiles/test009.go`,
-			want: `package test9
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -236,7 +236,7 @@ func TestFoo9(t *testing.T) {
 		}, {
 			name: "Function w/ map argument and return type",
 			in:   `testfiles/test010.go`,
-			want: `package test10
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -261,7 +261,7 @@ func TestFoo10(t *testing.T) {
 		}, {
 			name: "Function w/ slice argument and return type",
 			in:   `testfiles/test011.go`,
-			want: `package test11
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -292,7 +292,7 @@ func TestFoo11(t *testing.T) {
 		}, {
 			name: "Function returning only an error",
 			in:   `testfiles/test012.go`,
-			want: `package test12
+			want: `package testfiles
 
 import "testing"
 
@@ -314,7 +314,7 @@ func TestFoo12(t *testing.T) {
 		}, {
 			name: "Function w/ a function parameter",
 			in:   `testfiles/test013.go`,
-			want: `package test13
+			want: `package testfiles
 
 import "testing"
 
@@ -336,7 +336,7 @@ func TestFoo13(t *testing.T) {
 		}, {
 			name: "Function w/ a function parameter w/ its own parameters and result",
 			in:   `testfiles/test014.go`,
-			want: `package test14
+			want: `package testfiles
 
 import "testing"
 
@@ -358,7 +358,7 @@ func TestFoo14(t *testing.T) {
 		}, {
 			name: "Function w/ a function parameter that returns two results",
 			in:   `testfiles/test015.go`,
-			want: `package test15
+			want: `package testfiles
 
 import "testing"
 
@@ -378,41 +378,25 @@ func TestFoo15(t *testing.T) {
 }
 `,
 		}, {
-			name: "Function w/ interface receiver, parameter, and result",
+			name: "Function w/ interface parameter and result",
 			in:   `testfiles/test016.go`,
-			want: `package test16
+			want: `package testfiles
 
 import (
 	"reflect"
 	"testing"
 )
 
-func TestBaz(t *testing.T) {
-	tests := []struct {
-		name string
-		b    *baz
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := tt.b.Baz(); got != tt.want {
-			t.Errorf("%v. Baz() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
 func TestFoo16(t *testing.T) {
 	tests := []struct {
 		name string
-		i    Bazzar
 		in   Bazzar
 		want Bazzar
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := tt.i.Foo16(tt.in); !reflect.DeepEqual(got, tt.want) {
+		if got := Foo16(tt.in); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Foo16() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
@@ -421,7 +405,7 @@ func TestFoo16(t *testing.T) {
 		}, {
 			name: "Function w/ imported interface receiver, parameter, and result",
 			in:   `testfiles/test017.go`,
-			want: `package test17
+			want: `package testfiles
 
 import (
 	"io"
@@ -447,7 +431,7 @@ func TestFoo17(t *testing.T) {
 		}, {
 			name: "Function w/ imported struct receiver, parameter, and result",
 			in:   `testfiles/test018.go`,
-			want: `package test18
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -473,7 +457,7 @@ func TestFoo18(t *testing.T) {
 		}, {
 			name: "Function w/ multiple parameters of the same type",
 			in:   `testfiles/test019.go`,
-			want: `package test19
+			want: `package testfiles
 
 import "testing"
 
@@ -497,7 +481,7 @@ func TestFoo19(t *testing.T) {
 		}, {
 			name: "Function w/ a variadic parameter",
 			in:   `testfiles/test020.go`,
-			want: `package test20
+			want: `package testfiles
 
 import "testing"
 

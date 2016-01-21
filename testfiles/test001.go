@@ -1,3 +1,3 @@
-package test1
+package testfiles
 
 func Foo1() {}

@@ -1,4 +1,4 @@
-package test18
+package testfiles
 
 import "html/template"
 

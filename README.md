@@ -11,7 +11,7 @@ The goal is to:
 Given the source file:
 ```Go
 // testfiles/test007.go
-package test7
+package testfiles
 
 type Bar struct{}
 
@@ -24,7 +24,7 @@ $ gotests testfiles/test007.go
 Generates the following test code:
 ```Go
 // testfiles/test007_test.go
-package test7
+package testfiles
 
 import "testing"
 
