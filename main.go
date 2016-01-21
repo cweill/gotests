@@ -44,11 +44,20 @@ func main() {
 		return
 	}
 	for _, path := range flag.Args() {
-		for _, info := range source.Files(path) {
+		infos, err := source.Files(path)
+		if err != nil {
+			if err == source.NoFilesFound {
+				fmt.Printf("No source files found at %v\n", path)
+			} else {
+				fmt.Println(err.Error())
+			}
+			continue
+		}
+		for _, info := range infos {
 			tests, err := GenerateTests(info, onlyFlag, exclFlag)
 			if err != nil {
 				if err == NoTestsError {
-					fmt.Println("No tests generated")
+					fmt.Printf("No tests generated for %v\n", path)
 				} else {
 					fmt.Println(err.Error())
 				}

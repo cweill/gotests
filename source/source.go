@@ -1,6 +1,7 @@
 package source
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -8,18 +9,18 @@ import (
 	"github.com/cweill/gotests/models"
 )
 
-func Files(srcPath string) []*models.FileInfo {
+var NoFilesFound = errors.New("no files found")
+
+func Files(srcPath string) ([]*models.FileInfo, error) {
 	var srcPaths []*models.FileInfo
 	srcPath, err := filepath.Abs(srcPath)
 	if err != nil {
-		fmt.Printf("filepath.Abs: %v\n", err)
-		return nil
+		return nil, fmt.Errorf("filepath.Abs: %v\n", err)
 	}
 	if filepath.Ext(srcPath) == "" {
 		ps, err := filepath.Glob(srcPath + "/*.go")
 		if err != nil {
-			fmt.Printf("filepath.Glob: %v\n", err)
-			return nil
+			return nil, fmt.Errorf("filepath.Glob: %v\n", err)
 		}
 		for _, p := range ps {
 			if !isTestPath(p) {
@@ -29,15 +30,18 @@ func Files(srcPath string) []*models.FileInfo {
 				})
 			}
 		}
-	} else if filepath.Ext(srcPath) == ".go" {
+		return srcPaths, nil
+	}
+	if filepath.Ext(srcPath) == ".go" {
 		if !isTestPath(srcPath) {
 			srcPaths = append(srcPaths, &models.FileInfo{
 				SourcePath: srcPath,
 				TestPath:   testPath(srcPath),
 			})
 		}
+		return srcPaths, nil
 	}
-	return srcPaths
+	return nil, NoFilesFound
 }
 
 func testPath(srcPath string) string {
@@ -45,13 +49,5 @@ func testPath(srcPath string) string {
 }
 
 func isTestPath(path string) bool {
-	ok, err := filepath.Match("*_test.go", path)
-	if err != nil {
-		fmt.Printf("filepath.Match: %v\n", err)
-		return false
-	}
-	if ok {
-		return true
-	}
-	return false
+	return strings.HasSuffix(path, "_test.go")
 }
