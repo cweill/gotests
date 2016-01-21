@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/cweill/gotests/code"
 	"github.com/cweill/gotests/render"
+	"github.com/cweill/gotests/source"
 	"golang.org/x/tools/imports"
 )
 
@@ -37,7 +37,6 @@ var (
 	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories.")
 )
 
-// Generates test cases and returns the number of cases generated.
 func generateTestCases(srcPath, testPath string, onlyFuncs, exclFuncs []string) {
 	info := code.Parse(srcPath)
 	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
@@ -112,47 +111,8 @@ func main() {
 		return
 	}
 	for _, path := range flag.Args() {
-		for _, srcPath := range sourceFiles(path) {
-			testPath := strings.Replace(srcPath, ".go", "_test.go", -1)
-			generateTestCases(srcPath, testPath, onlyFlag, exclFlag)
+		for _, srcPath := range source.Files(path) {
+			generateTestCases(srcPath, source.TestPath(srcPath), onlyFlag, exclFlag)
 		}
 	}
-}
-
-func sourceFiles(path string) []string {
-	var srcPaths []string
-	path, err := filepath.Abs(path)
-	if err != nil {
-		fmt.Printf("filepath.Abs: %v\n", err)
-		return nil
-	}
-	if filepath.Ext(path) == "" {
-		ps, err := filepath.Glob(path + "/*.go")
-		if err != nil {
-			fmt.Printf("filepath.Glob: %v\n", err)
-			return nil
-		}
-		for _, p := range ps {
-			if !isTestFile(p) {
-				srcPaths = append(srcPaths, p)
-			}
-		}
-	} else if filepath.Ext(path) == ".go" {
-		if !isTestFile(path) {
-			srcPaths = append(srcPaths, path)
-		}
-	}
-	return srcPaths
-}
-
-func isTestFile(path string) bool {
-	ok, err := filepath.Match("*_test.go", path)
-	if err != nil {
-		fmt.Printf("filepath.Match: %v\n", err)
-		return false
-	}
-	if ok {
-		return true
-	}
-	return false
 }
