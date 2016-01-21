@@ -4,8 +4,8 @@ A Go tool to automatically generate Go test code boilerplate.
 The goal is to:
 * generate missing Go test boilerplate for any specified functions and methods
 * automatically import test dependencies from file-under-test's
-* (optionally) generate fakes that conform to interfaces used in parameters
-* (_bluesky_) generate test cases for you
+* create fakes that conform to interfaces used in function parameters
+* (_bluesky_) write test cases for you
 
 ## Example
 Given the source file:
