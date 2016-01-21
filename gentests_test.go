@@ -192,6 +192,7 @@ func TestFoo7(t *testing.T) {
 			want: `package test8
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -222,6 +223,7 @@ func TestFoo8(t *testing.T) {
 			want: `package test9
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -246,6 +248,7 @@ func TestFoo9(t *testing.T) {
 			want: `package test10
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -270,6 +273,7 @@ func TestFoo10(t *testing.T) {
 			want: `package test11
 
 import (
+	"reflect"
 	"testing"
 )
 

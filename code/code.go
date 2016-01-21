@@ -10,7 +10,6 @@ import (
 )
 
 func Parse(path string) *models.Info {
-	fmt.Println(path)
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 	if err != nil {

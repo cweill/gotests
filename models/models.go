@@ -7,7 +7,7 @@ type Field struct {
 
 func (f *Field) IsScalar() bool {
 	switch f.Type {
-	case "uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128", "byte", "rune", "bool", "string":
+	case "uint8", "uint16", "uint32", "uint64", "int8", "int", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128", "byte", "rune", "bool", "string", "error":
 		return true
 	default:
 		return false
@@ -41,4 +41,15 @@ func (f *Function) TestName() string {
 type Info struct {
 	Package string
 	Funcs   []*Function
+}
+
+func (i *Info) UsesReflection() bool {
+	for _, f := range i.Funcs {
+		for _, fi := range f.Results {
+			if !fi.IsScalar() {
+				return true
+			}
+		}
+	}
+	return false
 }
