@@ -17,7 +17,8 @@ func Parse(path string) *models.Info {
 		log.Fatalf("Parsing file: %v", err)
 	}
 	info := &models.Info{
-		Package: f.Name.Name,
+		Package: parseExpr(f.Name).String(),
+		Imports: parseImports(f.Imports),
 	}
 	for _, d := range f.Decls {
 		fDecl, ok := d.(*ast.FuncDecl)
@@ -31,7 +32,7 @@ func Parse(path string) *models.Info {
 
 func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	f := &models.Function{
-		Name:       fDecl.Name.Name,
+		Name:       parseExpr(fDecl.Name).String(),
 		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
@@ -58,6 +59,21 @@ func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	return f
 }
 
+func parseImports(imps []*ast.ImportSpec) []*models.Import {
+	var is []*models.Import
+	for _, imp := range imps {
+		var n string
+		if imp.Name != nil {
+			n = parseExpr(imp.Name).String()
+		}
+		is = append(is, &models.Import{
+			Name: n,
+			Path: parseExpr(imp.Path).String(),
+		})
+	}
+	return is
+}
+
 func parseField(f *ast.Field) []*models.Field {
 	if f == nil {
 		return nil
@@ -80,6 +96,10 @@ func parseField(f *ast.Field) []*models.Field {
 
 func parseExpr(e ast.Expr) models.Expression {
 	switch v := e.(type) {
+	case *ast.Ident:
+		return &models.Identity{Value: v.Name}
+	case *ast.BasicLit:
+		return &models.BasicLit{Value: v.Value}
 	case *ast.InterfaceType:
 		return &models.InterfaceType{}
 	case *ast.StarExpr:

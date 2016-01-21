@@ -1,4 +1,4 @@
-package test100
+package testfiles
 
 func Foo100(strs []string) ([]*Bar, error) { return nil, nil }
 

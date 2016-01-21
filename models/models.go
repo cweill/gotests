@@ -19,6 +19,12 @@ func (s *Identity) String() string { return s.Value }
 
 func (*Identity) IsVariadic() bool { return false }
 
+type BasicLit Identity
+
+func (b *BasicLit) String() string { return b.Value }
+
+func (*BasicLit) IsVariadic() bool { return false }
+
 type InterfaceType struct{}
 
 func (*InterfaceType) String() string { return "interface{}" }
@@ -132,8 +138,13 @@ func (f *Function) TestName() string {
 	return "Test" + strings.Title(f.Name)
 }
 
+type Import struct {
+	Name, Path string
+}
+
 type Info struct {
 	Package string
+	Imports []*Import
 	Funcs   []*Function
 }
 

@@ -514,9 +514,35 @@ func TestFoo21(t *testing.T) {
 }
 `,
 		}, {
+			name: "Function w/ named imports",
+			in:   `testfiles/test022.go`,
+			want: `package testfiles
+
+import (
+	ht "html/template"
+	"reflect"
+	"testing"
+)
+
+func TestFoo22(t *testing.T) {
+	tests := []struct {
+		name string
+		t    *ht.Template
+		want *ht.Template
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo22(tt.t); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo22() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name: "Multiple functions",
 			in:   `testfiles/test100.go`,
-			want: `package test100
+			want: `package testfiles
 
 import (
 	"reflect"
@@ -579,7 +605,7 @@ func TestBaz100(t *testing.T) {
 			name:      "Multiple functions w/ onlyFuncs",
 			in:        `testfiles/test100.go`,
 			onlyFuncs: []string{"Foo100", "baz100"},
-			want: `package test100
+			want: `package testfiles
 
 import (
 	"reflect"

@@ -1,3 +1,5 @@
 {{define "header"}}
 package {{.Package}}
-{{end}}
+{{range .Imports}}
+import {{.Name}} {{.Path}}
+{{end}}{{end}}

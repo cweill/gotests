@@ -41,7 +41,7 @@ var (
 func generateTestCases(testPath, src string, onlyFuncs []string) {
 	info := code.Parse(src)
 	if len(info.TestableFuncs(onlyFuncs)) == 0 {
-		fmt.Println("No new tests generated")
+		fmt.Println("No tests generated")
 		return
 	}
 	f, err := os.Create(testPath)
@@ -74,7 +74,7 @@ func generateTestCases(testPath, src string, onlyFuncs []string) {
 		fmt.Printf("processImports: %v\n", err)
 	}
 	if count == 0 {
-		fmt.Println("No new tests generated")
+		fmt.Println("No tests generated")
 		os.Remove(f.Name())
 	}
 }
