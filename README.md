@@ -1,5 +1,11 @@
 # gotests [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests)
-A tool to generate test code boilerplate for exported Golang functions and methods.
+A Go tool to generate test code boilerplate for exported Golang functions and methods.
+
+The goal is to:
+* generate missing Go test boilerplate for __exported__ functions and methods
+* automatically import test dependencies from file-under-test's
+* (optionally) generate fakes that conform to interfaces used in parameters
+* (_bluesky_) generate test cases for you
 
 ## Example
 Given the source file:
