@@ -1,14 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/cweill/gotests/code"
 	"github.com/cweill/gotests/render"
+	"golang.org/x/tools/imports"
 )
 
 func generateTestCases(f *os.File, path string) {
@@ -16,20 +18,45 @@ func generateTestCases(f *os.File, path string) {
 	if len(info.ExportedFuncs()) == 0 {
 		return
 	}
-	if err := render.Header(f, info); err != nil {
+	w := bufio.NewWriter(f)
+	defer w.Flush()
+	if err := render.Header(w, info); err != nil {
 		fmt.Printf("render.Header: %v\n", err)
 		return
 	}
 	for _, fun := range info.ExportedFuncs() {
-		if err := render.TestCases(f, fun); err != nil {
+		if err := render.TestCases(w, fun); err != nil {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue
 		}
 		fmt.Printf("Generated test for %v.%v\n", info.Package, fun.Name)
 	}
-	if err := exec.Command("gofmt", "-w", f.Name()).Run(); err != nil {
-		fmt.Printf("exec.Command: %v\n", err)
+	if err := w.Flush(); err != nil {
+		fmt.Printf("bufio.Flush: %v\n", err)
+		return
 	}
+	if err := processImports(f); err != nil {
+		fmt.Printf("processImports: %v\n", err)
+	}
+}
+
+func processImports(f *os.File) error {
+	v, err := ioutil.ReadFile(f.Name())
+	if err != nil {
+		return fmt.Errorf("ioutil.ReadFile: %v", err)
+	}
+	b, err := imports.Process(f.Name(), v, nil)
+	if err != nil {
+		return fmt.Errorf("imports.Process: %v\n", err)
+	}
+	n, err := f.WriteAt(b, 0)
+	if err != nil {
+		return fmt.Errorf("file.Write: %v\n", err)
+	}
+	if err := f.Truncate(int64(n)); err != nil {
+		return fmt.Errorf("file.Truncate: %v\n", err)
+	}
+	return nil
 }
 
 func main() {

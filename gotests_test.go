@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -445,6 +446,7 @@ func TestFoo16(t *testing.T) {
 			want: `package test17
 
 import (
+	"io"
 	"reflect"
 	"testing"
 )
@@ -472,6 +474,7 @@ func TestFoo17(t *testing.T) {
 import (
 	"reflect"
 	"testing"
+	"text/template"
 )
 
 func TestFoo18(t *testing.T) {
@@ -494,14 +497,14 @@ func TestFoo18(t *testing.T) {
 	for _, tt := range tests {
 		f, err := ioutil.TempFile("", "")
 		if err != nil {
-			t.Errorf("%v. Creating temp file: %v", tt.name, err)
+			t.Errorf("%v. ioutil.TempFile: %v", tt.name, err)
 			continue
 		}
-		defer f.Close()
+		defer os.Remove(f.Name())
 		generateTestCases(f, tt.in)
 		b, err := ioutil.ReadFile(f.Name())
 		if err != nil {
-			t.Errorf("%v. Reading temp file: %v", tt.name, err)
+			t.Errorf("%v. ioutil.ReadFile: %v", tt.name, err)
 			continue
 		}
 		if got := string(b); got != tt.want {
