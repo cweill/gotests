@@ -18,23 +18,9 @@ func TestGenerateTestCases(t *testing.T) {
 			in:           `testfiles/test000.go`,
 			wantNoOutput: true,
 		}, {
-			name: "Minimal function",
-			in:   `testfiles/test001.go`,
-			want: `package testfiles
-
-import "testing"
-
-func TestFoo1(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		Foo1()
-	}
-}
-`,
+			name:         "Function w/ neither receiver, parameters, nor results",
+			in:           `testfiles/test001.go`,
+			wantNoOutput: true,
 		}, {
 			name: "Function w/ anonymous argument",
 			in:   `testfiles/test002.go`,

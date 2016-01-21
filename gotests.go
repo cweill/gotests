@@ -16,7 +16,7 @@ import (
 // Generates test cases and returns the number of cases generated.
 func generateTestCases(testPath, src string) {
 	info := code.Parse(src)
-	if len(info.ExportedFuncs()) == 0 {
+	if len(info.TestableFuncs()) == 0 {
 		return
 	}
 	f, err := os.Create(testPath)
@@ -32,7 +32,7 @@ func generateTestCases(testPath, src string) {
 		return
 	}
 	var count int
-	for _, fun := range info.ExportedFuncs() {
+	for _, fun := range info.TestableFuncs() {
 		if err := render.TestCases(w, fun); err != nil {
 			fmt.Printf("render.TestCases: %v\n", err)
 			continue

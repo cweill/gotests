@@ -136,10 +136,10 @@ type Info struct {
 	Funcs   []*Function
 }
 
-func (i *Info) ExportedFuncs() []*Function {
+func (i *Info) TestableFuncs() []*Function {
 	var fs []*Function
 	for _, f := range i.Funcs {
-		if f.IsExported {
+		if f.IsExported && (f.Receiver != nil || len(f.Parameters) > 0 || len(f.Results) > 0) {
 			fs = append(fs, f)
 		}
 	}
