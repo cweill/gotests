@@ -471,7 +471,7 @@ func TestFoo18(t *testing.T) {
 }
 `,
 		}, {
-			name: "Function w/ imported struct receiver, parameter, and result",
+			name: "Function w/ multiple parameters of the same type",
 			in:   `testfiles/test019.go`,
 			want: `package test19
 
@@ -490,6 +490,28 @@ func TestFoo19(t *testing.T) {
 	for _, tt := range tests {
 		if got := Foo19(tt.in1, tt.in2, tt.in3); got != tt.want {
 			t.Errorf("%v. Foo19() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name: "Function w/ a variadic parameter",
+			in:   `testfiles/test020.go`,
+			want: `package test20
+
+import "testing"
+
+func TestFoo20(t *testing.T) {
+	tests := []struct {
+		name string
+		strs []string
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo20(tt.strs...); got != tt.want {
+			t.Errorf("%v. Foo20() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

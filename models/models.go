@@ -1,12 +1,98 @@
 package models
 
+import (
+	"fmt"
+	"strings"
+)
+
+type Expression interface {
+	IsVariadic() bool
+	String() string
+}
+
+type Identity struct {
+	Value string
+}
+
+func (s *Identity) String() string { return s.Value }
+
+func (s *Identity) IsVariadic() bool { return false }
+
+type StarExpr struct {
+	X Expression
+}
+
+func (s *StarExpr) String() string {
+	return fmt.Sprintf("*%v", s.X)
+}
+
+func (s *StarExpr) IsVariadic() bool { return false }
+
+type SelectorExpr struct {
+	X, Sel Expression
+}
+
+func (s *SelectorExpr) String() string {
+	return fmt.Sprintf("%v.%v", s.X, s.Sel)
+}
+
+func (s *SelectorExpr) IsVariadic() bool { return false }
+
+type MapExpr struct {
+	Key, Value Expression
+}
+
+func (m *MapExpr) String() string {
+	return fmt.Sprintf("map[%v]%v", m.Key, m.Value)
+}
+
+func (m *MapExpr) IsVariadic() bool { return false }
+
+type ArrayExpr struct {
+	Elt Expression
+}
+
+func (a *ArrayExpr) String() string {
+	return fmt.Sprintf("[]%v", a.Elt)
+}
+
+func (a *ArrayExpr) IsVariadic() bool { return false }
+
+type Ellipsis ArrayExpr
+
+func (e *Ellipsis) String() string {
+	return fmt.Sprintf("[]%v", e.Elt)
+}
+
+func (e *Ellipsis) IsVariadic() bool { return true }
+
+type FuncType struct {
+	Params, Results []Expression
+}
+
+func (f *FuncType) String() string {
+	var ps, rs []string
+	for _, p := range f.Params {
+		ps = append(ps, p.String())
+	}
+	for _, r := range f.Results {
+		rs = append(rs, r.String())
+	}
+	if len(rs) < 2 {
+		return fmt.Sprintf("func(%v) %v", strings.Join(ps, ","), strings.Join(rs, ""))
+	}
+	return fmt.Sprintf("func(%v) (%v)", strings.Join(ps, ","), strings.Join(rs, ","))
+}
+
+func (f *FuncType) IsVariadic() bool { return false }
+
 type Field struct {
 	Name string
-	Type string
+	Type Expression
 }
 
 func (f *Field) IsScalar() bool {
-	switch f.Type {
+	switch f.Type.String() {
 	case "uint8", "uint16", "uint32", "uint64", "int8", "int", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128", "byte", "rune", "bool", "string", "error":
 		return true
 	default:

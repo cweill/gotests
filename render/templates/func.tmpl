@@ -1,1 +1,1 @@
-{{define "func"}}{{if .Receiver}}tt.{{.Receiver.Name}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{end}}){{end}}
+{{define "func"}}{{if .Receiver}}tt.{{.Receiver.Name}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{end}}

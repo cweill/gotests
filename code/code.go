@@ -6,7 +6,6 @@ import (
 	"go/parser"
 	"go/token"
 	"log"
-	"strings"
 
 	"github.com/cweill/gotests/models"
 )
@@ -48,7 +47,7 @@ func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	if fDecl.Type.Results != nil {
 		for _, fi := range fDecl.Type.Results.List {
 			for _, mf := range parseField(fi) {
-				if mf.Type == "error" {
+				if mf.Type.String() == "error" {
 					f.ReturnsError = true
 				} else {
 					f.Results = append(f.Results, mf)
@@ -79,18 +78,20 @@ func parseField(f *ast.Field) []*models.Field {
 	return fs
 }
 
-func parseExpr(e ast.Expr) string {
+func parseExpr(e ast.Expr) models.Expression {
 	switch v := e.(type) {
 	case *ast.StarExpr:
-		return fmt.Sprintf("*%v", parseExpr(v.X))
+		return &models.StarExpr{X: parseExpr(v.X)}
 	case *ast.SelectorExpr:
-		return fmt.Sprintf("%v.%v", v.X, v.Sel)
+		return &models.SelectorExpr{X: parseExpr(v.X), Sel: parseExpr(v.Sel)}
 	case *ast.MapType:
-		return fmt.Sprintf("map[%v]%v", parseExpr(v.Key), parseExpr(v.Value))
+		return &models.MapExpr{Key: parseExpr(v.Key), Value: parseExpr(v.Value)}
 	case *ast.ArrayType:
-		return fmt.Sprintf("[]%v", parseExpr(v.Elt))
+		return &models.ArrayExpr{Elt: parseExpr(v.Elt)}
+	case *ast.Ellipsis:
+		return &models.Ellipsis{Elt: parseExpr(v.Elt)}
 	case *ast.FuncType:
-		var ps, rs []string
+		var ps, rs []models.Expression
 		if v.Params != nil {
 			for _, p := range v.Params.List {
 				ps = append(ps, parseExpr(p.Type))
@@ -101,11 +102,8 @@ func parseExpr(e ast.Expr) string {
 				rs = append(rs, parseExpr(r.Type))
 			}
 		}
-		if len(rs) < 2 {
-			return fmt.Sprintf("func(%v) %v", strings.Join(ps, ","), strings.Join(rs, ""))
-		}
-		return fmt.Sprintf("func(%v) (%v)", strings.Join(ps, ","), strings.Join(rs, ","))
+		return &models.FuncType{Params: ps, Results: rs}
 	default:
-		return fmt.Sprintf("%v", v)
+		return &models.Identity{Value: fmt.Sprintf("%v", v)}
 	}
 }
