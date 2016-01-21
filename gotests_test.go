@@ -13,7 +13,7 @@ func TestGenerateTestCases(t *testing.T) {
 	}{
 		{
 			name: "Minimal function",
-			in:   `testfiles/test1.go`,
+			in:   `testfiles/test001.go`,
 			want: `package test1
 
 import (
@@ -33,7 +33,7 @@ func TestFoo1(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ anonymous argument",
-			in:   `testfiles/test2.go`,
+			in:   `testfiles/test002.go`,
 			want: `package test2
 
 import (
@@ -54,7 +54,7 @@ func TestFoo2(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ named argument",
-			in:   `testfiles/test3.go`,
+			in:   `testfiles/test003.go`,
 			want: `package test3
 
 import (
@@ -75,7 +75,7 @@ func TestFoo3(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ return value",
-			in:   `testfiles/test4.go`,
+			in:   `testfiles/test004.go`,
 			want: `package test4
 
 import (
@@ -98,7 +98,7 @@ func TestFoo4(t *testing.T) {
 `,
 		}, {
 			name: "Function returning an error",
-			in:   `testfiles/test5.go`,
+			in:   `testfiles/test005.go`,
 			want: `package test5
 
 import (
@@ -127,7 +127,7 @@ func TestFoo5(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ multiple arguments",
-			in:   `testfiles/test6.go`,
+			in:   `testfiles/test006.go`,
 			want: `package test6
 
 import (
@@ -158,7 +158,7 @@ func TestFoo6(t *testing.T) {
 `,
 		}, {
 			name: "Method on a struct pointer",
-			in:   `testfiles/test7.go`,
+			in:   `testfiles/test007.go`,
 			want: `package test7
 
 import (
@@ -188,7 +188,7 @@ func TestFoo7(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ struct pointer argument and return type",
-			in:   `testfiles/test8.go`,
+			in:   `testfiles/test008.go`,
 			want: `package test8
 
 import (
@@ -219,7 +219,7 @@ func TestFoo8(t *testing.T) {
 `,
 		}, {
 			name: "Struct value method w/ struct value return type",
-			in:   `testfiles/test9.go`,
+			in:   `testfiles/test009.go`,
 			want: `package test9
 
 import (
@@ -244,7 +244,7 @@ func TestFoo9(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ map argument and return type",
-			in:   `testfiles/test10.go`,
+			in:   `testfiles/test010.go`,
 			want: `package test10
 
 import (
@@ -269,7 +269,7 @@ func TestFoo10(t *testing.T) {
 `,
 		}, {
 			name: "Function w/ slice argument and return type",
-			in:   `testfiles/test11.go`,
+			in:   `testfiles/test011.go`,
 			want: `package test11
 
 import (
@@ -300,7 +300,7 @@ func TestFoo11(t *testing.T) {
 `,
 		}, {
 			name: "Function returning only an error",
-			in:   `testfiles/test12.go`,
+			in:   `testfiles/test012.go`,
 			want: `package test12
 
 import (
