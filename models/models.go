@@ -185,6 +185,15 @@ func contains(ss []string, s string) bool {
 	return false
 }
 
-type FileInfo struct {
-	SourcePath, TestPath string
+type Path string
+
+func (p Path) TestPath() string {
+	if p.IsTestPath() {
+		return string(p)
+	}
+	return strings.TrimSuffix(string(p), ".go") + "_test.go"
+}
+
+func (p Path) IsTestPath() bool {
+	return strings.HasSuffix(string(p), "_test.go")
 }
