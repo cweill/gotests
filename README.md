@@ -56,7 +56,7 @@ $ go get github.com/cweill/gotests
 ```
 Generating tests for specific files:
 ```
-$ gotests  my/source/dir/foo.go  my/source/dir/bar.go
+$ gotests my/source/dir/foo.go my/source/dir/bar.go
 ```
 You can also generate tests for an entire directory:
 ```
