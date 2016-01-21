@@ -439,6 +439,56 @@ func TestFoo16(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name: "Function w/ imported interface receiver, parameter, and result",
+			in:   `testfiles/test017.go`,
+			want: `package test17
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo17(t *testing.T) {
+	tests := []struct {
+		name string
+		w    io.Writer
+		want io.Writer
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo17(tt.w); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo17() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name: "Function w/ imported struct receiver, parameter, and result",
+			in:   `testfiles/test018.go`,
+			want: `package test18
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo18(t *testing.T) {
+	tests := []struct {
+		name string
+		t    *template.Template
+		want *template.Template
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo18(tt.t); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo18() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {

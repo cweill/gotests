@@ -74,6 +74,8 @@ func parseExpr(e ast.Expr) string {
 	switch v := e.(type) {
 	case *ast.StarExpr:
 		return fmt.Sprintf("*%v", parseExpr(v.X))
+	case *ast.SelectorExpr:
+		return fmt.Sprintf("%v.%v", v.X, v.Sel)
 	case *ast.MapType:
 		return fmt.Sprintf("map[%v]%v", parseExpr(v.Key), parseExpr(v.Value))
 	case *ast.ArrayType:
