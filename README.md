@@ -1,11 +1,11 @@
 # gotests [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests)
-A Go tool to generate test code boilerplate for exported Golang functions and methods.
+A Go tool to automatically generate Go test code boilerplate.
 
 The goal is to:
-* generate missing Go test boilerplate for __exported__ functions and methods
+* generate missing Go test boilerplate for any specified functions and methods
 * automatically import test dependencies from file-under-test's
-* (optionally) generate fakes that conform to interfaces used in parameters
-* (_bluesky_) generate test cases for you
+* create fakes that conform to interfaces used in function parameters
+* (_bluesky_) write test cases for you
 
 ## Example
 Given the source file:
@@ -19,7 +19,7 @@ func (b *Bar) Foo7() (string, error) { return "", nil }
 ```
 Running: 
 ```
-$ gotests testfiles/test007.go
+$ gotests -funcs=Foo7 testfiles/test007.go
 ```
 Generates the following test code:
 ```Go
@@ -54,13 +54,17 @@ Installation:
 ```
 $ go get github.com/cweill/gotests
 ```
-Generating tests for specific files:
+Generating only certain tests for specific files:
 ```
-$ gotests my/source/dir/foo.go my/source/dir/bar.go
+$ gotests -funcs=Foo,fetchBaz foo.go bar.go
 ```
-You can also generate tests for an entire directory:
+Or all tests:
 ```
-$ gotests my/source/dir
+$ gotests -all foo.go bar.go
+```
+Or generating tests for an entire directory:
+```
+$ gotests -all .
 ```
 Now get that coverage up! 
 
