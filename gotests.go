@@ -33,8 +33,8 @@ func generateTests(fi *models.FileInfo, onlyFuncs, exclFuncs []string) {
 	}
 	var count int
 	for _, fun := range tfs {
-		if err := render.TestCases(w, fun); err != nil {
-			fmt.Printf("render.TestCases: %v\n", err)
+		if err := render.TestFunction(w, fun); err != nil {
+			fmt.Printf("render.TestFunction: %v\n", err)
 			continue
 		}
 		fmt.Printf("Generated %v.%v\n", info.Package, fun.TestName())
