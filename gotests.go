@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,46 +13,47 @@ import (
 	"golang.org/x/tools/imports"
 )
 
-func generateTests(fi *models.FileInfo, onlyFuncs, exclFuncs []string) {
+var NoTestsError = errors.New("no tests generated")
+
+func GenerateTests(fi *models.FileInfo, onlyFuncs, exclFuncs []string) ([]string, error) {
 	info := code.Parse(fi.SourcePath)
 	tfs := info.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(tfs) == 0 {
-		fmt.Println("No tests generated")
-		return
+		return nil, NoTestsError
 	}
 	f, err := os.Create(fi.TestPath)
 	if err != nil {
-		fmt.Printf("oc.Create: %v\n", err)
-		return
+		return nil, fmt.Errorf("oc.Create: %v", err)
 	}
 	defer f.Close()
+	tests, err := writeTests(f, info, tfs)
+	if err != nil {
+		os.Remove(f.Name())
+		return nil, err
+	}
+	f.Sync()
+	return tests, nil
+}
+
+func writeTests(f *os.File, info *models.SourceInfo, funcs []*models.Function) ([]string, error) {
 	w := bufio.NewWriter(f)
 	if err := render.Header(w, info); err != nil {
-		fmt.Printf("render.Header: %v\n", err)
-		os.Remove(f.Name())
-		return
+		return nil, fmt.Errorf("render.Header: %v", err)
 	}
-	var count int
-	for _, fun := range tfs {
+	var tests []string
+	for _, fun := range funcs {
 		if err := render.TestFunction(w, fun); err != nil {
-			fmt.Printf("render.TestFunction: %v\n", err)
-			continue
+			return nil, fmt.Errorf("render.TestFunction: %v", err)
 		}
-		fmt.Printf("Generated %v.%v\n", info.Package, fun.TestName())
-		count++
+		tests = append(tests, fmt.Sprintf("%v.%v", info.Package, fun.TestName()))
 	}
 	if err := w.Flush(); err != nil {
-		fmt.Printf("bufio.Flush: %v\n", err)
-		os.Remove(f.Name())
-		return
+		return nil, fmt.Errorf("bufio.Flush: %v", err)
 	}
 	if err := processImports(f); err != nil {
-		fmt.Printf("processImports: %v\n", err)
+		return nil, fmt.Errorf("processImports: %v", err)
 	}
-	if count == 0 {
-		fmt.Println("No tests generated")
-		os.Remove(f.Name())
-	}
+	return tests, nil
 }
 
 func processImports(f *os.File) error {
@@ -61,14 +63,14 @@ func processImports(f *os.File) error {
 	}
 	b, err := imports.Process(f.Name(), v, nil)
 	if err != nil {
-		return fmt.Errorf("imports.Process: %v\n", err)
+		return fmt.Errorf("imports.Process: %v", err)
 	}
 	n, err := f.WriteAt(b, 0)
 	if err != nil {
-		return fmt.Errorf("file.Write: %v\n", err)
+		return fmt.Errorf("file.Write: %v", err)
 	}
 	if err := f.Truncate(int64(n)); err != nil {
-		return fmt.Errorf("file.Truncate: %v\n", err)
+		return fmt.Errorf("file.Truncate: %v", err)
 	}
 	return nil
 }

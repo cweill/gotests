@@ -45,7 +45,18 @@ func main() {
 	}
 	for _, path := range flag.Args() {
 		for _, info := range source.Files(path) {
-			generateTests(info, onlyFlag, exclFlag)
+			tests, err := GenerateTests(info, onlyFlag, exclFlag)
+			if err != nil {
+				if err == NoTestsError {
+					fmt.Println("No tests generated")
+				} else {
+					fmt.Println(err.Error())
+				}
+				continue
+			}
+			for _, test := range tests {
+				fmt.Printf("Generated %v\n", test)
+			}
 		}
 	}
 }
