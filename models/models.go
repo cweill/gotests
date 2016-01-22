@@ -1,57 +1,25 @@
 package models
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 )
 
-type Expression interface {
-	IsVariadic() bool
-	String() string
+type Expression struct {
+	Value      string
+	IsVariadic bool
 }
 
-type NonVariadicExpr struct {
-	Value string
-}
-
-func (e *NonVariadicExpr) String() string { return e.Value }
-
-func (*NonVariadicExpr) IsVariadic() bool { return false }
-
-type VariadicExpr struct {
-	Elt string
-}
-
-func (e *VariadicExpr) String() string {
-	return "[]" + e.Elt
-}
-
-func (*VariadicExpr) IsVariadic() bool { return true }
-
-type FuncType struct {
-	Params, Results []Expression
-}
-
-func (f *FuncType) String() string {
-	var ps, rs []string
-	for _, p := range f.Params {
-		ps = append(ps, p.String())
+func (e *Expression) String() string {
+	if e.IsVariadic {
+		return "[]" + e.Value
 	}
-	for _, r := range f.Results {
-		rs = append(rs, r.String())
-	}
-	if len(rs) < 2 {
-		return fmt.Sprintf("func(%v) %v", strings.Join(ps, ","), strings.Join(rs, ""))
-	}
-	return fmt.Sprintf("func(%v) (%v)", strings.Join(ps, ","), strings.Join(rs, ","))
+	return e.Value
 }
-
-func (*FuncType) IsVariadic() bool { return false }
 
 type Field struct {
 	Name string
-	Type Expression
+	Type *Expression
 }
 
 func (f *Field) IsScalar() bool {

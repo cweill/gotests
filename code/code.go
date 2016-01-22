@@ -127,11 +127,11 @@ func parseField(f *ast.Field) []*models.Field {
 	return fs
 }
 
-func parseExpr(e ast.Expr) models.Expression {
+func parseExpr(e ast.Expr) *models.Expression {
 	switch v := e.(type) {
 	case *ast.Ellipsis:
-		return &models.VariadicExpr{Elt: types.ExprString(v.Elt)}
+		return &models.Expression{Value: types.ExprString(v.Elt), IsVariadic: true}
 	default:
-		return &models.NonVariadicExpr{Value: types.ExprString(e)}
+		return &models.Expression{Value: types.ExprString(e)}
 	}
 }
