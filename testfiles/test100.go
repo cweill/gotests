@@ -1,7 +1,13 @@
+// Package testfiles
+// Multi
+// line
+// comment.
 package testfiles
 
+// Comment about import
 import "errors"
 
+// Comment on Foo100
 func Foo100(strs []string) ([]*Bar, error) { return nil, nil }
 
 func (b *Bar) Bar100(i interface{}) error {

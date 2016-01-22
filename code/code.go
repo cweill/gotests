@@ -43,14 +43,13 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
-	tf.Imports = append(tf.Imports, sf.Imports...)
-
-	var furthestPos int
+	furthestPos := tf.Name.End()
 	for _, node := range tf.Imports {
-		if pos := int(node.End()); pos > furthestPos {
+		if pos := node.End(); pos > furthestPos {
 			furthestPos = pos
 		}
 	}
+	tf.Imports = append(tf.Imports, sf.Imports...)
 	b, err := ioutil.ReadFile(testPath)
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
