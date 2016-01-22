@@ -47,6 +47,7 @@ func main() {
 		fmt.Println("Please specify a file or directory containing the source")
 		return
 	}
+	var count int
 	for _, path := range flag.Args() {
 		ps, err := source.Files(path)
 		if err != nil {
@@ -59,18 +60,18 @@ func main() {
 		}
 		for _, src := range ps {
 			tests, err := generateTests(string(src), src.TestPath(), onlyFlag, exclFlag)
-			if err != nil {
-				if err == noTestsError {
-					fmt.Printf("No tests generated for %v\n", path)
-				} else {
-					fmt.Println(err.Error())
-				}
+			if err != nil && err != noTestsError {
+				fmt.Println(err.Error())
 				continue
 			}
 			for _, test := range tests {
 				fmt.Printf("Generated %v\n", test)
+				count++
 			}
 		}
+	}
+	if count == 0 {
+		fmt.Println("No tests generated")
 	}
 }
 
