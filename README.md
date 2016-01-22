@@ -18,7 +18,7 @@ type Bar struct{}
 func (b *Bar) Foo7() (string, error) { return "", nil }
 ```
 Running: 
-```
+```sh
 $ gotests -only=Foo7 testfiles/test007.go
 ```
 Generates the following test code:
@@ -50,25 +50,36 @@ func TestFoo7(t *testing.T) {
 }
 ```
 If the test file already exists, gotests generates and appends any non-existing tests. Any new dependencies are imported automatically.
-## Usage
-Installation:
-```
+
+## Installation
+If your $GOPATH is setup just run:
+```sh
 $ go get github.com/cweill/gotests
 ```
-Generating only select tests for specific files:
+Otherwise, setting up your $GOPATH is simple:
+```sh
+# consider adding it to your .bashrc or .bash_profile
+$ mkdir $HOME/go
+$ export GOPATH=$HOME/go
+$ export PATH=$PATH:$GOPATH/bin
 ```
-$ gotests -only=Foo,fetchBaz foo.go bar.go
+## Usage
+gotests appends to existing test files or creates new ones next to the Go source files.
+
+Generating only select tests for specific files:
+```sh
+$ gotests -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
 ```
 Or all tests:
-```
+```sh
 $ gotests -all foo.go bar.go
 ```
 Or most tests, excluding a few:
-```
+```sh
 $ gotests -excl=fetchBaz foo.go bar.go
 ```
 Generating tests for an entire directory:
-```
+```sh
 $ gotests -all .
 ```
 Now get that coverage up! 
