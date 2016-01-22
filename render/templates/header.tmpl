@@ -1,5 +1,8 @@
 {{define "header"}}
 package {{.Package}}
-{{range .Imports}}
-import {{.Name}} {{.Path}}
-{{end}}{{end}}
+
+import (
+{{range .Imports}}{{.Name}} {{.Path}}
+{{end}}
+)
+{{end}}
