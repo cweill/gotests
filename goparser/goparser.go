@@ -58,7 +58,7 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	h := &models.Header{
 		Package: parseExpr(tf.Name).String(),
 		Imports: parseImports(tf.Imports),
-		Code:    b[furthestPos:],
+		Code:    b[furthestPos+1:],
 	}
 	return h, nil
 }

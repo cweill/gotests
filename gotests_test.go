@@ -567,6 +567,35 @@ func TestFoo23(t *testing.T) {
 }
 `,
 		}, {
+			name:    "File with multiple imports",
+			srcPath: `testfiles/test024.go`,
+			want: `package testfiles
+
+import (
+	"go/ast"
+	"go/types"
+	"io"
+	"testing"
+)
+
+func TestFoo24(t *testing.T) {
+	tests := []struct {
+		name    string
+		w       io.Writer
+		x       ast.Expr
+		t       types.Type
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := Foo24(tt.w, tt.x, tt.t); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo24() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles
@@ -879,6 +908,49 @@ func TestFoo100(t *testing.T) {
 		}
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:     "Existing test file with multiple imports",
+			srcPath:  `testfiles/test200.go`,
+			testPath: `testfiles/test200_test.go`,
+			want: `package testfiles
+
+import (
+	"go/ast"
+	"go/types"
+	"testing"
+)
+
+func TestFoo200(t *testing.T) {
+	tests := []struct {
+		name string
+		x    ast.Expr
+		t    types.Type
+		want bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo200(tt.x, tt.t); got != tt.want {
+			t.Errorf("%v. Foo200() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBar200(t *testing.T) {
+	tests := []struct {
+		name string
+		t    types.Type
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Bar200(tt.t); got != tt.want {
+			t.Errorf("%v. Bar200() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

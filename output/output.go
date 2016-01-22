@@ -30,7 +30,6 @@ func Write(srcPath, destPath string, head *models.Header, funcs []*models.Functi
 			return nil, fmt.Errorf("os.Create: %v", err)
 		}
 		defer df.Close()
-		// df.Chmod(os.ModePerm)
 		destPath = df.Name()
 		isDestNew = true
 	}
@@ -64,7 +63,7 @@ func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Functi
 		return nil, fmt.Errorf("bufio.Flush: %v", err)
 	}
 	if err := processImports(temp.Name()); err != nil {
-		return nil, fmt.Errorf("processImports: %v", err)
+		return nil, err
 	}
 	return tests, nil
 }
