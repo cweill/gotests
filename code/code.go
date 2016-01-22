@@ -17,9 +17,9 @@ func Parse(path string) (*models.SourceInfo, error) {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
 	info := &models.SourceInfo{
-		Header: &models.SourceHeader{
-			Pkg:  parseExpr(f.Name).String(),
-			Imps: parseImports(f.Imports),
+		Header: &models.Header{
+			Package: parseExpr(f.Name).String(),
+			Imports: parseImports(f.Imports),
 		},
 	}
 	for _, d := range f.Decls {
@@ -32,7 +32,7 @@ func Parse(path string) (*models.SourceInfo, error) {
 	return info, nil
 }
 
-func ParseHeader(srcPath, testPath string) (*models.CodeHeader, error) {
+func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	fset := token.NewFileSet()
 	sf, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
@@ -55,10 +55,10 @@ func ParseHeader(srcPath, testPath string) (*models.CodeHeader, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
 	}
-	h := &models.CodeHeader{
-		Pkg:  parseExpr(tf.Name).String(),
-		Imps: parseImports(tf.Imports),
-		Code: b[furthestPos:],
+	h := &models.Header{
+		Package: parseExpr(tf.Name).String(),
+		Imports: parseImports(tf.Imports),
+		Code:    b[furthestPos:],
 	}
 	return h, nil
 }

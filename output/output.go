@@ -11,7 +11,7 @@ import (
 	"golang.org/x/tools/imports"
 )
 
-func Write(srcPath, destPath string, head models.Header, funcs []*models.Function) ([]string, error) {
+func Write(srcPath, destPath string, head *models.Header, funcs []*models.Function) ([]string, error) {
 	tf, err := ioutil.TempFile("", "gotests_")
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.TempFile: %v", err)
@@ -46,7 +46,7 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTestsToTemp(temp *os.File, head models.Header, funcs []*models.Function) ([]string, error) {
+func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function) ([]string, error) {
 	w := bufio.NewWriter(temp)
 	if err := render.Header(w, head); err != nil {
 		return nil, fmt.Errorf("render.Header: %v", err)
@@ -56,7 +56,7 @@ func writeTestsToTemp(temp *os.File, head models.Header, funcs []*models.Functio
 		if err := render.TestFunction(w, fun); err != nil {
 			return nil, fmt.Errorf("render.TestFunction: %v", err)
 		}
-		tests = append(tests, fmt.Sprintf("%v.%v", head.Package(), fun.TestName()))
+		tests = append(tests, fmt.Sprintf("%v.%v", head.Package, fun.TestName()))
 	}
 	if err := w.Flush(); err != nil {
 		return nil, fmt.Errorf("bufio.Flush: %v", err)

@@ -81,7 +81,7 @@ func generateTests(srcPath, testPath, destPath string, onlyFuncs, exclFuncs []st
 	if err != nil {
 		return nil, fmt.Errorf("code.Parse: %v", err)
 	}
-	var header models.Header = srcInfo.Header
+	header := srcInfo.Header
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
 		testInfo, err := code.Parse(testPath)
 		if err != nil {
