@@ -11,6 +11,8 @@ import (
 	"golang.org/x/tools/imports"
 )
 
+const newFilePerm os.FileMode = 0644
+
 func Write(srcPath, destPath string, head *models.Header, funcs []*models.Function) ([]string, error) {
 	tf, err := ioutil.TempFile("", "gotests_")
 	if err != nil {
@@ -84,5 +86,5 @@ func copyTempToDest(tempPath, destPath string) error {
 	if err != nil {
 		return fmt.Errorf("ioutil.ReadAll: %v", err)
 	}
-	return ioutil.WriteFile(destPath, b, os.ModePerm)
+	return ioutil.WriteFile(destPath, b, newFilePerm)
 }
