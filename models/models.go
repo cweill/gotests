@@ -138,17 +138,36 @@ func (f *Function) TestName() string {
 	return "Test" + strings.Title(f.Name)
 }
 
-type Header struct {
-	Package string
-	Imports []*Import
+type Header interface {
+	Package() string
+	Imports() []*Import
 }
+
+type SourceHeader struct {
+	Pkg  string
+	Imps []*Import
+}
+
+func (s *SourceHeader) Package() string { return s.Pkg }
+
+func (s *SourceHeader) Imports() []*Import { return s.Imps }
+
+type CodeHeader struct {
+	Pkg  string
+	Imps []*Import
+	Code []byte
+}
+
+func (c *CodeHeader) Package() string { return c.Pkg }
+
+func (c *CodeHeader) Imports() []*Import { return c.Imps }
 
 type Import struct {
 	Name, Path string
 }
 
 type SourceInfo struct {
-	Header *Header
+	Header *SourceHeader
 	Funcs  []*Function
 }
 

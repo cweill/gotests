@@ -34,6 +34,7 @@ func TestBaz100(t *testing.T) {
 			want: 64,
 		},
 	}
+	// TestBaz100 contains a comment.
 	for _, tt := range tests {
 		if got := baz100(tt.f); got != tt.want {
 			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)

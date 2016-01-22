@@ -60,7 +60,7 @@ func main() {
 			continue
 		}
 		for _, src := range ps {
-			tests, err := generateTests(string(src), src.TestPath(), onlyFlag, exclFlag)
+			tests, err := generateTests(string(src), src.TestPath(), src.TestPath(), onlyFlag, exclFlag)
 			if err != nil && err != noTestsError {
 				fmt.Println(err.Error())
 				continue
@@ -76,23 +76,29 @@ func main() {
 	}
 }
 
-func generateTests(srcPath, destPath string, onlyFuncs, exclFuncs []string) ([]string, error) {
+func generateTests(srcPath, testPath, destPath string, onlyFuncs, exclFuncs []string) ([]string, error) {
 	srcInfo, err := code.Parse(srcPath)
 	if err != nil {
 		return nil, fmt.Errorf("code.Parse: %v", err)
 	}
-	if models.Path(destPath).IsTestPath() {
-		testInfo, err := code.Parse(destPath)
+	var header models.Header = srcInfo.Header
+	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
+		testInfo, err := code.Parse(testPath)
 		if err != nil {
 			return nil, fmt.Errorf("code.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
 			exclFuncs = append(exclFuncs, fun.Name)
 		}
+		h, err := code.ParseHeader(srcPath, testPath)
+		if err != nil {
+			return nil, fmt.Errorf("code.ParseHeader: %v", err)
+		}
+		header = h
 	}
 	funcs := srcInfo.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(funcs) == 0 {
 		return nil, noTestsError
 	}
-	return output.Write(srcPath, destPath, srcInfo.Header, funcs)
+	return output.Write(srcPath, destPath, header, funcs)
 }

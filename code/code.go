@@ -5,20 +5,21 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"io/ioutil"
 
 	"github.com/cweill/gotests/models"
 )
 
 func Parse(path string) (*models.SourceInfo, error) {
 	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
+	f, err := parser.ParseFile(fset, path, nil, 0)
 	if err != nil {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
 	info := &models.SourceInfo{
-		Header: &models.Header{
-			Package: parseExpr(f.Name).String(),
-			Imports: parseImports(f.Imports),
+		Header: &models.SourceHeader{
+			Pkg:  parseExpr(f.Name).String(),
+			Imps: parseImports(f.Imports),
 		},
 	}
 	for _, d := range f.Decls {
@@ -29,6 +30,37 @@ func Parse(path string) (*models.SourceInfo, error) {
 		info.Funcs = append(info.Funcs, parseFunc(fDecl))
 	}
 	return info, nil
+}
+
+func ParseHeader(srcPath, testPath string) (*models.CodeHeader, error) {
+	fset := token.NewFileSet()
+	sf, err := parser.ParseFile(fset, srcPath, nil, 0)
+	if err != nil {
+		return nil, fmt.Errorf("parser.ParseFile: %v", err)
+	}
+	fset = token.NewFileSet()
+	tf, err := parser.ParseFile(fset, testPath, nil, parser.ParseComments)
+	if err != nil {
+		return nil, fmt.Errorf("parser.ParseFile: %v", err)
+	}
+	tf.Imports = append(tf.Imports, sf.Imports...)
+
+	var furthestPos int
+	for _, node := range tf.Imports {
+		if pos := int(node.End()); pos > furthestPos {
+			furthestPos = pos
+		}
+	}
+	b, err := ioutil.ReadFile(testPath)
+	if err != nil {
+		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
+	}
+	h := &models.CodeHeader{
+		Pkg:  parseExpr(tf.Name).String(),
+		Imps: parseImports(tf.Imports),
+		Code: b[furthestPos:],
+	}
+	return h, nil
 }
 
 func parseFunc(fDecl *ast.FuncDecl) *models.Function {

@@ -16,8 +16,15 @@ func init() {
 	tmpls = template.Must(template.ParseGlob(path.Join(path.Dir(filename), "templates/*.tmpl")))
 }
 
-func Header(w io.Writer, info *models.Header) error {
-	return tmpls.ExecuteTemplate(w, "header", info)
+func Header(w io.Writer, h models.Header) error {
+	if err := tmpls.ExecuteTemplate(w, "header", h); err != nil {
+		return err
+	}
+	if v, ok := h.(*models.CodeHeader); ok {
+		_, err := w.Write(v.Code)
+		return err
+	}
+	return nil
 }
 
 func TestFunction(w io.Writer, f *models.Function) error {
