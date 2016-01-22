@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cweill/gotests/code"
+	"github.com/cweill/gotests/goparser"
 	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/output"
 	"github.com/cweill/gotests/source"
@@ -77,22 +77,22 @@ func main() {
 }
 
 func generateTests(srcPath, testPath, destPath string, onlyFuncs, exclFuncs []string) ([]string, error) {
-	srcInfo, err := code.Parse(srcPath)
+	srcInfo, err := goparser.Parse(srcPath)
 	if err != nil {
-		return nil, fmt.Errorf("code.Parse: %v", err)
+		return nil, fmt.Errorf("goparser.Parse: %v", err)
 	}
 	header := srcInfo.Header
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
-		testInfo, err := code.Parse(testPath)
+		testInfo, err := goparser.Parse(testPath)
 		if err != nil {
-			return nil, fmt.Errorf("code.Parse: %v", err)
+			return nil, fmt.Errorf("goparser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
 			exclFuncs = append(exclFuncs, fun.Name)
 		}
-		h, err := code.ParseHeader(srcPath, testPath)
+		h, err := goparser.ParseHeader(srcPath, testPath)
 		if err != nil {
-			return nil, fmt.Errorf("code.ParseHeader: %v", err)
+			return nil, fmt.Errorf("goparser.ParseHeader: %v", err)
 		}
 		header = h
 	}
