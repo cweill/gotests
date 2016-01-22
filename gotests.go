@@ -38,10 +38,10 @@ var (
 
 func main() {
 	flag.Var(&onlyFlag, "only", "comma-separated list of case-sensitive function names for which tests will be generating exclusively. Takes precedence over -all.")
-	flag.Var(&exclFlag, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -funcs and -all.")
+	flag.Var(&exclFlag, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -only and -all.")
 	flag.Parse()
 	if len(onlyFlag) == 0 && len(exclFlag) == 0 && !*allFlag {
-		fmt.Println("Please specify either the -funcs or -all flag")
+		fmt.Println("Please specify either the -only, -excl, or -all flag")
 		return
 	}
 	if len(flag.Args()) == 0 {
