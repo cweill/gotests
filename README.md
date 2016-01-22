@@ -49,6 +49,7 @@ func TestFoo7(t *testing.T) {
 	}
 }
 ```
+If the test file already exists, gotests generates and appends any non-existing tests. Any new dependencies are imported automatically.
 ## Usage
 Installation:
 ```
