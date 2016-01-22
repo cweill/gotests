@@ -11,73 +11,23 @@ type Expression interface {
 	String() string
 }
 
-type Identity struct {
+type NonVariadicExpr struct {
 	Value string
 }
 
-func (s *Identity) String() string { return s.Value }
+func (e *NonVariadicExpr) String() string { return e.Value }
 
-func (*Identity) IsVariadic() bool { return false }
+func (*NonVariadicExpr) IsVariadic() bool { return false }
 
-type BasicLit Identity
-
-func (b *BasicLit) String() string { return b.Value }
-
-func (*BasicLit) IsVariadic() bool { return false }
-
-type InterfaceType struct{}
-
-func (*InterfaceType) String() string { return "interface{}" }
-
-func (*InterfaceType) IsVariadic() bool { return false }
-
-type StarExpr struct {
-	X Expression
+type VariadicExpr struct {
+	Elt string
 }
 
-func (s *StarExpr) String() string {
-	return fmt.Sprintf("*%v", s.X)
+func (e *VariadicExpr) String() string {
+	return "[]" + e.Elt
 }
 
-func (*StarExpr) IsVariadic() bool { return false }
-
-type SelectorExpr struct {
-	X, Sel Expression
-}
-
-func (s *SelectorExpr) String() string {
-	return fmt.Sprintf("%v.%v", s.X, s.Sel)
-}
-
-func (*SelectorExpr) IsVariadic() bool { return false }
-
-type MapExpr struct {
-	Key, Value Expression
-}
-
-func (m *MapExpr) String() string {
-	return fmt.Sprintf("map[%v]%v", m.Key, m.Value)
-}
-
-func (*MapExpr) IsVariadic() bool { return false }
-
-type ArrayExpr struct {
-	Elt Expression
-}
-
-func (a *ArrayExpr) String() string {
-	return fmt.Sprintf("[]%v", a.Elt)
-}
-
-func (*ArrayExpr) IsVariadic() bool { return false }
-
-type Ellipsis ArrayExpr
-
-func (e *Ellipsis) String() string {
-	return fmt.Sprintf("[]%v", e.Elt)
-}
-
-func (*Ellipsis) IsVariadic() bool { return true }
+func (*VariadicExpr) IsVariadic() bool { return true }
 
 type FuncType struct {
 	Params, Results []Expression

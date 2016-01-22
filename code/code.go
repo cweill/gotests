@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"go/types"
 	"io/ioutil"
 
 	"github.com/cweill/gotests/models"
@@ -128,36 +129,9 @@ func parseField(f *ast.Field) []*models.Field {
 
 func parseExpr(e ast.Expr) models.Expression {
 	switch v := e.(type) {
-	case *ast.Ident:
-		return &models.Identity{Value: v.Name}
-	case *ast.BasicLit:
-		return &models.BasicLit{Value: v.Value}
-	case *ast.InterfaceType:
-		return &models.InterfaceType{}
-	case *ast.StarExpr:
-		return &models.StarExpr{X: parseExpr(v.X)}
-	case *ast.SelectorExpr:
-		return &models.SelectorExpr{X: parseExpr(v.X), Sel: parseExpr(v.Sel)}
-	case *ast.MapType:
-		return &models.MapExpr{Key: parseExpr(v.Key), Value: parseExpr(v.Value)}
-	case *ast.ArrayType:
-		return &models.ArrayExpr{Elt: parseExpr(v.Elt)}
 	case *ast.Ellipsis:
-		return &models.Ellipsis{Elt: parseExpr(v.Elt)}
-	case *ast.FuncType:
-		var ps, rs []models.Expression
-		if v.Params != nil {
-			for _, p := range v.Params.List {
-				ps = append(ps, parseExpr(p.Type))
-			}
-		}
-		if v.Results != nil {
-			for _, r := range v.Results.List {
-				rs = append(rs, parseExpr(r.Type))
-			}
-		}
-		return &models.FuncType{Params: ps, Results: rs}
+		return &models.VariadicExpr{Elt: types.ExprString(v.Elt)}
 	default:
-		return &models.Identity{Value: fmt.Sprintf("%v", v)}
+		return &models.NonVariadicExpr{Value: types.ExprString(e)}
 	}
 }
