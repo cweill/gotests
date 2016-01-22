@@ -160,10 +160,10 @@ func (i *SourceInfo) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
 			continue
 		}
-		if len(exclFuncs) > 0 && contains(exclFuncs, f.Name) {
+		if len(exclFuncs) > 0 && (contains(exclFuncs, f.Name) || contains(exclFuncs, f.TestName())) {
 			continue
 		}
-		if len(onlyFuncs) > 0 && !contains(onlyFuncs, f.Name) {
+		if len(onlyFuncs) > 0 && !contains(onlyFuncs, f.Name) && !contains(onlyFuncs, f.TestName()) {
 			continue
 		}
 		fs = append(fs, f)

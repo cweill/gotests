@@ -650,6 +650,53 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
+			name:      "Multiple functions w/ onlyFuncs by test name",
+			srcPath:   `testfiles/test100.go`,
+			onlyFuncs: []string{"TestFoo100", "TestBaz100"},
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBaz100(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:      "Multiple functions filtering all out",
 			srcPath:   `testfiles/test100.go`,
 			onlyFuncs: []string{"foo100"},
@@ -682,6 +729,11 @@ func TestBar100(t *testing.T) {
 			name:      "Multiple functions excluding all",
 			srcPath:   `testfiles/test100.go`,
 			exclFuncs: []string{"baz100", "Foo100", "Bar100"},
+			wantErr:   true,
+		}, {
+			name:      "Multiple functions excluding all test names",
+			srcPath:   `testfiles/test100.go`,
+			exclFuncs: []string{"TestBaz100", "TestFoo100", "TestBar100"},
 			wantErr:   true,
 		}, {
 			name:      "Multiple functions w/ both onlyFuncs and exclFunc",

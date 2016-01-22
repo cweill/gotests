@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/cweill/gotests/code"
+	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/output"
 	"github.com/cweill/gotests/source"
 )
@@ -76,13 +77,22 @@ func main() {
 }
 
 func generateTests(srcPath, destPath string, onlyFuncs, exclFuncs []string) ([]string, error) {
-	info, err := code.Parse(srcPath)
+	srcInfo, err := code.Parse(srcPath)
 	if err != nil {
 		return nil, fmt.Errorf("code.Parse: %v", err)
 	}
-	funcs := info.TestableFuncs(onlyFuncs, exclFuncs)
+	if models.Path(destPath).IsTestPath() {
+		testInfo, err := code.Parse(destPath)
+		if err != nil {
+			return nil, fmt.Errorf("code.Parse: %v", err)
+		}
+		for _, fun := range testInfo.Funcs {
+			exclFuncs = append(exclFuncs, fun.Name)
+		}
+	}
+	funcs := srcInfo.TestableFuncs(onlyFuncs, exclFuncs)
 	if len(funcs) == 0 {
 		return nil, noTestsError
 	}
-	return output.Write(srcPath, destPath, info.Header, funcs)
+	return output.Write(srcPath, destPath, srcInfo.Header, funcs)
 }
