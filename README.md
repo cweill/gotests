@@ -1,5 +1,5 @@
 # gotests [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests)
-A Go tool to automatically generate Go test code boilerplate.
+A Go tool to automatically generate Go test code boilerplate in [table driven style](https://github.com/golang/go/wiki/TableDrivenTests).
 
 The goal is to:
 * generate missing Go test boilerplate for any specified functions and methods
