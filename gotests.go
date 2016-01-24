@@ -12,8 +12,6 @@ import (
 	"github.com/cweill/gotests/source"
 )
 
-var noTestsError = errors.New("no tests generated")
-
 type funcs []string
 
 func (f *funcs) String() string {
@@ -61,8 +59,11 @@ func main() {
 		}
 		for _, src := range ps {
 			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), onlyFuncs, exclFuncs, *writeOutput)
-			if err != nil && err != noTestsError {
+			if err != nil {
 				fmt.Println(err.Error())
+				continue
+			}
+			if len(tests) == 0 {
 				continue
 			}
 			for _, test := range tests {
@@ -101,7 +102,7 @@ func generateTests(srcPath, testPath, destPath string, only, excl []string, writ
 	}
 	funcs := srcInfo.TestableFuncs(only, excl)
 	if len(funcs) == 0 {
-		return nil, nil, noTestsError
+		return nil, nil, nil
 	}
 	b, err := output.Process(header, funcs)
 	if err != nil {

@@ -4,26 +4,29 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/cweill/gotests/output"
 )
 
 func TestGenerateTests(t *testing.T) {
 	tests := []struct {
-		name      string
-		srcPath   string
-		testPath  string
-		onlyFuncs []string
-		exclFuncs []string
-		want      string
-		wantErr   bool
+		name         string
+		srcPath      string
+		testPath     string
+		onlyFuncs    []string
+		exclFuncs    []string
+		want         string
+		wantNoOutput bool
+		wantErr      bool
 	}{
 		{
-			name:    "No funcs",
-			srcPath: `testfiles/test000.go`,
-			wantErr: true,
+			name:         "No funcs",
+			srcPath:      `testfiles/test000.go`,
+			wantNoOutput: true,
 		}, {
-			name:    "Function w/ neither receiver, parameters, nor results",
-			srcPath: `testfiles/test001.go`,
-			wantErr: true,
+			name:         "Function w/ neither receiver, parameters, nor results",
+			srcPath:      `testfiles/test001.go`,
+			wantNoOutput: true,
 		}, {
 			name:    "Function w/ anonymous argument",
 			srcPath: `testfiles/test002.go`,
@@ -826,10 +829,10 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
-			name:      "Multiple functions filtering all out",
-			srcPath:   `testfiles/test100.go`,
-			onlyFuncs: []string{"foo100"},
-			wantErr:   true,
+			name:         "Multiple functions filtering all out",
+			srcPath:      `testfiles/test100.go`,
+			onlyFuncs:    []string{"foo100"},
+			wantNoOutput: true,
 		}, {
 			name:      "Multiple functions w/ exclFunc",
 			srcPath:   `testfiles/test100.go`,
@@ -855,15 +858,15 @@ func TestBar100(t *testing.T) {
 }
 `,
 		}, {
-			name:      "Multiple functions excluding all",
-			srcPath:   `testfiles/test100.go`,
-			exclFuncs: []string{"baz100", "Foo100", "Bar100"},
-			wantErr:   true,
+			name:         "Multiple functions excluding all",
+			srcPath:      `testfiles/test100.go`,
+			exclFuncs:    []string{"baz100", "Foo100", "Bar100"},
+			wantNoOutput: true,
 		}, {
-			name:      "Multiple functions excluding all test names",
-			srcPath:   `testfiles/test100.go`,
-			exclFuncs: []string{"TestBaz100", "TestFoo100", "TestBar100"},
-			wantErr:   true,
+			name:         "Multiple functions excluding all test names",
+			srcPath:      `testfiles/test100.go`,
+			exclFuncs:    []string{"TestBaz100", "TestFoo100", "TestBar100"},
+			wantNoOutput: true,
 		}, {
 			name:      "Multiple functions w/ both onlyFuncs and exclFunc",
 			srcPath:   `testfiles/test100.go`,
@@ -1039,17 +1042,19 @@ func TestBar200(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		_, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), tt.onlyFuncs, tt.exclFuncs, true)
+		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), tt.onlyFuncs, tt.exclFuncs, true)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if got := len(funcs); (got == 0) != tt.wantNoOutput {
+			t.Errorf("%v. TestCases(%v) created %v tests, wantNoOutput %v", tt.name, tt.srcPath, got, tt.wantNoOutput)
+		}
 		if got := string(b); got != tt.want {
 			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.srcPath, got, tt.want)
 		}
-		b, err = ioutil.ReadFile(f.Name())
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. ioutil.ReadFile: %v, wantErr: %v", tt.name, err, tt.wantErr)
+		if got := output.IsFileExist(f.Name()); got == tt.wantNoOutput {
+			t.Errorf("%v. New file created: %v, wantNoOutput: %v", tt.name, got, tt.wantNoOutput)
 		}
 	}
 }
