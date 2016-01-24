@@ -19,7 +19,7 @@ func (b *Bar) Foo7() (string, error) { return "", nil }
 ```
 Running: 
 ```sh
-$ gotests -only=Foo7 testfiles/test007.go
+$ gotests -w -only=Foo7 testfiles/test007.go
 ```
 Generates the following test code:
 ```Go
@@ -66,9 +66,9 @@ $ export PATH=$PATH:$GOPATH/bin
 ## Usage
 gotests appends to existing test files or creates new ones next to the Go source files.
 
-Generating only select tests for specific files:
+Generating only select tests for specific files and outputting the results to stdout:
 ```sh
-$ gotests -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
+$ gotests -only=Foo,fetchBaz foo.go bar.go
 ```
 Or all tests:
 ```sh
@@ -81,6 +81,10 @@ $ gotests -excl=fetchBaz foo.go bar.go
 Generating tests for an entire directory:
 ```sh
 $ gotests -all .
+```
+Passing the -w flag writes the output to the test file.
+```sh
+$ gotests -w -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
 ```
 Now get that coverage up! 
 
