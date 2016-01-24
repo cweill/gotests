@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGenerateTestCases(t *testing.T) {
+func TestGenerateTests(t *testing.T) {
 	tests := []struct {
 		name      string
 		srcPath   string
