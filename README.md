@@ -58,8 +58,8 @@ $ go get github.com/cweill/gotests
 ```
 Otherwise, setting up your $GOPATH is simple:
 ```sh
-# consider adding it to your .bashrc or .bash_profile
 $ mkdir $HOME/go
+# consider adding below to your .bashrc or .bash_profile
 $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
