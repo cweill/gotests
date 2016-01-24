@@ -82,7 +82,7 @@ Generating tests for an entire directory:
 ```sh
 $ gotests -all .
 ```
-Passing the -w flag writes the output to the test file.
+Passing the -w flag writes the output to the test files.
 ```sh
 $ gotests -w -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
 ```
