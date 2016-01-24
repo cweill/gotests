@@ -965,16 +965,17 @@ func TestBar200(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		if _, err := generateTests(tt.srcPath, tt.testPath, f.Name(), tt.onlyFuncs, tt.exclFuncs); (err != nil) != tt.wantErr {
+		_, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), tt.onlyFuncs, tt.exclFuncs, true)
+		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		b, err := ioutil.ReadFile(f.Name())
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. ioutil.ReadFile: %v, wantErr: %v", tt.name, err, tt.wantErr)
-		}
 		if got := string(b); got != tt.want {
 			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.srcPath, got, tt.want)
+		}
+		b, err = ioutil.ReadFile(f.Name())
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. ioutil.ReadFile: %v, wantErr: %v", tt.name, err, tt.wantErr)
 		}
 	}
 }

@@ -31,16 +31,16 @@ func (f *funcs) Set(value string) error {
 }
 
 var (
-	onlyFlag, exclFlag funcs
-
-	allFlag = flag.Bool("all", false, "generate tests for all functions in specified files or directories.")
+	onlyFuncs, exclFuncs funcs
+	allFuncs             = flag.Bool("all", false, "generate tests for all functions in specified files or directories")
+	writeOutput          = flag.Bool("w", false, "write result to (test) file instead of stdout")
 )
 
 func main() {
-	flag.Var(&onlyFlag, "only", "comma-separated list of case-sensitive function names for which tests will be generating exclusively. Takes precedence over -all.")
-	flag.Var(&exclFlag, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -only and -all.")
+	flag.Var(&onlyFuncs, "only", "comma-separated list of case-sensitive function names for which tests will be generating exclusively. Takes precedence over -all")
+	flag.Var(&exclFuncs, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -only and -all")
 	flag.Parse()
-	if len(onlyFlag) == 0 && len(exclFlag) == 0 && !*allFlag {
+	if len(onlyFuncs) == 0 && len(exclFuncs) == 0 && !*allFuncs {
 		fmt.Println("Please specify either the -only, -excl, or -all flag")
 		return
 	}
@@ -60,14 +60,17 @@ func main() {
 			continue
 		}
 		for _, src := range ps {
-			tests, err := generateTests(string(src), src.TestPath(), src.TestPath(), onlyFlag, exclFlag)
+			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), onlyFuncs, exclFuncs, *writeOutput)
 			if err != nil && err != noTestsError {
 				fmt.Println(err.Error())
 				continue
 			}
 			for _, test := range tests {
-				fmt.Printf("Generated %v\n", test)
+				fmt.Printf("Generated %v\n", test.TestName())
 				count++
+			}
+			if !*writeOutput {
+				fmt.Println(string(b))
 			}
 		}
 	}
@@ -76,29 +79,38 @@ func main() {
 	}
 }
 
-func generateTests(srcPath, testPath, destPath string, onlyFuncs, exclFuncs []string) ([]string, error) {
+func generateTests(srcPath, testPath, destPath string, only, excl []string, write bool) ([]*models.Function, []byte, error) {
 	srcInfo, err := goparser.Parse(srcPath)
 	if err != nil {
-		return nil, fmt.Errorf("goparser.Parse: %v", err)
+		return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 	}
 	header := srcInfo.Header
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
 		testInfo, err := goparser.Parse(testPath)
 		if err != nil {
-			return nil, fmt.Errorf("goparser.Parse: %v", err)
+			return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
-			exclFuncs = append(exclFuncs, fun.Name)
+			excl = append(excl, fun.Name)
 		}
 		h, err := goparser.ParseHeader(srcPath, testPath)
 		if err != nil {
-			return nil, fmt.Errorf("goparser.ParseHeader: %v", err)
+			return nil, nil, fmt.Errorf("goparser.ParseHeader: %v", err)
 		}
 		header = h
 	}
-	funcs := srcInfo.TestableFuncs(onlyFuncs, exclFuncs)
+	funcs := srcInfo.TestableFuncs(only, excl)
 	if len(funcs) == 0 {
-		return nil, noTestsError
+		return nil, nil, noTestsError
 	}
-	return output.Write(srcPath, destPath, header, funcs)
+	b, err := output.Process(header, funcs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("output.Process: %v", err)
+	}
+	if write {
+		if err := output.Write(destPath, b); err != nil {
+			return nil, nil, err
+		}
+	}
+	return funcs, b, nil
 }

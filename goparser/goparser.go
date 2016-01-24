@@ -11,9 +11,9 @@ import (
 	"github.com/cweill/gotests/models"
 )
 
-func Parse(path string) (*models.SourceInfo, error) {
+func Parse(srcPath string) (*models.SourceInfo, error) {
 	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, path, nil, 0)
+	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}

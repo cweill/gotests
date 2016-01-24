@@ -6,40 +6,52 @@ import (
 	"io/ioutil"
 	"os"
 
+	"golang.org/x/tools/imports"
+
 	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/render"
-	"golang.org/x/tools/imports"
 )
 
 const newFilePerm os.FileMode = 0644
 
-func Write(srcPath, destPath string, head *models.Header, funcs []*models.Function) ([]string, error) {
+func Process(head *models.Header, funcs []*models.Function) ([]byte, error) {
 	tf, err := ioutil.TempFile("", "gotests_")
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.TempFile: %v", err)
 	}
+	defer tf.Close()
 	defer os.Remove(tf.Name())
-	tests, err := writeTestsToTemp(tf, head, funcs)
-	if err != nil {
+	if err := writeTestsToTemp(tf, head, funcs); err != nil {
 		return nil, err
 	}
-	var isDestNew bool
-	if IsFileExist(destPath) {
-		df, err := os.Create(destPath)
+	b, err := ioutil.ReadFile(tf.Name())
+	if err != nil {
+		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
+	}
+	b, err = imports.Process(tf.Name(), b, nil)
+	if err != nil {
+		return nil, fmt.Errorf("imports.Process: %v", err)
+	}
+	return b, nil
+}
+
+func Write(dest string, b []byte) error {
+	var isNewFile bool
+	if IsFileExist(dest) {
+		df, err := os.Create(dest)
 		if err != nil {
-			return nil, fmt.Errorf("os.Create: %v", err)
+			return fmt.Errorf("os.Create: %v", err)
 		}
 		defer df.Close()
-		destPath = df.Name()
-		isDestNew = true
+		isNewFile = true
 	}
-	if err := copyTempToDest(tf.Name(), destPath); err != nil {
-		if isDestNew {
-			os.Remove(destPath)
+	if err := ioutil.WriteFile(dest, b, newFilePerm); err != nil {
+		if isNewFile {
+			os.Remove(dest)
 		}
-		return nil, err
+		return err
 	}
-	return tests, nil
+	return nil
 }
 
 func IsFileExist(path string) bool {
@@ -47,43 +59,18 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function) ([]string, error) {
+func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function) error {
 	w := bufio.NewWriter(temp)
 	if err := render.Header(w, head); err != nil {
-		return nil, fmt.Errorf("render.Header: %v", err)
+		return fmt.Errorf("render.Header: %v", err)
 	}
-	var tests []string
 	for _, fun := range funcs {
 		if err := render.TestFunction(w, fun); err != nil {
-			return nil, fmt.Errorf("render.TestFunction: %v", err)
+			return fmt.Errorf("render.TestFunction: %v", err)
 		}
-		tests = append(tests, fmt.Sprintf("%v.%v", head.Package, fun.TestName()))
 	}
 	if err := w.Flush(); err != nil {
-		return nil, fmt.Errorf("bufio.Flush: %v", err)
+		return fmt.Errorf("bufio.Flush: %v", err)
 	}
-	if err := processImports(temp.Name()); err != nil {
-		return nil, err
-	}
-	return tests, nil
-}
-
-func processImports(path string) error {
-	v, err := ioutil.ReadFile(path)
-	if err != nil {
-		return fmt.Errorf("ioutil.ReadFile: %v", err)
-	}
-	b, err := imports.Process(path, v, nil)
-	if err != nil {
-		return fmt.Errorf("imports.Process: %v", err)
-	}
-	return ioutil.WriteFile(path, b, 0)
-}
-
-func copyTempToDest(tempPath, destPath string) error {
-	b, err := ioutil.ReadFile(tempPath)
-	if err != nil {
-		return fmt.Errorf("ioutil.ReadAll: %v", err)
-	}
-	return ioutil.WriteFile(destPath, b, newFilePerm)
+	return nil
 }
