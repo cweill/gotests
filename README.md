@@ -64,7 +64,7 @@ $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
 ## Usage
-gotests appends to existing test files or creates new ones next to the Go source files.
+gotests appends to existing test files or creates new ones beside the Go source files.
 
 Generating only select tests for specific files and outputting the results to stdout:
 ```sh
