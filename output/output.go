@@ -14,14 +14,18 @@ import (
 
 const newFilePerm os.FileMode = 0644
 
-func Process(head *models.Header, funcs []*models.Function) ([]byte, error) {
+type Options struct {
+	Messagediff bool
+}
+
+func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byte, error) {
 	tf, err := ioutil.TempFile("", "gotests_")
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.TempFile: %v", err)
 	}
 	defer tf.Close()
 	defer os.Remove(tf.Name())
-	if err := writeTestsToTemp(tf, head, funcs); err != nil {
+	if err := writeTestsToTemp(tf, head, funcs, opt); err != nil {
 		return nil, err
 	}
 	b, err := ioutil.ReadFile(tf.Name())
@@ -59,13 +63,13 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function) error {
+func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function, opt *Options) error {
 	w := bufio.NewWriter(temp)
 	if err := render.Header(w, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 	for _, fun := range funcs {
-		if err := render.TestFunction(w, fun); err != nil {
+		if err := render.TestFunction(w, fun, opt.Messagediff); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}

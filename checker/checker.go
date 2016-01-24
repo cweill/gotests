@@ -12,7 +12,7 @@ import (
 
 type Import string
 
-const MessageDiff Import = `package check
+const Messagediff Import = `package check
 
 func F(i1, i2 interface{}) (string, bool) {
 	return messagediff.DeepDiff(i1, i2)
