@@ -5,23 +5,23 @@ func {{.TestName}}(t *testing.T) {
 		name string{{if .Receiver}}
 		{{.Receiver.Name}} {{.Receiver.Type}}{{end}}{{range $index, $element := .Parameters}}{{if .Name}}
 		{{.Name}} {{.Type}}{{else}}
-		in{{$index}} {{.Type}}{{end}}{{end}}{{range .Results}}{{if and .Name $f.ReturnsMultiple}}	
+		in{{$index}} {{.Type}}{{end}}{{end}}{{range $index, $element := .Results}}{{if and .Name $f.ReturnsMultiple}}	
 		want{{.Name}} {{.Type}}{{else if $f.ReturnsMultiple}}
-		want{{.Type}} {{.Type}}{{else}}
+		want{{$index}} {{.Type}}{{else}}
 		want {{.Type}}{{end}}{{end}}{{if .ReturnsError}}
 		wantErr bool{{end}}
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests { {{if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
-		{{if .Results}}got{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
+		{{if .Results}}{{range $index, $element := .Results}}{{if $index}}, {{end}}got{{if $f.ReturnsMultiple}}{{$index}}{{end}}{{end}}{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
 		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
-		}{{end}}{{range .Results}}{{if .IsScalar}}
-		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got != tt.want { {{else}}
-		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got, tt.want) { {{end}}
-			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got, tt.want)
+		}{{end}}{{range $index, $element := .Results}}{{if .IsScalar}}
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}) { {{end}}
+			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})
 		}{{end}}
 	}
 }

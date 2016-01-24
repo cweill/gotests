@@ -596,6 +596,41 @@ func TestFoo24(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Function returning two results and an error",
+			srcPath: `testfiles/test025.go`,
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo25(t *testing.T) {
+	tests := []struct {
+		name    string
+		in0     interface{}
+		want0   string
+		want1   []byte
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got0, got1, err := Foo25(tt.in0)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo25() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if got0 != tt.want0 {
+			t.Errorf("%v. Foo25() = %v, want %v", tt.name, got0, tt.want0)
+		}
+		if !reflect.DeepEqual(got1, tt.want1) {
+			t.Errorf("%v. Foo25() = %v, want %v", tt.name, got1, tt.want1)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles

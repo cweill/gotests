@@ -28,11 +28,11 @@ func Process(head *models.Header, funcs []*models.Function) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
 	}
-	b, err = imports.Process(tf.Name(), b, nil)
+	out, err := imports.Process(tf.Name(), b, nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
-	return b, nil
+	return out, nil
 }
 
 func Write(dest string, b []byte) error {

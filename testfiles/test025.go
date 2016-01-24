@@ -1,0 +1,5 @@
+package testfiles
+
+func Foo25(interface{}) (string, []byte, error) {
+	return "", nil, nil
+}
