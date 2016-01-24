@@ -1042,7 +1042,11 @@ func TestBar200(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), tt.onlyFuncs, tt.exclFuncs, true)
+		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), &options{
+			only:  tt.onlyFuncs,
+			excl:  tt.exclFuncs,
+			write: true,
+		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
 			continue

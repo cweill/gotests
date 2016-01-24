@@ -58,7 +58,11 @@ func main() {
 			continue
 		}
 		for _, src := range ps {
-			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), onlyFuncs, exclFuncs, *writeOutput)
+			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), &options{
+				only:  onlyFuncs,
+				excl:  exclFuncs,
+				write: *writeOutput,
+			})
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -80,7 +84,13 @@ func main() {
 	}
 }
 
-func generateTests(srcPath, testPath, destPath string, only, excl []string, write bool) ([]*models.Function, []byte, error) {
+type options struct {
+	only  []string
+	excl  []string
+	write bool
+}
+
+func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.Function, []byte, error) {
 	srcInfo, err := goparser.Parse(srcPath)
 	if err != nil {
 		return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
@@ -92,7 +102,7 @@ func generateTests(srcPath, testPath, destPath string, only, excl []string, writ
 			return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
-			excl = append(excl, fun.Name)
+			opt.excl = append(opt.excl, fun.Name)
 		}
 		h, err := goparser.ParseHeader(srcPath, testPath)
 		if err != nil {
@@ -100,7 +110,7 @@ func generateTests(srcPath, testPath, destPath string, only, excl []string, writ
 		}
 		header = h
 	}
-	funcs := srcInfo.TestableFuncs(only, excl)
+	funcs := srcInfo.TestableFuncs(opt.only, opt.excl)
 	if len(funcs) == 0 {
 		return nil, nil, nil
 	}
@@ -108,7 +118,7 @@ func generateTests(srcPath, testPath, destPath string, only, excl []string, writ
 	if err != nil {
 		return nil, nil, fmt.Errorf("output.Process: %v", err)
 	}
-	if write {
+	if opt.write {
 		if err := output.Write(destPath, b); err != nil {
 			return nil, nil, err
 		}
