@@ -631,6 +631,45 @@ func TestFoo25(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Multiple named results",
+			srcPath: `testfiles/test026.go`,
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo26(t *testing.T) {
+	tests := []struct {
+		name    string
+		v       interface{}
+		want0   string
+		want1   int
+		want2   []byte
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got0, got1, got2, err := Foo26(tt.v)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo26() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if got0 != tt.want0 {
+			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got0, tt.want0)
+		}
+		if got1 != tt.want1 {
+			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got1, tt.want1)
+		}
+		if !reflect.DeepEqual(got2, tt.want2) {
+			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got2, tt.want2)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles

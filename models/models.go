@@ -31,6 +31,10 @@ func (f *Field) IsScalar() bool {
 	}
 }
 
+func (f *Field) IsNamed() bool {
+	return f.Name != "" && f.Name != "_"
+}
+
 type Function struct {
 	Name         string
 	IsExported   bool

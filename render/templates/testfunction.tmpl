@@ -3,12 +3,10 @@
 func {{.TestName}}(t *testing.T) {
 	tests := []struct {
 		name string{{if .Receiver}}
-		{{.Receiver.Name}} {{.Receiver.Type}}{{end}}{{range $index, $element := .Parameters}}{{if .Name}}
+		{{.Receiver.Name}} {{.Receiver.Type}}{{end}}{{range $index, $element := .Parameters}}{{if .IsNamed}}
 		{{.Name}} {{.Type}}{{else}}
-		in{{$index}} {{.Type}}{{end}}{{end}}{{range $index, $element := .Results}}{{if and .Name $f.ReturnsMultiple}}	
-		want{{.Name}} {{.Type}}{{else if $f.ReturnsMultiple}}
-		want{{$index}} {{.Type}}{{else}}
-		want {{.Type}}{{end}}{{end}}{{if .ReturnsError}}
+		in{{$index}} {{.Type}}{{end}}{{end}}{{range $index, $element := .Results}}
+		want{{if $f.ReturnsMultiple}}{{$index}}{{end}} {{.Type}}{{end}}{{if .ReturnsError}}
 		wantErr bool{{end}}
 	}{
 		// TODO: Add test cases.
