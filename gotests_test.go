@@ -625,10 +625,10 @@ func TestFoo25(t *testing.T) {
 			continue
 		}
 		if got0 != tt.want0 {
-			t.Errorf("%v. Foo25() = %v, want %v", tt.name, got0, tt.want0)
+			t.Errorf("%v. Foo25() got0 = %v, want %v", tt.name, got0, tt.want0)
 		}
 		if !reflect.DeepEqual(got1, tt.want1) {
-			t.Errorf("%v. Foo25() = %v, want %v", tt.name, got1, tt.want1)
+			t.Errorf("%v. Foo25() got1 = %v, want %v", tt.name, got1, tt.want1)
 		}
 	}
 }
@@ -661,13 +661,13 @@ func TestFoo26(t *testing.T) {
 			continue
 		}
 		if got0 != tt.want0 {
-			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got0, tt.want0)
+			t.Errorf("%v. Foo26() got0 = %v, want %v", tt.name, got0, tt.want0)
 		}
 		if got1 != tt.want1 {
-			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got1, tt.want1)
+			t.Errorf("%v. Foo26() got1 = %v, want %v", tt.name, got1, tt.want1)
 		}
 		if !reflect.DeepEqual(got2, tt.want2) {
-			t.Errorf("%v. Foo26() = %v, want %v", tt.name, got2, tt.want2)
+			t.Errorf("%v. Foo26() got2 = %v, want %v", tt.name, got2, tt.want2)
 		}
 	}
 }

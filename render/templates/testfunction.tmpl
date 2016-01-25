@@ -19,7 +19,7 @@ func {{.TestName}}(t *testing.T) {
 		}{{end}}{{range $index, $element := .Results}}{{if .IsBasicType}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}) { {{end}}
-			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})
+			t.Errorf("%v. {{$f.Name}}() {{if $f.ReturnsMultiple}}got{{$index}} {{end}}= %v, want %v", tt.name, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})
 		}{{end}}
 	}
 }
