@@ -63,26 +63,32 @@ $ mkdir $HOME/go
 $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
+To update:
+```sh
+$ cd $GOPATH/src/github.com/cweill/gotests
+$ git pull
+$ go install
+```
 ## Usage
 gotests appends to existing test files or creates new ones beside the Go source files.
 
-Generating only select tests for specific files and outputting the results to stdout:
+To generating only select tests for specific files and outputting the results to stdout:
 ```sh
 $ gotests -only=Foo,fetchBaz foo.go bar.go
 ```
-Or all tests:
+For all tests:
 ```sh
 $ gotests -all foo.go bar.go
 ```
-Or most tests, excluding a few:
+For most tests, excluding a few:
 ```sh
 $ gotests -excl=fetchBaz foo.go bar.go
 ```
-Generating tests for an entire directory:
+To generate tests for an entire directory:
 ```sh
 $ gotests -all .
 ```
-Passing the -w flag writes the output to the test files.
+Pass the -w flag to write the output to the test files.
 ```sh
 $ gotests -w -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
 ```
