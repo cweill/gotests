@@ -16,7 +16,7 @@ func {{.TestName}}(t *testing.T) {
 		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
-		}{{end}}{{range $index, $element := .Results}}{{if .IsScalar}}
+		}{{end}}{{range $index, $element := .Results}}{{if .IsBasicType}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}) { {{end}}
 			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})

@@ -22,9 +22,11 @@ type Field struct {
 	Type *Expression
 }
 
-func (f *Field) IsScalar() bool {
+func (f *Field) IsBasicType() bool {
 	switch f.Type.String() {
-	case "uint8", "uint16", "uint32", "uint64", "int8", "int", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128", "byte", "rune", "bool", "string", "error":
+	case "bool", "string", "int", "int8", "int16", "int32", "int64", "uint",
+		"uint8", "uint16", "uint32", "uint64", "uintptr", "byte", "rune",
+		"float32", "float64", "complex64", "complex128":
 		return true
 	default:
 		return false
@@ -96,8 +98,8 @@ func (i *SourceInfo) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
 
 func (i *SourceInfo) UsesReflection() bool {
 	for _, f := range i.Funcs {
-		for _, fi := range f.Results {
-			if !fi.IsScalar() {
+		for _, r := range f.Results {
+			if !r.IsBasicType() {
 				return true
 			}
 		}
