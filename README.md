@@ -70,9 +70,8 @@ $ git pull
 $ go install
 ```
 ## Usage
-gotests appends to existing test files or creates new ones beside the Go source files.
-
-To generating only select tests for specific files and outputting the results to stdout:
+gotests only generates missing test functions, leaving existing ones intact. 
+To generate only select tests for specific files, and output the results to stdout:
 ```sh
 $ gotests -only=Foo,fetchBaz foo.go bar.go
 ```
@@ -88,9 +87,9 @@ To generate tests for an entire directory:
 ```sh
 $ gotests -all .
 ```
-Pass the -w flag to write the output to the test files.
+Pass the -w flag to write the output to the test files. gotests appends to existing test files or creates new ones beside the source files.
 ```sh
-$ gotests -w -only=Foo,fetchBaz foo.go bar.go # outputs new tests to foo_test.go and bar_test.go
+$ gotests -w -only=Foo,fetchBaz foo.go bar.go # outputs to foo_test.go and bar_test.go
 ```
 Now get that coverage up! 
 
