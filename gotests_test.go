@@ -15,7 +15,6 @@ func TestGenerateTests(t *testing.T) {
 		testPath     string
 		onlyFuncs    []string
 		exclFuncs    []string
-		messagediff  bool
 		want         string
 		wantNoOutput bool
 		wantErr      bool
@@ -674,30 +673,6 @@ func TestFoo26(t *testing.T) {
 }
 `,
 		}, {
-			name:        "Test messagediff",
-			srcPath:     `testfiles/test027.go`,
-			messagediff: true,
-			want: `package testfiles
-
-import "testing"
-
-func TestFoo27(t *testing.T) {
-	tests := []struct {
-		name string
-		in0  interface{}
-		want interface{}
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got := Foo27(tt.in0)
-		if diff, equal := messagediff.DeepDiff(tt.want, got); !equal {
-			t.Errorf("%v. Foo27() = (want) -> (got)\n%v", tt.name, diff)
-		}
-	}
-}
-`,
-		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles
@@ -1068,10 +1043,9 @@ func TestBar200(t *testing.T) {
 		f.Close()
 		os.Remove(f.Name())
 		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), &options{
-			only:        tt.onlyFuncs,
-			excl:        tt.exclFuncs,
-			write:       true,
-			messagediff: tt.messagediff,
+			only:  tt.onlyFuncs,
+			excl:  tt.exclFuncs,
+			write: true,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)

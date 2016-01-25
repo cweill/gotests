@@ -16,15 +16,11 @@ func {{.TestName}}(t *testing.T) {
 		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
-		}{{end}}{{range $index, $element := .Results}}{{if $f.Messagediff}}{{if $f.OnlyReturnsOneValue}}
-		got := {{template "func" $f}}{{end}}
-		if diff, equal := messagediff.DeepDiff(tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}); !equal {
-			t.Errorf("%v. {{$f.Name}}() = (want) -> (got)\n%v", tt.name, diff)
-		}{{else}}{{if .IsScalar}}
+		}{{end}}{{range $index, $element := .Results}}{{if .IsScalar}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}) { {{end}}
 			t.Errorf("%v. {{$f.Name}}() = %v, want %v", tt.name, got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})
-		}{{end}}{{end}}
+		}{{end}}
 	}
 }
 {{end}}

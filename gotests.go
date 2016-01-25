@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cweill/gotests/checker"
 	"github.com/cweill/gotests/goparser"
 	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/output"
@@ -47,11 +46,6 @@ func main() {
 		fmt.Println("Please specify a file or directory containing the source")
 		return
 	}
-	md, err := checker.CheckImport(checker.Messagediff)
-	if err != nil {
-		fmt.Printf("checker.Check: %v", err)
-		return
-	}
 	var count int
 	for _, path := range flag.Args() {
 		ps, err := source.Files(path)
@@ -65,10 +59,9 @@ func main() {
 		}
 		for _, src := range ps {
 			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), &options{
-				only:        onlyFuncs,
-				excl:        exclFuncs,
-				write:       *writeOutput,
-				messagediff: md,
+				only:  onlyFuncs,
+				excl:  exclFuncs,
+				write: *writeOutput,
 			})
 			if err != nil {
 				fmt.Println(err.Error())
@@ -92,10 +85,9 @@ func main() {
 }
 
 type options struct {
-	only        []string
-	excl        []string
-	write       bool
-	messagediff bool
+	only  []string
+	excl  []string
+	write bool
 }
 
 func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.Function, []byte, error) {
@@ -122,9 +114,7 @@ func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.
 	if len(funcs) == 0 {
 		return nil, nil, nil
 	}
-	b, err := output.Process(header, funcs, &output.Options{
-		Messagediff: opt.messagediff,
-	})
+	b, err := output.Process(header, funcs)
 	if err != nil {
 		return nil, nil, fmt.Errorf("output.Process: %v", err)
 	}

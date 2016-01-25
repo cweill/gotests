@@ -26,12 +26,6 @@ func Header(w io.Writer, h *models.Header) error {
 	return nil
 }
 
-func TestFunction(w io.Writer, f *models.Function, messagediff bool) error {
-	return tmpls.ExecuteTemplate(w, "testfunction", struct {
-		*models.Function
-		Messagediff bool
-	}{
-		Function:    f,
-		Messagediff: messagediff,
-	})
+func TestFunction(w io.Writer, f *models.Function) error {
+	return tmpls.ExecuteTemplate(w, "testfunction", f)
 }
