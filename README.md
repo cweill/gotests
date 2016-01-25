@@ -2,10 +2,10 @@
 A Go tool to automatically generate Go test code boilerplate in [table driven style](https://github.com/golang/go/wiki/TableDrivenTests).
 
 The goal is to:
-* generate missing Go test boilerplate for any specified functions and methods
-* automatically import test dependencies from file-under-test's
-* create fakes that conform to interfaces used in function parameters
-* (_bluesky_) write test cases for you
+- [x] generate missing Go test boilerplate for any specified functions and methods
+- [x] automatically import test dependencies from file-under-test's
+- [ ] create fakes that conform to interfaces used in function parameters
+- [ ] write test cases for you (_bluesky_)
 
 ## Example
 Given the source file:
