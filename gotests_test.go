@@ -104,7 +104,7 @@ func TestFoo5(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo5()
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo5() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo5() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
@@ -133,7 +133,7 @@ func TestFoo6(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo6(tt.i, tt.b)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo6() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo6() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
@@ -161,7 +161,7 @@ func TestFoo7(t *testing.T) {
 	for _, tt := range tests {
 		got, err := tt.b.Foo7()
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo7() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
@@ -192,7 +192,7 @@ func TestFoo8(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo8(tt.b)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo8() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo8() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -273,7 +273,7 @@ func TestFoo11(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo11(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo11() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo11() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -299,7 +299,7 @@ func TestFoo12(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := Foo12(tt.str); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo12() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo12() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -321,7 +321,7 @@ func TestFoo13(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := Foo13(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo13() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo13() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -343,7 +343,7 @@ func TestFoo14(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := Foo14(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo14() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo14() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -365,7 +365,7 @@ func TestFoo15(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := Foo15(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo15() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo15() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -593,7 +593,7 @@ func TestFoo24(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := Foo24(tt.w, tt.x, tt.t); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo24() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo24() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -621,7 +621,7 @@ func TestFoo25(t *testing.T) {
 	for _, tt := range tests {
 		got0, got1, err := Foo25(tt.in0)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo25() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo25() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got0 != tt.want0 {
@@ -657,7 +657,7 @@ func TestFoo26(t *testing.T) {
 	for _, tt := range tests {
 		got0, got1, got2, err := Foo26(tt.v)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo26() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo26() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got0 != tt.want0 {
@@ -694,7 +694,7 @@ func TestFoo100(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo100(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -714,7 +714,7 @@ func TestBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -757,7 +757,7 @@ func TestFoo100(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo100(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -804,7 +804,7 @@ func TestFoo100(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo100(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -852,7 +852,7 @@ func TestBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -887,7 +887,7 @@ func TestBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -912,7 +912,7 @@ func TestBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -943,7 +943,7 @@ func TestBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -980,7 +980,7 @@ func TestFoo100(t *testing.T) {
 	for _, tt := range tests {
 		got, err := Foo100(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo100() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
@@ -1048,7 +1048,7 @@ func TestBar200(t *testing.T) {
 			write: true,
 		})
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. generateTests() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got := len(funcs); (got == 0) != tt.wantNoOutput {

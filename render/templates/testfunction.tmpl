@@ -14,7 +14,7 @@ func {{.TestName}}(t *testing.T) {
 	for _, tt := range tests { {{if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
 		{{if .Results}}{{range $index, $element := .Results}}{{if $index}}, {{end}}got{{if $f.ReturnsMultiple}}{{$index}}{{end}}{{end}}{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
 		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
-			t.Errorf("%v. {{.Name}}() error = %v, wantErr: %v", tt.name, err, tt.wantErr){{if .Results}}
+			t.Errorf("%v. {{.Name}}() error = %v, wantErr %v", tt.name, err, tt.wantErr){{if .Results}}
 			continue{{end}}
 		}{{end}}{{range $index, $element := .Results}}{{if .IsBasicType}}
 		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}

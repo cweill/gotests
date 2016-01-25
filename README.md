@@ -40,7 +40,7 @@ func TestFoo7(t *testing.T) {
 	for _, tt := range tests {
 		got, err := tt.b.Foo7()
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo7() error = %v, wantErr: %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
