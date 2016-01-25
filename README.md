@@ -4,6 +4,7 @@ A Go tool to automatically generate Go test code boilerplate in [table driven st
 The goal is to:
 - [x] generate missing Go test boilerplate for any specified functions and methods
 - [x] automatically import test dependencies from file-under-test's
+- [x] compare results using `==` on basic types and `reflect.DeepEqual` on everything else
 - [ ] create fakes that conform to interfaces used in function parameters
 - [ ] write test cases for you (_bluesky_)
 
