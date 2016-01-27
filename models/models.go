@@ -7,14 +7,19 @@ import (
 
 type Expression struct {
 	Value      string
+	IsStar     bool
 	IsVariadic bool
 }
 
 func (e *Expression) String() string {
-	if e.IsVariadic {
-		return "[]" + e.Value
+	value := e.Value
+	if e.IsStar {
+		value = "*" + value
 	}
-	return e.Value
+	if e.IsVariadic {
+		return "[]" + value
+	}
+	return value
 }
 
 type Field struct {
@@ -59,7 +64,11 @@ func (f *Function) OnlyReturnsError() bool {
 }
 
 func (f *Function) TestName() string {
-	return "Test" + strings.Title(f.Name)
+	var r string
+	if f.Receiver != nil {
+		r = f.Receiver.Type.Value
+	}
+	return "Test" + strings.Title(r) + strings.Title(f.Name)
 }
 
 type Header struct {

@@ -2,7 +2,7 @@ package testfiles
 
 import "testing"
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar

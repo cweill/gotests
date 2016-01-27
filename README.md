@@ -16,7 +16,9 @@ package testfiles
 
 type Bar struct{}
 
-func (b *Bar) Foo7() (string, error) { return "", nil }
+func (b *Bar) Foo7(i int) (string, error) {
+  return "", nil
+}
 ```
 Running: 
 ```sh
@@ -29,17 +31,18 @@ package testfiles
 
 import "testing"
 
-func TestFoo7(t *testing.T) {
+func TestBarFoo7(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
+		i       int
 		want    string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.b.Foo7()
+		got, err := tt.b.Foo7(tt.i)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

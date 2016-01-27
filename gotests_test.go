@@ -149,17 +149,18 @@ func TestFoo6(t *testing.T) {
 
 import "testing"
 
-func TestFoo7(t *testing.T) {
+func TestBarFoo7(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
+		i       int
 		want    string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.b.Foo7()
+		got, err := tt.b.Foo7(tt.i)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -211,7 +212,7 @@ import (
 	"testing"
 )
 
-func TestFoo9(t *testing.T) {
+func TestBarFoo9(t *testing.T) {
 	tests := []struct {
 		name string
 		b    Bar
@@ -673,6 +674,43 @@ func TestFoo26(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Two different structs with same method name",
+			srcPath: `testfiles/test027.go`,
+			want: `package testfiles
+
+import "testing"
+
+func TestBookOpen(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Book
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Open(); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+
+func TestDoorOpen(t *testing.T) {
+	tests := []struct {
+		name    string
+		d       *door
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.d.Open(); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles
@@ -703,7 +741,7 @@ func TestFoo100(t *testing.T) {
 	}
 }
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
@@ -841,7 +879,7 @@ func TestBaz100(t *testing.T) {
 
 import "testing"
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
@@ -865,7 +903,7 @@ func TestBar100(t *testing.T) {
 		}, {
 			name:         "Multiple functions excluding all test names",
 			srcPath:      `testfiles/test100.go`,
-			exclFuncs:    []string{"TestBaz100", "TestFoo100", "TestBar100"},
+			exclFuncs:    []string{"TestBaz100", "TestFoo100", "TestBarBar100"},
 			wantNoOutput: true,
 		}, {
 			name:      "Multiple functions w/ both onlyFuncs and exclFunc",
@@ -876,7 +914,7 @@ func TestBar100(t *testing.T) {
 
 import "testing"
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
@@ -901,7 +939,7 @@ func TestBar100(t *testing.T) {
 
 import "testing"
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
@@ -928,7 +966,7 @@ import (
 	"testing"
 )
 
-func TestBar100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
