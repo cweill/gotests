@@ -42,6 +42,10 @@ func (f *Field) IsNamed() bool {
 	return f.Name != "" && f.Name != "_"
 }
 
+func (f *Field) ShortName() string {
+	return strings.ToLower(string([]rune(f.Type.Value)[0]))
+}
+
 type Function struct {
 	Name         string
 	IsExported   bool

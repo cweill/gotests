@@ -6,8 +6,12 @@ type Opener interface {
 
 type Book struct{}
 
-func (b *Book) Open() error { return nil }
+func (*Book) Open() error { return nil }
 
 type door struct{}
 
-func (d *door) Open() error { return nil }
+func (*door) Open() error { return nil }
+
+type xml struct{}
+
+func (*xml) Open() error { return nil }

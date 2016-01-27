@@ -2,8 +2,9 @@
 {{$f := .}}
 func {{.TestName}}(t *testing.T) {
 	tests := []struct {
-		name string{{if .Receiver}}
-		{{.Receiver.Name}} {{.Receiver.Type}}{{end}}{{range $index, $element := .Parameters}}{{if .IsNamed}}
+		name string{{if .Receiver}}{{if .Receiver.IsNamed}}
+		{{.Receiver.Name}} {{.Receiver.Type}}{{else}}
+		{{.Receiver.ShortName}} {{.Receiver.Type}}{{end}}{{end}}{{range $index, $element := .Parameters}}{{if .IsNamed}}
 		{{.Name}} {{.Type}}{{else}}
 		in{{$index}} {{.Type}}{{end}}{{end}}{{range $index, $element := .Results}}
 		want{{if $f.ReturnsMultiple}}{{$index}}{{end}} {{.Type}}{{end}}{{if .ReturnsError}}

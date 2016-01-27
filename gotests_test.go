@@ -709,6 +709,21 @@ func TestDoorOpen(t *testing.T) {
 		}
 	}
 }
+
+func TestXmlOpen(t *testing.T) {
+	tests := []struct {
+		name    string
+		x       *xml
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.x.Open(); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
 `,
 		}, {
 			name:    "Multiple functions",
