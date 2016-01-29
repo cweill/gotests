@@ -162,11 +162,11 @@ func TestBarFoo7(t *testing.T) {
 	for _, tt := range tests {
 		got, err := tt.b.Foo7(tt.i)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar.Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
-			t.Errorf("%v. Foo7() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%v. Bar.Foo7() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
@@ -222,7 +222,7 @@ func TestBarFoo9(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if got := tt.b.Foo9(); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%v. Foo9() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%v. Bar.Foo9() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
@@ -690,7 +690,7 @@ func TestBookOpen(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Book.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -705,7 +705,7 @@ func TestDoorOpen(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.d.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. door.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -720,7 +720,7 @@ func TestXmlOpen(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.x.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. xml.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -767,7 +767,7 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -905,7 +905,7 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -940,7 +940,7 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -965,7 +965,7 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
