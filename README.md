@@ -67,11 +67,9 @@ $ mkdir $HOME/go
 $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
-To update:
+To update from anywhere:
 ```sh
-$ cd $GOPATH/src/github.com/cweill/gotests
-$ git pull
-$ go install
+$ cwd=$(pwd); cd $GOPATH/src/github.com/cweill/gotests; git pull; go install; cd $cwd
 ```
 ## Usage
 gotests only generates missing test functions, leaving existing ones intact. 
