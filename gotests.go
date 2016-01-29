@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/cweill/gotests/goparser"
+	"github.com/cweill/gotests/input"
 	"github.com/cweill/gotests/models"
 	"github.com/cweill/gotests/output"
-	"github.com/cweill/gotests/source"
 )
 
 type funcs []string
@@ -48,9 +48,9 @@ func main() {
 	}
 	var count int
 	for _, path := range flag.Args() {
-		ps, err := source.Files(path)
+		ps, err := input.Files(path)
 		if err != nil {
-			if err == source.NoFilesFound {
+			if err == input.NoFilesFound {
 				fmt.Printf("No source files found at %v\n", path)
 			} else {
 				fmt.Println(err.Error())
