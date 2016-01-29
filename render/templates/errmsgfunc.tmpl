@@ -1,0 +1,1 @@
+{{define "errmsgfunc"}}{{if not .PrintInputs}}%v. {{end}}{{if .Receiver}}{{.Receiver.Type.Value}}.{{end}}{{.Name}}({{if .PrintInputs}}{{range $index, $element := .Parameters}}{{if $index}}, {{end}}%v{{end}}{{end}}){{end}}

@@ -1,0 +1,1 @@
+{{define "funcresults"}}{{$f := .}}{{range $index, $element := .Results}}{{if $index}}, {{end}}got{{if $f.ReturnsMultiple}}{{$index}}{{end}}{{end}}{{if .ReturnsError}}, err{{end}}{{end}}

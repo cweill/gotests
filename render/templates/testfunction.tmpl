@@ -1,27 +1,28 @@
-{{define "testfunction"}}
-{{$f := .}}
+{{define "testfunction"}}{{$f := .}}
+
 func {{.TestName}}(t *testing.T) {
 	tests := []struct { {{if not $f.PrintInputs}}
 		name string{{end}}{{if .Receiver}}{{if .Receiver.IsNamed}}
 		{{.Receiver.Name}} {{.Receiver.Type}}{{else}}
-		{{.Receiver.ShortName}} {{.Receiver.Type}}{{end}}{{end}}{{range $index, $element := .Parameters}}{{if .IsNamed}}
+		{{.Receiver.ShortName}} {{.Receiver.Type}}{{end}}{{end}}{{range $i, $el := .Parameters}}{{if .IsNamed}}
 		{{.Name}} {{.Type}}{{else}}
-		in{{$index}} {{.Type}}{{end}}{{end}}{{range $index, $element := .Results}}
-		want{{if $f.ReturnsMultiple}}{{$index}}{{end}} {{.Type}}{{end}}{{if .ReturnsError}}
+		in{{$i}} {{.Type}}{{end}}{{end}}{{range $i, $el := .Results}}
+		want{{if $f.ReturnsMultiple}}{{$i}}{{end}} {{.Type}}{{end}}{{if .ReturnsError}}
 		wantErr bool{{end}}
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests { {{if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
-		{{if .Results}}{{range $index, $element := .Results}}{{if $index}}, {{end}}got{{if $f.ReturnsMultiple}}{{$index}}{{end}}{{end}}{{if .ReturnsError}}, err{{end}} := {{else if .ReturnsError}}err := {{end}}{{template "func" .}}{{end}}{{if .ReturnsError}}
-		if {{if .OnlyReturnsError}}err := {{template "func" .}}; {{end}} (err != nil) != tt.wantErr {
-			t.Errorf("{{if not $f.PrintInputs}}%v. {{end}}{{if $f.Receiver}}{{$f.Receiver.Type.Value}}.{{end}}{{$f.Name}}({{if $f.PrintInputs}}{{range $index, $element := $f.Parameters}}{{if $index}}, {{end}}%v{{end}}{{end}}) error = %v, wantErr %v", {{if $f.PrintInputs}}{{range $index, $element := $f.Parameters}}{{if .IsNamed}}tt.{{.Name}}, {{else}}tt.in{{$index}}, {{end}}{{end}}{{else}}tt.name, {{end}}err, tt.wantErr){{if .Results}}
+		{{if .Results}}{{template "funcresults" .}} := {{end}}{{template "funccall" .}}{{end}}{{if .ReturnsError}}
+		if {{if .OnlyReturnsError}}err := {{template "funccall" .}}; {{end}} (err != nil) != tt.wantErr {
+			t.Errorf("{{template "errmsgfunc" $f}} error = %v, wantErr %v", {{if $f.PrintInputs}}{{range $i, $el := $f.Parameters}}{{if .IsNamed}}tt.{{.Name}}, {{else}}tt.in{{$i}}, {{end}}{{end}}{{else}}tt.name, {{end}}err, tt.wantErr){{if .Results}}
 			continue{{end}}
-		}{{end}}{{range $index, $element := .Results}}{{if .IsBasicType}}
-		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$index}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}} { {{else}}
-		if {{if $f.OnlyReturnsOneValue}}got := {{template "func" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}}) { {{end}}
-			t.Errorf("{{if not $f.PrintInputs}}%v. {{end}}{{if $f.Receiver}}{{$f.Receiver.Type.Value}}.{{end}}{{$f.Name}}({{if $f.PrintInputs}}{{range $index, $element := $f.Parameters}}{{if $index}}, {{end}}%v{{end}}{{end}}) {{if $f.ReturnsMultiple}}got{{$index}} {{end}}= %v, want %v", {{if $f.PrintInputs}}{{range $index, $element := $f.Parameters}}{{if .IsNamed}}tt.{{.Name}}, {{else}}tt.in{{$index}}, {{end}}{{end}}{{else}}tt.name, {{end}}	got{{if $f.ReturnsMultiple}}{{$index}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$index}}{{end}})
+		}{{end}}{{range $i, $el := .Results}}{{if .IsBasicType}}
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "funccall" $f}}; {{end}} got{{if $f.ReturnsMultiple}}{{$i}}{{end}} != tt.want{{if $f.ReturnsMultiple}}{{$i}}{{end}} { {{else}}
+		if {{if $f.OnlyReturnsOneValue}}got := {{template "funccall" $f}}; {{end}} !reflect.DeepEqual(got{{if $f.ReturnsMultiple}}{{$i}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$i}}{{end}}) { {{end}}
+			t.Errorf("{{template "errmsgfunc" $f}} {{if $f.ReturnsMultiple}}got{{$i}} {{end}}= %v, want %v", {{if $f.PrintInputs}}{{range $i, $el := $f.Parameters}}{{if .IsNamed}}tt.{{.Name}}, {{else}}tt.in{{$i}}, {{end}}{{end}}{{else}}tt.name, {{end}} got{{if $f.ReturnsMultiple}}{{$i}}{{end}}, tt.want{{if $f.ReturnsMultiple}}{{$i}}{{end}})
 		}{{end}}
 	}
 }
+
 {{end}}
