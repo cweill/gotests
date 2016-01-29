@@ -1,8 +1,8 @@
 # gotests [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests)
-A Go tool to automatically generate Go test code boilerplate in [table driven style](https://github.com/golang/go/wiki/TableDrivenTests).
+A Golang tool to automatically generate scaffolding for [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests).
 
 The goal is to:
-- [x] generate missing Go test boilerplate for any specified functions and methods
+- [x] generate a framework for Go test functions in table driven style
 - [x] automatically import test dependencies from file-under-test's
 - [x] compare results using `==` on basic types and `reflect.DeepEqual` on everything else
 - [ ] create fakes that conform to interfaces used in function parameters
