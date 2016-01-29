@@ -15,6 +15,7 @@ func TestGenerateTests(t *testing.T) {
 		testPath     string
 		onlyFuncs    []string
 		exclFuncs    []string
+		printInputs  bool
 		want         string
 		wantNoOutput bool
 		wantErr      bool
@@ -143,6 +144,35 @@ func TestFoo6(t *testing.T) {
 }
 `,
 		}, {
+			name:        "Print inputs with multiple arguments ",
+			srcPath:     `testfiles/test006.go`,
+			printInputs: true,
+			want: `package testfiles
+
+import "testing"
+
+func TestFoo6(t *testing.T) {
+	tests := []struct {
+		i       int
+		b       bool
+		want    string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo6(tt.i, tt.b)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("Foo6(%v, %v) error = %v, wantErr %v", tt.i, tt.b, err, tt.wantErr)
+			continue
+		}
+		if got != tt.want {
+			t.Errorf("Foo6(%v, %v) = %v, want %v", tt.i, tt.b, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Method on a struct pointer",
 			srcPath: `testfiles/test007.go`,
 			want: `package testfiles
@@ -167,6 +197,35 @@ func TestBarFoo7(t *testing.T) {
 		}
 		if got != tt.want {
 			t.Errorf("%v. Bar.Foo7() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:        "Print inputs with single argument",
+			srcPath:     `testfiles/test007.go`,
+			printInputs: true,
+			want: `package testfiles
+
+import "testing"
+
+func TestBarFoo7(t *testing.T) {
+	tests := []struct {
+		b       *Bar
+		i       int
+		want    string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := tt.b.Foo7(tt.i)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("Bar.Foo7(%v) error = %v, wantErr %v", tt.i, err, tt.wantErr)
+			continue
+		}
+		if got != tt.want {
+			t.Errorf("Bar.Foo7(%v) = %v, want %v", tt.i, got, tt.want)
 		}
 	}
 }
@@ -1096,9 +1155,10 @@ func TestBar200(t *testing.T) {
 		f.Close()
 		os.Remove(f.Name())
 		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), &options{
-			only:  tt.onlyFuncs,
-			excl:  tt.exclFuncs,
-			write: true,
+			only:        tt.onlyFuncs,
+			excl:        tt.exclFuncs,
+			write:       true,
+			printInputs: tt.printInputs,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)

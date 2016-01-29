@@ -26,6 +26,12 @@ func Header(w io.Writer, h *models.Header) error {
 	return nil
 }
 
-func TestFunction(w io.Writer, f *models.Function) error {
-	return tmpls.ExecuteTemplate(w, "testfunction", f)
+func TestFunction(w io.Writer, f *models.Function, printInputs bool) error {
+	return tmpls.ExecuteTemplate(w, "testfunction", struct {
+		*models.Function
+		PrintInputs bool
+	}{
+		Function:    f,
+		PrintInputs: printInputs,
+	})
 }

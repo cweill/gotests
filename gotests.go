@@ -31,6 +31,7 @@ func (f *funcs) Set(value string) error {
 var (
 	onlyFuncs, exclFuncs funcs
 	allFuncs             = flag.Bool("all", false, "generate tests for all functions in specified files or directories")
+	printInputs          = flag.Bool("i", false, "prints test inputs in error messages and omits the test's name field")
 	writeOutput          = flag.Bool("w", false, "write result to (test) file instead of stdout")
 )
 
@@ -59,9 +60,10 @@ func main() {
 		}
 		for _, src := range ps {
 			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), &options{
-				only:  onlyFuncs,
-				excl:  exclFuncs,
-				write: *writeOutput,
+				only:        onlyFuncs,
+				excl:        exclFuncs,
+				write:       *writeOutput,
+				printInputs: *printInputs,
 			})
 			if err != nil {
 				fmt.Println(err.Error())
@@ -85,9 +87,10 @@ func main() {
 }
 
 type options struct {
-	only  []string
-	excl  []string
-	write bool
+	only        []string
+	excl        []string
+	printInputs bool
+	write       bool
 }
 
 func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.Function, []byte, error) {
@@ -114,7 +117,9 @@ func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.
 	if len(funcs) == 0 {
 		return nil, nil, nil
 	}
-	b, err := output.Process(header, funcs)
+	b, err := output.Process(header, funcs, &output.Options{
+		PrintInputs: opt.printInputs,
+	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("output.Process: %v", err)
 	}
