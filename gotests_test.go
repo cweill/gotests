@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/cweill/gotests/output"
@@ -13,8 +14,8 @@ func TestGenerateTests(t *testing.T) {
 		name         string
 		srcPath      string
 		testPath     string
-		onlyFuncs    []string
-		exclFuncs    []string
+		only         *regexp.Regexp
+		excl         *regexp.Regexp
 		printInputs  bool
 		want         string
 		wantNoOutput bool
@@ -847,9 +848,9 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
-			name:      "Multiple functions w/ onlyFuncs",
-			srcPath:   `testfiles/test100.go`,
-			onlyFuncs: []string{"Foo100", "baz100"},
+			name:    "Multiple functions w/ only",
+			srcPath: `testfiles/test100.go`,
+			only:    regexp.MustCompile("Foo100|baz100"),
 			want: `package testfiles
 
 import (
@@ -894,9 +895,9 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
-			name:      "Multiple functions w/ onlyFuncs by test name",
-			srcPath:   `testfiles/test100.go`,
-			onlyFuncs: []string{"TestFoo100", "TestBaz100"},
+			name:    "Multiple functions w/ only exported",
+			srcPath: `testfiles/test100.go`,
+			only:    regexp.MustCompile(`^\p{Lu}`),
 			want: `package testfiles
 
 import (
@@ -925,17 +926,18 @@ func TestFoo100(t *testing.T) {
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBarBar100(t *testing.T) {
 	tests := []struct {
-		name string
-		f    *float64
-		want float64
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -943,15 +945,63 @@ func TestBaz100(t *testing.T) {
 		}, {
 			name:         "Multiple functions filtering all out",
 			srcPath:      `testfiles/test100.go`,
-			onlyFuncs:    []string{"foo100"},
+			only:         regexp.MustCompile("foo100"),
 			wantNoOutput: true,
 		}, {
-			name:      "Multiple functions w/ exclFunc",
-			srcPath:   `testfiles/test100.go`,
-			exclFuncs: []string{"Foo100", "baz100"},
+			name:    "Multiple functions w/ excl",
+			srcPath: `testfiles/test100.go`,
+			excl:    regexp.MustCompile("Foo100|baz100"),
 			want: `package testfiles
 
 import "testing"
+
+func TestBarBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:    "Multiple functions excluding unexported",
+			srcPath: `testfiles/test100.go`,
+			excl:    regexp.MustCompile(`^\p{Ll}`),
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -972,18 +1022,13 @@ func TestBarBar100(t *testing.T) {
 		}, {
 			name:         "Multiple functions excluding all",
 			srcPath:      `testfiles/test100.go`,
-			exclFuncs:    []string{"baz100", "Foo100", "Bar100"},
+			excl:         regexp.MustCompile("baz100|Foo100|Bar100"),
 			wantNoOutput: true,
 		}, {
-			name:         "Multiple functions excluding all test names",
-			srcPath:      `testfiles/test100.go`,
-			exclFuncs:    []string{"TestBaz100", "TestFoo100", "TestBarBar100"},
-			wantNoOutput: true,
-		}, {
-			name:      "Multiple functions w/ both onlyFuncs and exclFunc",
-			srcPath:   `testfiles/test100.go`,
-			onlyFuncs: []string{"Bar100"},
-			exclFuncs: []string{"Foo100"},
+			name:    "Multiple functions w/ both only and excl",
+			srcPath: `testfiles/test100.go`,
+			only:    regexp.MustCompile("Bar100"),
+			excl:    regexp.MustCompile("Foo100"),
 			want: `package testfiles
 
 import "testing"
@@ -1005,10 +1050,10 @@ func TestBarBar100(t *testing.T) {
 }
 `,
 		}, {
-			name:      "Multiple functions w/ onlyFuncs and exclFunc competing",
-			srcPath:   `testfiles/test100.go`,
-			onlyFuncs: []string{"Foo100", "Bar100"},
-			exclFuncs: []string{"Foo100", "baz100"},
+			name:    "Multiple functions w/ only and excl competing",
+			srcPath: `testfiles/test100.go`,
+			only:    regexp.MustCompile("Foo100|Bar100"),
+			excl:    regexp.MustCompile("Foo100|baz100"),
 			want: `package testfiles
 
 import "testing"
@@ -1155,8 +1200,8 @@ func TestBar200(t *testing.T) {
 		f.Close()
 		os.Remove(f.Name())
 		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), &options{
-			only:        tt.onlyFuncs,
-			excl:        tt.exclFuncs,
+			only:        tt.only,
+			excl:        tt.excl,
 			write:       true,
 			printInputs: tt.printInputs,
 		})

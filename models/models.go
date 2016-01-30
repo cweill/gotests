@@ -1,6 +1,7 @@
 package models
 
 import (
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -90,18 +91,20 @@ type SourceInfo struct {
 	Funcs  []*Function
 }
 
-func (i *SourceInfo) TestableFuncs(onlyFuncs, exclFuncs []string) []*Function {
-	sort.Strings(onlyFuncs)
-	sort.Strings(exclFuncs)
+func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, testFuncs []string) []*Function {
+	sort.Strings(testFuncs)
 	var fs []*Function
 	for _, f := range i.Funcs {
 		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
 			continue
 		}
-		if len(exclFuncs) > 0 && (contains(exclFuncs, f.Name) || contains(exclFuncs, f.TestName())) {
+		if len(testFuncs) > 0 && contains(testFuncs, f.TestName()) {
 			continue
 		}
-		if len(onlyFuncs) > 0 && !contains(onlyFuncs, f.Name) && !contains(onlyFuncs, f.TestName()) {
+		if excl != nil && excl.MatchString(f.Name) {
+			continue
+		}
+		if only != nil && !only.MatchString(f.Name) {
 			continue
 		}
 		fs = append(fs, f)

@@ -1,10 +1,9 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	"strings"
+	"regexp"
 
 	"github.com/cweill/gotests/goparser"
 	"github.com/cweill/gotests/input"
@@ -12,40 +11,39 @@ import (
 	"github.com/cweill/gotests/output"
 )
 
-type funcs []string
-
-func (f *funcs) String() string {
-	return fmt.Sprint(*f)
-}
-
-func (f *funcs) Set(value string) error {
-	if len(*f) > 0 {
-		return errors.New("flag already set")
-	}
-	for _, fun := range strings.Split(value, ",") {
-		*f = append(*f, fun)
-	}
-	return nil
-}
-
 var (
-	onlyFuncs, exclFuncs funcs
-	allFuncs             = flag.Bool("all", false, "generate tests for all functions in specified files or directories")
-	printInputs          = flag.Bool("i", false, "prints test inputs in error messages and omits the test's name field")
-	writeOutput          = flag.Bool("w", false, "write result to (test) file instead of stdout")
+	onlyFuncs   = flag.String("only", "", `regexp. generate tests for functions and methods that match only. e.g. -only="^\p{Lu}" selects exported functions and methods only. Takes precedence over -all`)
+	exclFuncs   = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. e.g. -excl="^\p{Ll}" filters unexported functions and methods only. Takes precedence over -only and -all`)
+	allFuncs    = flag.Bool("all", false, "generate tests for all functions and methods")
+	printInputs = flag.Bool("i", false, "print test inputs in error messages")
+	writeOutput = flag.Bool("w", false, "write output to (test) files instead of stdout")
 )
 
 func main() {
-	flag.Var(&onlyFuncs, "only", "comma-separated list of case-sensitive function names for which tests will be generating exclusively. Takes precedence over -all")
-	flag.Var(&exclFuncs, "excl", "comma-separated list of case-sensitive function names to exclude when generating tests. Take precedence over -only and -all")
 	flag.Parse()
-	if len(onlyFuncs) == 0 && len(exclFuncs) == 0 && !*allFuncs {
+	if *onlyFuncs == "" && *exclFuncs == "" && !*allFuncs {
 		fmt.Println("Please specify either the -only, -excl, or -all flag")
 		return
 	}
 	if len(flag.Args()) == 0 {
 		fmt.Println("Please specify a file or directory containing the source")
 		return
+	}
+	var onlyRE, exclRE *regexp.Regexp
+	var err error
+	if *onlyFuncs != "" {
+		onlyRE, err = regexp.Compile(*onlyFuncs)
+		if err != nil {
+			fmt.Printf("Invalid -only regex: %v\n", err)
+			return
+		}
+	}
+	if *exclFuncs != "" {
+		exclRE, err = regexp.Compile(*exclFuncs)
+		if err != nil {
+			fmt.Printf("Invalid -excl regex: %v\n", err)
+			return
+		}
 	}
 	var count int
 	for _, path := range flag.Args() {
@@ -60,8 +58,8 @@ func main() {
 		}
 		for _, src := range ps {
 			tests, b, err := generateTests(string(src), src.TestPath(), src.TestPath(), &options{
-				only:        onlyFuncs,
-				excl:        exclFuncs,
+				only:        onlyRE,
+				excl:        exclRE,
 				write:       *writeOutput,
 				printInputs: *printInputs,
 			})
@@ -87,8 +85,8 @@ func main() {
 }
 
 type options struct {
-	only        []string
-	excl        []string
+	only        *regexp.Regexp
+	excl        *regexp.Regexp
 	printInputs bool
 	write       bool
 }
@@ -99,13 +97,14 @@ func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.
 		return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 	}
 	header := srcInfo.Header
+	var testFuncs []string
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
 		testInfo, err := goparser.Parse(testPath)
 		if err != nil {
 			return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
-			opt.excl = append(opt.excl, fun.Name)
+			testFuncs = append(testFuncs, fun.Name)
 		}
 		h, err := goparser.ParseHeader(srcPath, testPath)
 		if err != nil {
@@ -113,7 +112,7 @@ func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.
 		}
 		header = h
 	}
-	funcs := srcInfo.TestableFuncs(opt.only, opt.excl)
+	funcs := srcInfo.TestableFuncs(opt.only, opt.excl, testFuncs)
 	if len(funcs) == 0 {
 		return nil, nil, nil
 	}
