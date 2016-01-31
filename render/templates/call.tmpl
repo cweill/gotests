@@ -1,0 +1,1 @@
+{{define "call"}}{{if .Receiver}}tt.{{if .Receiver.IsNamed}}{{.Receiver.Name}}{{else}}{{.Receiver.ShortName}}{{end}}.{{end}}{{.Name}}({{range $index, $element := .Parameters}}{{if $index}}, {{end}}{{if .Name}}tt.{{.Name}}{{else}}tt.in{{$index}}{{end}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{end}}

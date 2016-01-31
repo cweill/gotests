@@ -1,0 +1,1 @@
+{{define "message"}}{{if not .PrintInputs}}%v. {{end}}{{with .Receiver}}{{.Type.Value}}.{{end}}{{.Name}}({{if .PrintInputs}}{{range $i, $el := .Parameters}}{{if $i}}, {{end}}%v{{end}}{{end}}){{end}}

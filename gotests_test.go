@@ -673,20 +673,20 @@ func TestFoo25(t *testing.T) {
 	tests := []struct {
 		name    string
 		in0     interface{}
-		want0   string
+		want    string
 		want1   []byte
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got0, got1, err := Foo25(tt.in0)
+		got, got1, err := Foo25(tt.in0)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo25() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if got0 != tt.want0 {
-			t.Errorf("%v. Foo25() got0 = %v, want %v", tt.name, got0, tt.want0)
+		if got != tt.want {
+			t.Errorf("%v. Foo25() got = %v, want %v", tt.name, got, tt.want)
 		}
 		if !reflect.DeepEqual(got1, tt.want1) {
 			t.Errorf("%v. Foo25() got1 = %v, want %v", tt.name, got1, tt.want1)
@@ -708,7 +708,7 @@ func TestFoo26(t *testing.T) {
 	tests := []struct {
 		name    string
 		v       interface{}
-		want0   string
+		want    string
 		want1   int
 		want2   []byte
 		wantErr bool
@@ -716,13 +716,13 @@ func TestFoo26(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got0, got1, got2, err := Foo26(tt.v)
+		got, got1, got2, err := Foo26(tt.v)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo26() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if got0 != tt.want0 {
-			t.Errorf("%v. Foo26() got0 = %v, want %v", tt.name, got0, tt.want0)
+		if got != tt.want {
+			t.Errorf("%v. Foo26() got = %v, want %v", tt.name, got, tt.want)
 		}
 		if got1 != tt.want1 {
 			t.Errorf("%v. Foo26() got1 = %v, want %v", tt.name, got1, tt.want1)
