@@ -11,47 +11,76 @@ The goal is to:
 ## Example
 Given the source file:
 ```Go
-// testfiles/test007.go
+// testfiles/calculator.go
 package testfiles
 
-type Bar struct{}
+import "errors"
 
-func (b *Bar) Foo7(i int) (string, error) {
-  return "", nil
+type Calculator struct{}
+
+func (c *Calculator) Multiply(n, d int) int {
+	return n * d
 }
+
+func (c *Calculator) Divide(n, d int) (int, error) {
+	if d == 0 {
+		return 0, errors.New("division by zero")
+	}
+	return n / d, nil
+}
+
 ```
 Running: 
 ```sh
-$ gotests -w -only=Foo7 testfiles/test007.go
+$ gotests -w -i -all testfiles/calculator.go
+Generated TestCalculatorMultiply
+Generated TestCalculatorDivide
 ```
 Generates the following test code:
 ```Go
-// testfiles/test007_test.go
+// testfiles/calculator_test.go
 package testfiles
 
 import "testing"
 
-func TestBarFoo7(t *testing.T) {
+func TestCalculatorMultiply(t *testing.T) {
 	tests := []struct {
-		name    string
-		b       *Bar
-		i       int
-		want    string
+		c    *Calculator
+		n    int
+		d    int
+		want int
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := tt.c.Multiply(tt.n, tt.d); got != tt.want {
+			t.Errorf("Calculator.Multiply(%v, %v) = %v, want %v", tt.n, tt.d, got, tt.want)
+		}
+	}
+}
+
+func TestCalculatorDivide(t *testing.T) {
+	tests := []struct {
+		c       *Calculator
+		n       int
+		d       int
+		want    int
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.b.Foo7(tt.i)
+		got, err := tt.c.Divide(tt.n, tt.d)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar.Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("Calculator.Divide(%v, %v) error = %v, wantErr %v", tt.n, tt.d, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
-			t.Errorf("%v. Bar.Foo7() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("Calculator.Divide(%v, %v) = %v, want %v", tt.n, tt.d, got, tt.want)
 		}
 	}
 }
+
 ```
 If the test file already exists, gotests generates and appends any non-existing tests. Any new dependencies are imported automatically.
 
