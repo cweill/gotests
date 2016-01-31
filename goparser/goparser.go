@@ -69,22 +69,26 @@ func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
-		f.Receiver = parseField(fDecl.Recv.List[0])[0]
+		f.Receiver = parseFields(fDecl.Recv.List[0])[0]
 	}
 	if fDecl.Type.Params != nil {
 		for _, fi := range fDecl.Type.Params.List {
-			for _, pf := range parseField(fi) {
+			for i, pf := range parseFields(fi) {
+				pf.Index = i
 				f.Parameters = append(f.Parameters, pf)
 			}
 		}
 	}
 	if fDecl.Type.Results != nil {
+		i := 0
 		for _, fi := range fDecl.Type.Results.List {
-			for _, mf := range parseField(fi) {
-				if mf.Type.String() == "error" {
+			for _, pf := range parseFields(fi) {
+				if pf.Type.String() == "error" {
 					f.ReturnsError = true
 				} else {
-					f.Results = append(f.Results, mf)
+					pf.Index = i
+					f.Results = append(f.Results, pf)
+					i++
 				}
 			}
 		}
@@ -107,7 +111,7 @@ func parseImports(imps []*ast.ImportSpec) []*models.Import {
 	return is
 }
 
-func parseField(f *ast.Field) []*models.Field {
+func parseFields(f *ast.Field) []*models.Field {
 	if f == nil {
 		return nil
 	}

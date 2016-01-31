@@ -3,9 +3,9 @@
 func {{.TestName}}(t *testing.T) {
 	tests := []struct { {{if not $f.PrintInputs}}
 		name string {{end}} {{with .Receiver}}
-		{{Receiver .}} {{.Type}} {{end}} {{range $i, $el := .Parameters}}
-		{{Param . $i}} {{.Type}} {{end}} {{range $i, $el := .Results}}
-		{{Want $i}} {{.Type}} {{end}} {{if .ReturnsError}}
+		{{Receiver .}} {{.Type}} {{end}} {{range .Parameters}}
+		{{Param .}} {{.Type}} {{end}} {{range .Results}}
+		{{Want .}} {{.Type}} {{end}} {{if .ReturnsError}}
 		wantErr bool {{end}}
 	}{
 		// TODO: Add test cases.
@@ -15,10 +15,10 @@ func {{.TestName}}(t *testing.T) {
 		if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
 			t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr) {{if .Results}}
 			continue {{end}}
-		} {{end}} {{range $i, $el := .Results}} {{if .IsBasicType}}
-		if {{template "inline" $f}} {{Got $i}} != tt.{{Want $i}} { {{else}}
-		if {{template "inline" $f}} !reflect.DeepEqual({{Got $i}}, tt.{{Want $i}}) { {{end}}
-			t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got $i}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got $i}}, tt.{{Want $i}})
+		} {{end}} {{range .Results}} {{if .IsBasicType}}
+		if {{template "inline" $f}} {{Got .}} != tt.{{Want .}} { {{else}}
+		if {{template "inline" $f}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) { {{end}}
+			t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
 		} {{end}}
 	}
 }

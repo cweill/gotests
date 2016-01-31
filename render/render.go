@@ -29,25 +29,25 @@ func receiverName(f *models.Field) string {
 	return f.ShortName()
 }
 
-func parameterName(f *models.Field, i int) string {
+func parameterName(f *models.Field) string {
 	if f.IsNamed() {
 		return f.Name
 	}
-	return fmt.Sprintf("in%v", i)
+	return fmt.Sprintf("in%v", f.Index)
 }
 
-func wantName(i int) string {
-	if i == 0 {
+func wantName(f *models.Field) string {
+	if f.Index == 0 {
 		return "want"
 	}
-	return fmt.Sprintf("want%v", i)
+	return fmt.Sprintf("want%v", f.Index)
 }
 
-func gotName(i int) string {
-	if i == 0 {
+func gotName(f *models.Field) string {
+	if f.Index == 0 {
 		return "got"
 	}
-	return fmt.Sprintf("got%v", i)
+	return fmt.Sprintf("got%v", f.Index)
 }
 
 func Header(w io.Writer, h *models.Header) error {

@@ -24,8 +24,9 @@ func (e *Expression) String() string {
 }
 
 type Field struct {
-	Name string
-	Type *Expression
+	Name  string
+	Type  *Expression
+	Index int
 }
 
 func (f *Field) IsBasicType() bool {
