@@ -10,6 +10,7 @@ type Expression struct {
 	Value      string
 	IsStar     bool
 	IsVariadic bool
+	Underlying string
 }
 
 func (e *Expression) String() string {
@@ -30,7 +31,11 @@ type Field struct {
 }
 
 func (f *Field) IsBasicType() bool {
-	switch f.Type.String() {
+	return isBasicType(f.Type.String()) || isBasicType(f.Type.Underlying)
+}
+
+func isBasicType(t string) bool {
+	switch t {
 	case "bool", "string", "int", "int8", "int16", "int32", "int64", "uint",
 		"uint8", "uint16", "uint32", "uint64", "uintptr", "byte", "rune",
 		"float32", "float64", "complex64", "complex128":

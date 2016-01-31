@@ -786,6 +786,46 @@ func TestXmlOpen(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Underlying types",
+			srcPath: `testfiles/test028.go`,
+			want: `package testfiles
+
+import (
+	"testing"
+	"time"
+)
+
+func TestCelsiusToFahrenheit(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Celsius
+		want Fahrenheit
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := tt.c.ToFahrenheit(); got != tt.want {
+			t.Errorf("%v. Celsius.ToFahrenheit() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestHourToSecond(t *testing.T) {
+	tests := []struct {
+		name string
+		h    time.Duration
+		want time.Duration
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := HourToSecond(tt.h); got != tt.want {
+			t.Errorf("%v. HourToSecond() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"path"
 	"regexp"
 
 	"github.com/cweill/gotests/goparser"
@@ -92,14 +93,18 @@ type options struct {
 }
 
 func generateTests(srcPath, testPath, destPath string, opt *options) ([]*models.Function, []byte, error) {
-	srcInfo, err := goparser.Parse(srcPath)
+	files, err := input.Files(path.Dir(srcPath))
+	if err != nil {
+		return nil, nil, fmt.Errorf("input.Files: %v", err)
+	}
+	srcInfo, err := goparser.Parse(srcPath, files)
 	if err != nil {
 		return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 	}
 	header := srcInfo.Header
 	var testFuncs []string
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
-		testInfo, err := goparser.Parse(testPath)
+		testInfo, err := goparser.Parse(testPath, nil)
 		if err != nil {
 			return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
 		}
