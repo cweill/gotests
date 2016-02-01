@@ -22,7 +22,7 @@ func init() {
 	}).ParseGlob(path.Join(path.Dir(filename), "templates/*.tmpl")))
 }
 
-func receiverName(f *models.Field) string {
+func receiverName(f *models.Receiver) string {
 	if f.IsNamed() {
 		return f.Name
 	}

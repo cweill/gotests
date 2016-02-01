@@ -30,6 +30,10 @@ type Field struct {
 	Index int
 }
 
+func (f *Field) IsStruct() bool {
+	return strings.HasPrefix(f.Type.Underlying, "struct")
+}
+
 func (f *Field) IsBasicType() bool {
 	return isBasicType(f.Type.String()) || isBasicType(f.Type.Underlying)
 }
@@ -53,10 +57,15 @@ func (f *Field) ShortName() string {
 	return strings.ToLower(string([]rune(f.Type.Value)[0]))
 }
 
+type Receiver struct {
+	*Field
+	Fields []*Field
+}
+
 type Function struct {
 	Name         string
 	IsExported   bool
-	Receiver     *Field
+	Receiver     *Receiver
 	Parameters   []*Field
 	Results      []*Field
 	ReturnsError bool

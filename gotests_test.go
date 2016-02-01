@@ -183,7 +183,6 @@ import "testing"
 func TestBarFoo7(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       int
 		want    string
 		wantErr bool
@@ -191,7 +190,8 @@ func TestBarFoo7(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.b.Foo7(tt.i)
+		b := &Bar{}
+		got, err := b.Foo7(tt.i)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -212,7 +212,6 @@ import "testing"
 
 func TestBarFoo7(t *testing.T) {
 	tests := []struct {
-		b       *Bar
 		i       int
 		want    string
 		wantErr bool
@@ -220,7 +219,8 @@ func TestBarFoo7(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.b.Foo7(tt.i)
+		b := &Bar{}
+		got, err := b.Foo7(tt.i)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("Bar.Foo7(%v) error = %v, wantErr %v", tt.i, err, tt.wantErr)
 			continue
@@ -275,13 +275,13 @@ import (
 func TestBarFoo9(t *testing.T) {
 	tests := []struct {
 		name string
-		b    Bar
 		want Bar
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := tt.b.Foo9(); !reflect.DeepEqual(got, tt.want) {
+		b := Bar{}
+		if got := b.Foo9(); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Bar.Foo9() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
@@ -743,13 +743,13 @@ import "testing"
 func TestBookOpen(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Book
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Open(); (err != nil) != tt.wantErr {
+		b := &Book{}
+		if err := b.Open(); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Book.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -758,13 +758,13 @@ func TestBookOpen(t *testing.T) {
 func TestDoorOpen(t *testing.T) {
 	tests := []struct {
 		name    string
-		d       *door
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.d.Open(); (err != nil) != tt.wantErr {
+		d := &door{}
+		if err := d.Open(); (err != nil) != tt.wantErr {
 			t.Errorf("%v. door.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -773,13 +773,13 @@ func TestDoorOpen(t *testing.T) {
 func TestXmlOpen(t *testing.T) {
 	tests := []struct {
 		name    string
-		x       *xml
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.x.Open(); (err != nil) != tt.wantErr {
+		x := &xml{}
+		if err := x.Open(); (err != nil) != tt.wantErr {
 			t.Errorf("%v. xml.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -826,6 +826,38 @@ func TestHourToSecond(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Struct receiver with multiple fields",
+			srcPath: `testfiles/test029.go`,
+			want: `package testfiles
+
+import "testing"
+
+func TestPersonSayHello(t *testing.T) {
+	tests := []struct {
+		name     string
+		Name     string
+		Age      int
+		Gender   string
+		Siblings []*Person
+		r        *Person
+		want     string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		p := &Person{
+			Name:     tt.Name,
+			Age:      tt.Age,
+			Gender:   tt.Gender,
+			Siblings: tt.Siblings,
+		}
+		if got := p.SayHello(tt.r); got != tt.want {
+			t.Errorf("%v. Person.SayHello() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles
@@ -859,14 +891,14 @@ func TestFoo100(t *testing.T) {
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -969,14 +1001,14 @@ func TestFoo100(t *testing.T) {
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -998,14 +1030,14 @@ import "testing"
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -1046,14 +1078,14 @@ func TestFoo100(t *testing.T) {
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -1076,14 +1108,14 @@ import "testing"
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -1101,14 +1133,14 @@ import "testing"
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -1253,7 +1285,7 @@ func TestBar200(t *testing.T) {
 			t.Errorf("%v. TestCases(%v) created %v tests, wantNoOutput %v", tt.name, tt.srcPath, got, tt.wantNoOutput)
 		}
 		if got := string(b); got != tt.want {
-			t.Errorf("%v. TestCases(%v) = %v, want %v", tt.name, tt.srcPath, got, tt.want)
+			t.Errorf("%v. TestCases(%v) = \n%v, want \n%v", tt.name, tt.srcPath, got, tt.want)
 		}
 		if got := output.IsFileExist(f.Name()); got == tt.wantNoOutput {
 			t.Errorf("%v. New file created: %v, wantNoOutput: %v", tt.name, got, tt.wantNoOutput)
