@@ -858,6 +858,36 @@ func TestPersonSayHello(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Struct receiver with anonymous fields",
+			srcPath: `testfiles/test030.go`,
+			want: `package testfiles
+
+import "testing"
+
+func TestDoctorSayHello(t *testing.T) {
+	tests := []struct {
+		name        string
+		Person      *Person
+		numPatients int
+		string      string
+		r           *Person
+		want        string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		d := &Doctor{
+			Person:      tt.Person,
+			numPatients: tt.numPatients,
+			string:      tt.string,
+		}
+		if got := d.SayHello(tt.r); got != tt.want {
+			t.Errorf("%v. Doctor.SayHello() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testfiles/test100.go`,
 			want: `package testfiles
