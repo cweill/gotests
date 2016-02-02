@@ -45,6 +45,7 @@ import "testing"
 
 func TestCalculatorMultiply(t *testing.T) {
 	tests := []struct {
+		c    *Calculator
 		n    int
 		d    int
 		want int
@@ -52,8 +53,7 @@ func TestCalculatorMultiply(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		c := &Calculator{}
-		if got := c.Multiply(tt.n, tt.d); got != tt.want {
+		if got := tt.c.Multiply(tt.n, tt.d); got != tt.want {
 			t.Errorf("Calculator.Multiply(%v, %v) = %v, want %v", tt.n, tt.d, got, tt.want)
 		}
 	}
@@ -61,6 +61,7 @@ func TestCalculatorMultiply(t *testing.T) {
 
 func TestCalculatorDivide(t *testing.T) {
 	tests := []struct {
+		c       *Calculator
 		n       int
 		d       int
 		want    int
@@ -69,8 +70,7 @@ func TestCalculatorDivide(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		c := &Calculator{}
-		got, err := c.Divide(tt.n, tt.d)
+		got, err := tt.c.Divide(tt.n, tt.d)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("Calculator.Divide(%v, %v) error = %v, wantErr %v", tt.n, tt.d, err, tt.wantErr)
 			continue

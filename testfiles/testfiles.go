@@ -15,8 +15,7 @@ type Celsius float64
 type Fahrenheit float64
 
 type Person struct {
-	Name     string
-	Age      int
-	Gender   string
-	Siblings []*Person
+	Name   string
+	Age    int
+	Gender string
 }
