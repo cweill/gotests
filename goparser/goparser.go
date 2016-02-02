@@ -3,7 +3,6 @@ package goparser
 import (
 	"fmt"
 	"go/ast"
-	"go/importer"
 	"go/parser"
 	"go/token"
 	"go/types"
@@ -12,38 +11,15 @@ import (
 	"github.com/cweill/gotests/models"
 )
 
-func Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
+func Parse(srcPath string) (*models.SourceInfo, error) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
 		return nil, fmt.Errorf("parser.ParseFile: %v", err)
 	}
-	pkg := f.Name.String()
-	var fs []*ast.File
-	for _, file := range files {
-		ff, err := parser.ParseFile(fset, string(file), nil, 0)
-		if err != nil {
-			return nil, fmt.Errorf("parser.ParseFile: %v", err)
-		}
-		if name := f.Name.String(); name != pkg {
-			continue
-		}
-		fs = append(fs, ff)
-	}
-	conf := &types.Config{Importer: importer.Default()}
-	ti := &types.Info{
-		Types: make(map[ast.Expr]types.TypeAndValue),
-	}
-	if _, err = conf.Check("", fset, fs, ti); err != nil {
-		return nil, fmt.Errorf("conf.Check: %v", err)
-	}
-	ul := make(map[string]string)
-	for _, t := range ti.Types {
-		ul[t.Type.String()] = t.Type.Underlying().String()
-	}
 	info := &models.SourceInfo{
 		Header: &models.Header{
-			Package: pkg,
+			Package: parseExpr(f.Name).String(),
 			Imports: parseImports(f.Imports),
 		},
 	}
@@ -52,7 +28,7 @@ func Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
 		if !ok {
 			continue
 		}
-		info.Funcs = append(info.Funcs, parseFunc(fDecl, ul))
+		info.Funcs = append(info.Funcs, parseFunc(fDecl))
 	}
 	return info, nil
 }
@@ -80,24 +56,24 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
 	}
 	h := &models.Header{
-		Package: tf.Name.String(),
+		Package: parseExpr(tf.Name).String(),
 		Imports: parseImports(tf.Imports),
 		Code:    b[furthestPos+1:],
 	}
 	return h, nil
 }
 
-func parseFunc(fDecl *ast.FuncDecl, ul map[string]string) *models.Function {
+func parseFunc(fDecl *ast.FuncDecl) *models.Function {
 	f := &models.Function{
-		Name:       fDecl.Name.String(),
+		Name:       parseExpr(fDecl.Name).String(),
 		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
-		f.Receiver = parseFields(fDecl.Recv.List[0], ul)[0]
+		f.Receiver = parseFields(fDecl.Recv.List[0])[0]
 	}
 	if fDecl.Type.Params != nil {
 		for _, fi := range fDecl.Type.Params.List {
-			for i, pf := range parseFields(fi, ul) {
+			for i, pf := range parseFields(fi) {
 				pf.Index = i
 				f.Parameters = append(f.Parameters, pf)
 			}
@@ -106,7 +82,7 @@ func parseFunc(fDecl *ast.FuncDecl, ul map[string]string) *models.Function {
 	if fDecl.Type.Results != nil {
 		i := 0
 		for _, fi := range fDecl.Type.Results.List {
-			for _, pf := range parseFields(fi, ul) {
+			for _, pf := range parseFields(fi) {
 				if pf.Type.String() == "error" {
 					f.ReturnsError = true
 				} else {
@@ -125,21 +101,21 @@ func parseImports(imps []*ast.ImportSpec) []*models.Import {
 	for _, imp := range imps {
 		var n string
 		if imp.Name != nil {
-			n = imp.Name.String()
+			n = parseExpr(imp.Name).String()
 		}
 		is = append(is, &models.Import{
 			Name: n,
-			Path: imp.Path.Value,
+			Path: parseExpr(imp.Path).String(),
 		})
 	}
 	return is
 }
 
-func parseFields(f *ast.Field, ul map[string]string) []*models.Field {
+func parseFields(f *ast.Field) []*models.Field {
 	if f == nil {
 		return nil
 	}
-	t := parseExpr(f.Type, ul)
+	t := parseExpr(f.Type)
 	if len(f.Names) == 0 {
 		return []*models.Field{{
 			Type: t,
@@ -155,28 +131,18 @@ func parseFields(f *ast.Field, ul map[string]string) []*models.Field {
 	return fs
 }
 
-func parseExpr(e ast.Expr, ul map[string]string) *models.Expression {
+func parseExpr(e ast.Expr) *models.Expression {
 	switch v := e.(type) {
 	case *ast.StarExpr:
-		val := types.ExprString(v.X)
-		return &models.Expression{
-			Value:      val,
-			IsStar:     true,
-			Underlying: ul[val],
-		}
+		return &models.Expression{Value: types.ExprString(v.X), IsStar: true}
 	case *ast.Ellipsis:
-		exp := parseExpr(v.Elt, ul)
+		exp := parseExpr(v.Elt)
 		return &models.Expression{
 			Value:      exp.Value,
 			IsStar:     exp.IsStar,
 			IsVariadic: true,
-			Underlying: ul[exp.Value],
 		}
 	default:
-		val := types.ExprString(e)
-		return &models.Expression{
-			Value:      val,
-			Underlying: ul[val],
-		}
+		return &models.Expression{Value: types.ExprString(e)}
 	}
 }
