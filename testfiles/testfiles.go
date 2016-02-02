@@ -20,9 +20,3 @@ type Person struct {
 	Gender   string
 	Siblings []*Person
 }
-
-type Doctor struct {
-	*Person
-	numPatients int
-	string
-}
