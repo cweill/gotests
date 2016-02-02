@@ -96,7 +96,6 @@ $ mkdir $HOME/go
 $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
-## Updating
 To update from anywhere:
 ```sh
 $ cwd=$(pwd); cd $GOPATH/src/github.com/cweill/gotests; git pull; go install; cd $cwd
