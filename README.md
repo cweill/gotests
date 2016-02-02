@@ -97,9 +97,8 @@ $ export GOPATH=$HOME/go
 $ export PATH=$PATH:$GOPATH/bin
 ```
 ## Updating
-To update from anywhere:
 ```sh
-$ cwd=$(pwd); cd $GOPATH/src/github.com/cweill/gotests; git pull; go install; cd $cwd
+$ go get -u github.com/cweill/gotests
 ```
 ## Usage
 gotests only generates missing test functions, leaving existing ones intact. 
