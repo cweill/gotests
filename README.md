@@ -30,7 +30,7 @@ func (c *Calculator) Divide(n, d int) (int, error) {
 }
 
 ```
-Running: 
+Running:
 ```sh
 $ gotests -w -i -all testfiles/calculator.go
 Generated TestCalculatorMultiply
@@ -101,7 +101,7 @@ $ export PATH=$PATH:$GOPATH/bin
 $ go get -u github.com/cweill/gotests
 ```
 ## Usage
-gotests only generates missing test functions, leaving existing ones intact. 
+gotests only generates missing test functions, leaving existing ones intact.
 To generate only select tests for specific files, and output the results to stdout:
 ```sh
 $ gotests -only="Foo|fetchBaz" foo.go bar.go
@@ -122,8 +122,8 @@ Pass the -w flag to write the output to the test files. gotests appends to exist
 ```sh
 $ gotests -w -only="Foo|fetchBaz" foo.go bar.go # outputs to foo_test.go and bar_test.go
 ```
-Now get that coverage up! 
+Now get that coverage up!
 
 ## License
 
-gotests is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+gotests is released under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
