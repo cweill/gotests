@@ -26,16 +26,16 @@ func TestGenerateTests(t *testing.T) {
 	}{
 		{
 			name:         "No funcs",
-			srcPath:      `testfiles/test000.go`,
+			srcPath:      `testdata/test000.go`,
 			wantNoOutput: true,
 		}, {
 			name:         "Function w/ neither receiver, parameters, nor results",
-			srcPath:      `testfiles/test001.go`,
+			srcPath:      `testdata/test001.go`,
 			wantNoOutput: true,
 		}, {
 			name:    "Function w/ anonymous argument",
-			srcPath: `testfiles/test002.go`,
-			want: `package testfiles
+			srcPath: `testdata/test002.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -53,8 +53,8 @@ func TestFoo2(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ named argument",
-			srcPath: `testfiles/test003.go`,
-			want: `package testfiles
+			srcPath: `testdata/test003.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -72,8 +72,8 @@ func TestFoo3(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ return value",
-			srcPath: `testfiles/test004.go`,
-			want: `package testfiles
+			srcPath: `testdata/test004.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -93,8 +93,8 @@ func TestFoo4(t *testing.T) {
 `,
 		}, {
 			name:    "Function returning an error",
-			srcPath: `testfiles/test005.go`,
-			want: `package testfiles
+			srcPath: `testdata/test005.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -120,8 +120,8 @@ func TestFoo5(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ multiple arguments",
-			srcPath: `testfiles/test006.go`,
-			want: `package testfiles
+			srcPath: `testdata/test006.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -149,9 +149,9 @@ func TestFoo6(t *testing.T) {
 `,
 		}, {
 			name:        "Print inputs with multiple arguments ",
-			srcPath:     `testfiles/test006.go`,
+			srcPath:     `testdata/test006.go`,
 			printInputs: true,
-			want: `package testfiles
+			want: `package testdata
 
 import "testing"
 
@@ -178,8 +178,8 @@ func TestFoo6(t *testing.T) {
 `,
 		}, {
 			name:    "Method on a struct pointer",
-			srcPath: `testfiles/test007.go`,
-			want: `package testfiles
+			srcPath: `testdata/test007.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -207,9 +207,9 @@ func TestBarFoo7(t *testing.T) {
 `,
 		}, {
 			name:        "Print inputs with single argument",
-			srcPath:     `testfiles/test007.go`,
+			srcPath:     `testdata/test007.go`,
 			printInputs: true,
-			want: `package testfiles
+			want: `package testdata
 
 import "testing"
 
@@ -236,8 +236,8 @@ func TestBarFoo7(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ struct pointer argument and return type",
-			srcPath: `testfiles/test008.go`,
-			want: `package testfiles
+			srcPath: `testdata/test008.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -267,8 +267,8 @@ func TestFoo8(t *testing.T) {
 `,
 		}, {
 			name:    "Struct value method w/ struct value return type",
-			srcPath: `testfiles/test009.go`,
-			want: `package testfiles
+			srcPath: `testdata/test009.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -292,8 +292,8 @@ func TestBarFoo9(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ map argument and return type",
-			srcPath: `testfiles/test010.go`,
-			want: `package testfiles
+			srcPath: `testdata/test010.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -317,8 +317,8 @@ func TestFoo10(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ slice argument and return type",
-			srcPath: `testfiles/test011.go`,
-			want: `package testfiles
+			srcPath: `testdata/test011.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -348,8 +348,8 @@ func TestFoo11(t *testing.T) {
 `,
 		}, {
 			name:    "Function returning only an error",
-			srcPath: `testfiles/test012.go`,
-			want: `package testfiles
+			srcPath: `testdata/test012.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -370,8 +370,8 @@ func TestFoo12(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ a function parameter",
-			srcPath: `testfiles/test013.go`,
-			want: `package testfiles
+			srcPath: `testdata/test013.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -392,8 +392,8 @@ func TestFoo13(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ a function parameter w/ its own parameters and result",
-			srcPath: `testfiles/test014.go`,
-			want: `package testfiles
+			srcPath: `testdata/test014.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -414,8 +414,8 @@ func TestFoo14(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ a function parameter that returns two results",
-			srcPath: `testfiles/test015.go`,
-			want: `package testfiles
+			srcPath: `testdata/test015.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -436,8 +436,8 @@ func TestFoo15(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ interface parameter and result",
-			srcPath: `testfiles/test016.go`,
-			want: `package testfiles
+			srcPath: `testdata/test016.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -461,8 +461,8 @@ func TestFoo16(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ imported interface receiver, parameter, and result",
-			srcPath: `testfiles/test017.go`,
-			want: `package testfiles
+			srcPath: `testdata/test017.go`,
+			want: `package testdata
 
 import (
 	"io"
@@ -487,8 +487,8 @@ func TestFoo17(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ imported struct receiver, parameter, and result",
-			srcPath: `testfiles/test018.go`,
-			want: `package testfiles
+			srcPath: `testdata/test018.go`,
+			want: `package testdata
 
 import (
 	"os"
@@ -513,8 +513,8 @@ func TestFoo18(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ multiple parameters of the same type",
-			srcPath: `testfiles/test019.go`,
-			want: `package testfiles
+			srcPath: `testdata/test019.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -537,8 +537,8 @@ func TestFoo19(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ a variadic parameter",
-			srcPath: `testfiles/test020.go`,
-			want: `package testfiles
+			srcPath: `testdata/test020.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -559,8 +559,8 @@ func TestFoo20(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ interface{} parameter and result",
-			srcPath: `testfiles/test021.go`,
-			want: `package testfiles
+			srcPath: `testdata/test021.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -584,8 +584,8 @@ func TestFoo21(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ named imports",
-			srcPath: `testfiles/test022.go`,
-			want: `package testfiles
+			srcPath: `testdata/test022.go`,
+			want: `package testdata
 
 import (
 	ht "html/template"
@@ -610,8 +610,8 @@ func TestFoo22(t *testing.T) {
 `,
 		}, {
 			name:    "Function w/ channel parameter and result",
-			srcPath: `testfiles/test023.go`,
-			want: `package testfiles
+			srcPath: `testdata/test023.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -635,8 +635,8 @@ func TestFoo23(t *testing.T) {
 `,
 		}, {
 			name:    "File with multiple imports",
-			srcPath: `testfiles/test024.go`,
-			want: `package testfiles
+			srcPath: `testdata/test024.go`,
+			want: `package testdata
 
 import (
 	"go/ast"
@@ -664,8 +664,8 @@ func TestFoo24(t *testing.T) {
 `,
 		}, {
 			name:    "Function returning two results and an error",
-			srcPath: `testfiles/test025.go`,
-			want: `package testfiles
+			srcPath: `testdata/test025.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -699,8 +699,8 @@ func TestFoo25(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple named results",
-			srcPath: `testfiles/test026.go`,
-			want: `package testfiles
+			srcPath: `testdata/test026.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -738,8 +738,8 @@ func TestFoo26(t *testing.T) {
 `,
 		}, {
 			name:    "Two different structs with same method name",
-			srcPath: `testfiles/test027.go`,
-			want: `package testfiles
+			srcPath: `testdata/test027.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -790,8 +790,8 @@ func TestXmlOpen(t *testing.T) {
 `,
 		}, {
 			name:    "Underlying types",
-			srcPath: `testfiles/test028.go`,
-			want: `package testfiles
+			srcPath: `testdata/test028.go`,
+			want: `package testdata
 
 import (
 	"testing"
@@ -830,8 +830,8 @@ func TestHourToSecond(t *testing.T) {
 `,
 		}, {
 			name:    "Struct receiver with multiple fields",
-			srcPath: `testfiles/test029.go`,
-			want: `package testfiles
+			srcPath: `testdata/test029.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -862,8 +862,8 @@ func TestPersonSayHello(t *testing.T) {
 `,
 		}, {
 			name:    "Struct receiver with anonymous fields",
-			srcPath: `testfiles/test030.go`,
-			want: `package testfiles
+			srcPath: `testdata/test030.go`,
+			want: `package testdata
 
 import "testing"
 
@@ -892,8 +892,8 @@ func TestDoctorSayHello(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions",
-			srcPath: `testfiles/test100.go`,
-			want: `package testfiles
+			srcPath: `testdata/test100.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -954,9 +954,9 @@ func TestBaz100(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions w/ only",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			only:    regexp.MustCompile("Foo100|baz100"),
-			want: `package testfiles
+			want: `package testdata
 
 import (
 	"reflect"
@@ -1001,9 +1001,9 @@ func TestBaz100(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions w/ only exported",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			only:    regexp.MustCompile(`^\p{Lu}`),
-			want: `package testfiles
+			want: `package testdata
 
 import (
 	"reflect"
@@ -1049,14 +1049,14 @@ func TestBarBar100(t *testing.T) {
 `,
 		}, {
 			name:         "Multiple functions filtering all out",
-			srcPath:      `testfiles/test100.go`,
+			srcPath:      `testdata/test100.go`,
 			only:         regexp.MustCompile("foo100"),
 			wantNoOutput: true,
 		}, {
 			name:    "Multiple functions w/ excl",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			excl:    regexp.MustCompile("Foo100|baz100"),
-			want: `package testfiles
+			want: `package testdata
 
 import "testing"
 
@@ -1078,9 +1078,9 @@ func TestBarBar100(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions excluding unexported",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			excl:    regexp.MustCompile(`^\p{Ll}`),
-			want: `package testfiles
+			want: `package testdata
 
 import (
 	"reflect"
@@ -1126,15 +1126,15 @@ func TestBarBar100(t *testing.T) {
 `,
 		}, {
 			name:         "Multiple functions excluding all",
-			srcPath:      `testfiles/test100.go`,
+			srcPath:      `testdata/test100.go`,
 			excl:         regexp.MustCompile("baz100|Foo100|Bar100"),
 			wantNoOutput: true,
 		}, {
 			name:    "Multiple functions w/ both only and excl",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			only:    regexp.MustCompile("Bar100"),
 			excl:    regexp.MustCompile("Foo100"),
-			want: `package testfiles
+			want: `package testdata
 
 import "testing"
 
@@ -1156,10 +1156,10 @@ func TestBarBar100(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions w/ only and excl competing",
-			srcPath: `testfiles/test100.go`,
+			srcPath: `testdata/test100.go`,
 			only:    regexp.MustCompile("Foo100|Bar100"),
 			excl:    regexp.MustCompile("Foo100|baz100"),
-			want: `package testfiles
+			want: `package testdata
 
 import "testing"
 
@@ -1181,9 +1181,9 @@ func TestBarBar100(t *testing.T) {
 `,
 		}, {
 			name:     "Custom importer fails",
-			srcPath:  `testfiles/test100.go`,
+			srcPath:  `testdata/test100.go`,
 			importer: &fakeImporter{err: errors.New("error")},
-			want: `package testfiles
+			want: `package testdata
 
 import (
 	"reflect"
@@ -1244,9 +1244,9 @@ func TestBaz100(t *testing.T) {
 `,
 		}, {
 			name:     "Existing test file",
-			srcPath:  `testfiles/test100.go`,
-			testPath: `testfiles/test100_test.go`,
-			want: `package testfiles
+			srcPath:  `testdata/test100.go`,
+			testPath: `testdata/test100_test.go`,
+			want: `package testdata
 
 import (
 	"reflect"
@@ -1316,9 +1316,9 @@ func TestFoo100(t *testing.T) {
 `,
 		}, {
 			name:     "Existing test file with multiple imports",
-			srcPath:  `testfiles/test200.go`,
-			testPath: `testfiles/test200_test.go`,
-			want: `package testfiles
+			srcPath:  `testdata/test200.go`,
+			testPath: `testdata/test200_test.go`,
+			want: `package testdata
 
 import (
 	"go/ast"

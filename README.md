@@ -11,8 +11,8 @@ The goal is to:
 ## Example
 Given the source file:
 ```Go
-// testfiles/calculator.go
-package testfiles
+// testdata/calculator.go
+package testdata
 
 import "errors"
 
@@ -32,14 +32,14 @@ func (c *Calculator) Divide(n, d int) (int, error) {
 ```
 Running:
 ```sh
-$ gotests -w -i -all testfiles/calculator.go
+$ gotests -w -i -all testdata/calculator.go
 Generated TestCalculatorMultiply
 Generated TestCalculatorDivide
 ```
 Generates the following test code:
 ```Go
-// testfiles/calculator_test.go
-package testfiles
+// testdata/calculator_test.go
+package testdata
 
 import "testing"
 
