@@ -1,4 +1,4 @@
-package gen
+package gotests
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cweill/gotests/gen/internal/output"
+	"github.com/cweill/gotests/internal/output"
 )
 
 func TestGenerateTests(t *testing.T) {

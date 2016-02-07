@@ -8,7 +8,7 @@ import (
 	"go/types"
 	"io/ioutil"
 
-	"github.com/cweill/gotests/gen/internal/models"
+	"github.com/cweill/gotests/internal/models"
 )
 
 type Parser struct {

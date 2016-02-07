@@ -87,7 +87,7 @@ If the test file already exists, gotests generates and appends any non-existing 
 ## Installation
 If your $GOPATH is setup just run:
 ```sh
-$ go get github.com/cweill/gotests
+$ go get github.com/cweill/gotests/...
 ```
 Otherwise, setting up your $GOPATH is simple:
 ```sh
@@ -98,7 +98,7 @@ $ export PATH=$PATH:$GOPATH/bin
 ```
 ## Updating
 ```sh
-$ go get -u github.com/cweill/gotests
+$ go get -u github.com/cweill/gotests/...
 ```
 ## Usage
 gotests only generates missing test functions, leaving existing ones intact.
