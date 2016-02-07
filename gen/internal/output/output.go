@@ -34,7 +34,6 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 	}
 	out, err := imports.Process(tf.Name(), b, nil)
 	if err != nil {
-		fmt.Println(string(b))
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
 	return out, nil
