@@ -1,6 +1,8 @@
 package gen
 
 import (
+	"errors"
+	"go/types"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -17,6 +19,7 @@ func TestGenerateTests(t *testing.T) {
 		only         *regexp.Regexp
 		excl         *regexp.Regexp
 		printInputs  bool
+		importer     types.Importer
 		want         string
 		wantNoOutput bool
 		wantErr      bool
@@ -1177,6 +1180,69 @@ func TestBarBar100(t *testing.T) {
 }
 `,
 		}, {
+			name:     "Custom importer fails",
+			srcPath:  `testfiles/test100.go`,
+			importer: &fakeImporter{err: errors.New("error")},
+			want: `package testfiles
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%v. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBarBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		b       *Bar
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+
+func TestBaz100(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:     "Existing test file",
 			srcPath:  `testfiles/test100.go`,
 			testPath: `testfiles/test100_test.go`,
@@ -1306,6 +1372,7 @@ func TestBar200(t *testing.T) {
 			Excl:        tt.excl,
 			Write:       true,
 			PrintInputs: tt.printInputs,
+			Importer:    tt.importer,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)
@@ -1321,4 +1388,13 @@ func TestBar200(t *testing.T) {
 			t.Errorf("%v. New file created: %v, wantNoOutput: %v", tt.name, got, tt.wantNoOutput)
 		}
 	}
+}
+
+// A fake importer.
+type fakeImporter struct {
+	err error
+}
+
+func (f *fakeImporter) Import(path string) (*types.Package, error) {
+	return nil, f.err
 }

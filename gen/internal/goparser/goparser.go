@@ -3,7 +3,6 @@ package goparser
 import (
 	"fmt"
 	"go/ast"
-	"go/importer"
 	"go/parser"
 	"go/token"
 	"go/types"
@@ -12,7 +11,11 @@ import (
 	"github.com/cweill/gotests/gen/internal/models"
 )
 
-func Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
+type Parser struct {
+	Importer types.Importer
+}
+
+func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
@@ -30,13 +33,12 @@ func Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
 		}
 		fs = append(fs, ff)
 	}
-	conf := &types.Config{Importer: importer.Default()}
+	conf := &types.Config{Importer: p.Importer}
 	ti := &types.Info{
 		Types: make(map[ast.Expr]types.TypeAndValue),
 	}
-	if _, err = conf.Check("", fset, fs, ti); err != nil {
-		return nil, fmt.Errorf("conf.Check: %v", err)
-	}
+	// Note: conf.Check can fail, but since Info is not required data, it's ok.
+	conf.Check("", fset, fs, ti)
 	ul := make(map[string]types.Type)
 	for _, t := range ti.Types {
 		ul[t.Type.String()] = t.Type
@@ -139,7 +141,11 @@ func parseReceiver(f *ast.Field, ul map[string]types.Type) *models.Receiver {
 	r := &models.Receiver{
 		Field: parseFields(f, ul)[0],
 	}
-	s, ok := ul[r.Type.Value].Underlying().(*types.Struct)
+	t, ok := ul[r.Type.Value]
+	if !ok {
+		return r
+	}
+	s, ok := t.Underlying().(*types.Struct)
 	if !ok {
 		return r
 	}

@@ -2,6 +2,8 @@ package gen
 
 import (
 	"fmt"
+	"go/importer"
+	"go/types"
 	"path"
 	"regexp"
 
@@ -16,6 +18,7 @@ type Options struct {
 	Excl        *regexp.Regexp
 	PrintInputs bool
 	Write       bool
+	Importer    types.Importer
 }
 
 func GenerateTests(srcPath, testPath, destPath string, opt *Options) ([]*models.Function, []byte, error) {
@@ -23,16 +26,20 @@ func GenerateTests(srcPath, testPath, destPath string, opt *Options) ([]*models.
 	if err != nil {
 		return nil, nil, fmt.Errorf("input.Files: %v", err)
 	}
-	srcInfo, err := goparser.Parse(srcPath, files)
+	if opt.Importer == nil {
+		opt.Importer = importer.Default()
+	}
+	p := goparser.Parser{Importer: opt.Importer}
+	srcInfo, err := p.Parse(srcPath, files)
 	if err != nil {
-		return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
+		return nil, nil, fmt.Errorf("Parser.Parse: %v", err)
 	}
 	header := srcInfo.Header
 	var testFuncs []string
 	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
-		testInfo, err := goparser.Parse(testPath, nil)
+		testInfo, err := p.Parse(testPath, nil)
 		if err != nil {
-			return nil, nil, fmt.Errorf("goparser.Parse: %v", err)
+			return nil, nil, fmt.Errorf("Parser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
 			testFuncs = append(testFuncs, fun.Name)
