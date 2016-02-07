@@ -8,8 +8,8 @@ import (
 
 	"golang.org/x/tools/imports"
 
-	"github.com/cweill/gotests/models"
-	"github.com/cweill/gotests/render"
+	"github.com/cweill/gotests/gen/internal/models"
+	"github.com/cweill/gotests/gen/internal/render"
 )
 
 const newFilePerm os.FileMode = 0644

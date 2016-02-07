@@ -9,7 +9,7 @@ import (
 	"go/types"
 	"io/ioutil"
 
-	"github.com/cweill/gotests/models"
+	"github.com/cweill/gotests/gen/internal/models"
 )
 
 func Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {

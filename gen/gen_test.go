@@ -1,4 +1,4 @@
-package main
+package gen
 
 import (
 	"io/ioutil"
@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/cweill/gotests/output"
+	"github.com/cweill/gotests/gen/internal/output"
 )
 
 func TestGenerateTests(t *testing.T) {
@@ -1301,11 +1301,11 @@ func TestBar200(t *testing.T) {
 		}
 		f.Close()
 		os.Remove(f.Name())
-		funcs, b, err := generateTests(tt.srcPath, tt.testPath, f.Name(), &options{
-			only:        tt.only,
-			excl:        tt.excl,
-			write:       true,
-			printInputs: tt.printInputs,
+		funcs, b, err := GenerateTests(tt.srcPath, tt.testPath, f.Name(), &Options{
+			Only:        tt.only,
+			Excl:        tt.excl,
+			Write:       true,
+			PrintInputs: tt.printInputs,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)

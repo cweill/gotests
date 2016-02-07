@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"text/template"
 
-	"github.com/cweill/gotests/models"
+	"github.com/cweill/gotests/gen/internal/models"
 )
 
 var tmpls *template.Template

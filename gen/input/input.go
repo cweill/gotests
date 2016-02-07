@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/cweill/gotests/models"
+	"github.com/cweill/gotests/gen/internal/models"
 )
 
 var NoFilesFound = errors.New("no files found")
