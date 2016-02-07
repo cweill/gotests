@@ -3,8 +3,6 @@ package render
 import (
 	"fmt"
 	"io"
-	"path"
-	"runtime"
 	"text/template"
 
 	"github.com/cweill/gotests/internal/models"
@@ -13,13 +11,15 @@ import (
 var tmpls *template.Template
 
 func init() {
-	_, filename, _, _ := runtime.Caller(1)
-	tmpls = template.Must(template.New("render").Funcs(map[string]interface{}{
+	tmpls = template.New("render").Funcs(map[string]interface{}{
 		"Receiver": receiverName,
 		"Param":    parameterName,
 		"Want":     wantName,
 		"Got":      gotName,
-	}).ParseGlob(path.Join(path.Dir(filename), "templates/*.tmpl")))
+	})
+	for _, name := range AssetNames() {
+		tmpls = template.Must(tmpls.Parse(string(MustAsset(name))))
+	}
 }
 
 func receiverName(f *models.Receiver) string {
