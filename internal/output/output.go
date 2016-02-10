@@ -40,22 +40,7 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 }
 
 func Write(dest string, b []byte) error {
-	var isNewFile bool
-	if IsFileExist(dest) {
-		df, err := os.Create(dest)
-		if err != nil {
-			return fmt.Errorf("os.Create: %v", err)
-		}
-		defer df.Close()
-		isNewFile = true
-	}
-	if err := ioutil.WriteFile(dest, b, newFilePerm); err != nil {
-		if isNewFile {
-			os.Remove(dest)
-		}
-		return err
-	}
-	return nil
+	return ioutil.WriteFile(dest, b, newFilePerm)
 }
 
 func IsFileExist(path string) bool {
