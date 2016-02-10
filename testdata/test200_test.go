@@ -20,7 +20,7 @@ func TestFoo200(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if got := Foo200(tt.x, tt.t); got != tt.want {
-			t.Errorf("%v. Foo200() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. Foo200() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

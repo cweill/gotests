@@ -17,7 +17,7 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%v. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
@@ -37,7 +37,7 @@ func TestBaz100(t *testing.T) {
 	// TestBaz100 contains a comment.
 	for _, tt := range tests {
 		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%v. baz100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
