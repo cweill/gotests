@@ -10,6 +10,7 @@ type Expression struct {
 	Value      string
 	IsStar     bool
 	IsVariadic bool
+	IsWriter   bool
 	Underlying string
 }
 
@@ -28,6 +29,10 @@ type Field struct {
 	Name  string
 	Type  *Expression
 	Index int
+}
+
+func (f *Field) IsWriter() bool {
+	return f.Type.IsWriter
 }
 
 func (f *Field) IsStruct() bool {
@@ -69,6 +74,37 @@ type Function struct {
 	Parameters   []*Field
 	Results      []*Field
 	ReturnsError bool
+}
+
+func (f *Function) TestParameters() []*Field {
+	var ps []*Field
+	for _, p := range f.Parameters {
+		if p.IsWriter() {
+			continue
+		}
+		ps = append(ps, p)
+	}
+	return ps
+}
+
+func (f *Function) TestResults() []*Field {
+	var ps []*Field
+	ps = append(ps, f.Results...)
+	for _, p := range f.Parameters {
+		if !p.IsWriter() {
+			continue
+		}
+		ps = append(ps, &Field{
+			Name: p.Name,
+			Type: &Expression{
+				Value:      "string",
+				IsWriter:   true,
+				Underlying: "string",
+			},
+			Index: len(ps),
+		})
+	}
+	return ps
 }
 
 func (f *Function) ReturnsMultiple() bool {

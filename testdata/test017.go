@@ -2,4 +2,4 @@ package testdata
 
 import "io"
 
-func Foo17(w io.Writer) io.Writer { return w }
+func Foo17(r io.Reader) io.Reader { return r }

@@ -473,13 +473,13 @@ import (
 func TestFoo17(t *testing.T) {
 	tests := []struct {
 		name string
-		w    io.Writer
-		want io.Writer
+		r    io.Reader
+		want io.Reader
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Foo17(tt.w); !reflect.DeepEqual(got, tt.want) {
+		if got := Foo17(tt.r); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%v. Foo17() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
@@ -648,7 +648,7 @@ import (
 func TestFoo24(t *testing.T) {
 	tests := []struct {
 		name    string
-		w       io.Writer
+		r       io.Reader
 		x       ast.Expr
 		t       types.Type
 		wantErr bool
@@ -656,7 +656,7 @@ func TestFoo24(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := Foo24(tt.w, tt.x, tt.t); (err != nil) != tt.wantErr {
+		if err := Foo24(tt.r, tt.x, tt.t); (err != nil) != tt.wantErr {
 			t.Errorf("%v. Foo24() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
@@ -886,6 +886,93 @@ func TestDoctorSayHello(t *testing.T) {
 		}
 		if got := d.SayHello(tt.r); got != tt.want {
 			t.Errorf("%v. Doctor.SayHello() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:    "io.Writer parameters",
+			srcPath: `testdata/test031.go`,
+			want: `package testdata
+
+import (
+	"bytes"
+	"testing"
+)
+
+func TestBarWrite(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{}
+		w := &bytes.Buffer{}
+		if err := b.Write(w); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Bar.Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if got := w.String(); got != tt.want {
+			t.Errorf("%v. Bar.Write() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestWrite(t *testing.T) {
+	tests := []struct {
+		name    string
+		data    string
+		want    string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		w := &bytes.Buffer{}
+		if err := Write(w, tt.data); (err != nil) != tt.wantErr {
+			t.Errorf("%v. Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if got := w.String(); got != tt.want {
+			t.Errorf("%v. Write() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestMultiWrite(t *testing.T) {
+	tests := []struct {
+		name    string
+		data    string
+		want    int
+		want1   string
+		want2   string
+		want3   string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		w1 := &bytes.Buffer{}
+		w2 := &bytes.Buffer{}
+		got, got1, err := MultiWrite(w1, w2, tt.data)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%v. MultiWrite() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if got != tt.want {
+			t.Errorf("%v. MultiWrite() got = %v, want %v", tt.name, got, tt.want)
+		}
+		if got1 != tt.want1 {
+			t.Errorf("%v. MultiWrite() got1 = %v, want %v", tt.name, got1, tt.want1)
+		}
+		if got2 := w1.String(); got2 != tt.want2 {
+			t.Errorf("%v. MultiWrite() got2 = %v, want %v", tt.name, got2, tt.want2)
+		}
+		if got3 := w2.String(); got3 != tt.want3 {
+			t.Errorf("%v. MultiWrite() got3 = %v, want %v", tt.name, got3, tt.want3)
 		}
 	}
 }

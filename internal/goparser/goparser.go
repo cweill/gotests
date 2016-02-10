@@ -211,10 +211,10 @@ func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
 		if ul[val] != nil {
 			u = ul[val].Underlying().String()
 		}
-
 		return &models.Expression{
 			Value:      val,
 			Underlying: u,
+			IsWriter:   val == "io.Writer",
 		}
 	}
 }
