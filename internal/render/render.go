@@ -1,5 +1,7 @@
 package render
 
+//go:generate go-bindata -pkg=render templates
+
 import (
 	"fmt"
 	"io"
