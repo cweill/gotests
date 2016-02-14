@@ -1,7 +1,6 @@
 package render
 
-//go:generate go-bindata -pkg=render templates
-
+//go:generate go-bindata -pkg=bindata -o "./bindata/bindata.go" templates
 import (
 	"fmt"
 	"io"
@@ -9,6 +8,7 @@ import (
 	"unicode"
 
 	"github.com/cweill/gotests/internal/models"
+	"github.com/cweill/gotests/internal/render/bindata"
 )
 
 var tmpls *template.Template
@@ -21,8 +21,8 @@ func init() {
 		"Want":     wantName,
 		"Got":      gotName,
 	})
-	for _, name := range AssetNames() {
-		tmpls = template.Must(tmpls.Parse(string(MustAsset(name))))
+	for _, name := range bindata.AssetNames() {
+		tmpls = template.Must(tmpls.Parse(string(bindata.MustAsset(name))))
 	}
 }
 

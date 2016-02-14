@@ -9,7 +9,7 @@
 // templates/results.tmpl
 // DO NOT EDIT!
 
-package render
+package bindata
 
 import (
 	"bytes"
