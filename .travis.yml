@@ -6,6 +6,6 @@ before_install:
   - go get github.com/mattn/goveralls
   - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
 script:
-  - go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output
+  - go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
   - ./gotests.test -test.coverprofile coverage.cov
   - $HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.cov
