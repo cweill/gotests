@@ -3,7 +3,7 @@
 func {{.TestName}}(t *testing.T) {
 	tests := []struct { {{if not $f.PrintInputs}}
 		name string {{end}} {{with .Receiver}} {{if .IsStruct}} {{range .Fields}}
-		{{.Name}} {{.Type}} {{end}} {{else}}
+		{{Field .}} {{.Type}} {{end}} {{else}}
 		{{Receiver .}} {{.Type}} {{end}} {{end}} {{range .TestParameters}}
 		{{Param .}} {{.Type}} {{end}} {{range .TestResults}}
 		{{Want .}} {{.Type}} {{end}} {{if .ReturnsError}}
@@ -13,7 +13,7 @@ func {{.TestName}}(t *testing.T) {
 	}
 	for _, tt := range tests { {{with .Receiver}}{{if .IsStruct}}
 		{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{ {{range .Fields}}
-		{{.Name}}: tt.{{.Name}}, {{end}}
+		{{.Name}}: tt.{{Field .}}, {{end}}
 		} {{end}} {{end}} {{range .Parameters}}{{if .IsWriter}}
 		{{Param .}} := &bytes.Buffer{} {{end}} {{end}} {{if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
 		{{template "results" $f}} {{template "call" $f}} {{end}} {{if .ReturnsError}}

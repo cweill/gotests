@@ -837,22 +837,24 @@ import "testing"
 
 func TestPersonSayHello(t *testing.T) {
 	tests := []struct {
-		name     string
-		Name     string
-		Age      int
-		Gender   string
-		Siblings []*Person
-		r        *Person
-		want     string
+		name      string
+		firstName string
+		lastName  string
+		age       int
+		gender    string
+		siblings  []*Person
+		r         *Person
+		want      string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		p := &Person{
-			Name:     tt.Name,
-			Age:      tt.Age,
-			Gender:   tt.Gender,
-			Siblings: tt.Siblings,
+			FirstName: tt.firstName,
+			LastName:  tt.lastName,
+			Age:       tt.age,
+			Gender:    tt.gender,
+			Siblings:  tt.siblings,
 		}
 		if got := p.SayHello(tt.r); got != tt.want {
 			t.Errorf("%q. Person.SayHello() = %v, want %v", tt.name, got, tt.want)
@@ -870,7 +872,8 @@ import "testing"
 func TestDoctorSayHello(t *testing.T) {
 	tests := []struct {
 		name        string
-		Person      *Person
+		person      *Person
+		id          string
 		numPatients int
 		string      string
 		r           *Person
@@ -880,7 +883,8 @@ func TestDoctorSayHello(t *testing.T) {
 	}
 	for _, tt := range tests {
 		d := &Doctor{
-			Person:      tt.Person,
+			Person:      tt.person,
+			ID:          tt.id,
 			numPatients: tt.numPatients,
 			string:      tt.string,
 		}

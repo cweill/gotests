@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"text/template"
+	"unicode"
 
 	"github.com/cweill/gotests/internal/models"
 )
@@ -12,6 +13,7 @@ var tmpls *template.Template
 
 func init() {
 	tmpls = template.New("render").Funcs(map[string]interface{}{
+		"Field":    fieldName,
 		"Receiver": receiverName,
 		"Param":    parameterName,
 		"Want":     wantName,
@@ -20,6 +22,13 @@ func init() {
 	for _, name := range AssetNames() {
 		tmpls = template.Must(tmpls.Parse(string(MustAsset(name))))
 	}
+}
+
+func fieldName(f *models.Field) string {
+	if f.IsNamed() {
+		return unexport(f.Name)
+	}
+	return unexport(f.Type.String())
 }
 
 func receiverName(f *models.Receiver) string {
@@ -48,6 +57,17 @@ func gotName(f *models.Field) string {
 		return "got"
 	}
 	return fmt.Sprintf("got%v", f.Index)
+}
+
+func unexport(s string) string {
+	r := []rune(s)
+	for i := range r {
+		if i != 0 && i+1 < len(r)-1 && unicode.IsLower(r[i+1]) {
+			break
+		}
+		r[i] = unicode.ToLower(r[i])
+	}
+	return string(r)
 }
 
 func Header(w io.Writer, h *models.Header) error {
