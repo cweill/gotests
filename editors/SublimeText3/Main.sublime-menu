@@ -1,0 +1,36 @@
+[
+	{
+		"caption": "Preferences",
+		"id": "preferences",
+		"children":
+		[
+			{
+				"caption": "Package Settings",
+				"id": "package-settings",
+				"children":
+				[
+					{
+						"caption": "GoTests",
+						"children":
+						[
+							{
+								"caption": "Settings – Default",
+								"command": "open_file",
+								"args": {
+									"file": "${packages}/GoTests/GoTests.sublime-settings"
+								}
+							},
+							{
+								"caption": "Settings – User",
+								"command": "open_file",
+								"args": {
+									"file": "${packages}/User/GoTests.sublime-settings"
+								}
+							},
+						],
+					},
+				],
+			},
+		],
+	},
+]
