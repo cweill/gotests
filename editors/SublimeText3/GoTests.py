@@ -6,6 +6,7 @@ class gotestsCommand(sublime_plugin.TextCommand):
 		fn = self.view.file_name()
 		if fn and fn.endswith('.go') and not fn.endswith('_test.go'):
 			settings = sublime.load_settings("GoTests.sublime-settings")
+			fs = []
 			for s in self.view.sel():
 				line = self.function_line(s.begin())
 				i = line.begin()
@@ -15,12 +16,15 @@ class gotestsCommand(sublime_plugin.TextCommand):
 					line = self.view.line(i)
 					if not f:
 						continue
-					try:
-						proc = subprocess.Popen([settings.get("gotests_cmd", "gotests"), '-w', '-only=' + f, fn], stdout=subprocess.PIPE)
-						print(proc.stdout.read().decode("utf-8").replace('\r\n', '\n').replace('\n', ''))
-					except OSError as e:
-						sublime.message_dialog("GoTests error: " + str(e))
-						return False
+					fs.append(f)
+			try:
+				gotests = settings.get("gotests_cmd", "gotests")
+				cmd = [gotests, '-w', '-only=^(' + "|".join(fs) + ')$', fn]
+				proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+				print(proc.stdout.read().decode("utf-8").replace('\r\n', '\n'))
+			except OSError as e:
+				sublime.message_dialog("GoTests error: " + str(e))
+				return False
 			return True
 		return False
 
