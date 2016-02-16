@@ -1,128 +1,43 @@
 # gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master)
-A Golang tool to automatically generate scaffolding for [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests).
 
-The goal is to:
-- [x] generate a framework for Go test functions in table driven style
-- [x] automatically import test dependencies from file-under-test's
-- [x] compare results using `==` on basic types and `reflect.DeepEqual` on everything else
-- [ ] create fakes that conform to interfaces used in function parameters
-- [ ] write test cases for you (_bluesky_)
+`gotests` is a Golang commandline tool for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). For a given source file, `gotests` only generates missing test functions based on the function or method signature. Any new dependencies are automatically imported.
 
-## Example
-Given the source file:
-```Go
-// testdata/calculator.go
-package testdata
+## Demo
 
-import "errors"
+The following demo shows Sublime Text 3 integration with `gotests`.
 
-type Calculator struct{}
+![demo](/editors/SublimeText3/gotests.gif)
 
-func (c *Calculator) Multiply(n, d int) int {
-	return n * d
-}
-
-func (c *Calculator) Divide(n, d int) (int, error) {
-	if d == 0 {
-		return 0, errors.New("division by zero")
-	}
-	return n / d, nil
-}
-
-```
-Running:
-```sh
-$ gotests -w -i -all testdata/calculator.go
-Generated TestCalculatorMultiply
-Generated TestCalculatorDivide
-```
-Generates the following test code:
-```Go
-// testdata/calculator_test.go
-package testdata
-
-import "testing"
-
-func TestCalculatorMultiply(t *testing.T) {
-	tests := []struct {
-		n    int
-		d    int
-		want int
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		c := &Calculator{}
-		if got := c.Multiply(tt.n, tt.d); got != tt.want {
-			t.Errorf("Calculator.Multiply(%v, %v) = %v, want %v", tt.n, tt.d, got, tt.want)
-		}
-	}
-}
-
-func TestCalculatorDivide(t *testing.T) {
-	tests := []struct {
-		n       int
-		d       int
-		want    int
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		c := &Calculator{}
-		got, err := c.Divide(tt.n, tt.d)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("Calculator.Divide(%v, %v) error = %v, wantErr %v", tt.n, tt.d, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("Calculator.Divide(%v, %v) = %v, want %v", tt.n, tt.d, got, tt.want)
-		}
-	}
-}
-
-```
-If the test file already exists, gotests generates and appends any non-existing tests. Any new dependencies are imported automatically.
+Plugins for emacs and vim are coming soon.
 
 ## Installation
-If your $GOPATH is setup just run:
-```sh
-$ go get github.com/cweill/gotests/...
-```
-Otherwise, setting up your $GOPATH is simple:
-```sh
-$ mkdir $HOME/go
-# consider adding below to your .bashrc or .bash_profile
-$ export GOPATH=$HOME/go
-$ export PATH=$PATH:$GOPATH/bin
-```
-## Updating
+
+Use [`go get`](https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies) to install and update:
 ```sh
 $ go get -u github.com/cweill/gotests/...
 ```
+
 ## Usage
-gotests only generates missing test functions, leaving existing ones intact.
-To generate only select tests for specific files, and output the results to stdout:
+
+`gotests` can generate tests for a single Go source file or an entire directory. By default, it performs a dry-run and outputs the generate tests to stdout.
 ```sh
-$ gotests -only="Foo|fetchBaz" foo.go bar.go
+$ gotests [options] PATH
 ```
-For all tests:
-```sh
-$ gotests -all foo.go bar.go
 ```
-For most tests, excluding a few:
-```sh
-$ gotests -excl=fetchBaz foo.go bar.go
+Usage of gotests:
+
+  -all     generate tests for all functions and methods
+  
+  -excl    regexp. generate tests for functions and methods that don't match. e.g. -excl="^\p{Ll}" filters unexported
+    	   functions and methods only. Takes precedence over -only and -all
+    	   
+  -i	   print test inputs in error messages
+  
+  -only    regexp. generate tests for functions and methods that match only. e.g. -only="^\p{Lu}" selects exported 
+           functions and methods only. Takes precedence over -all
+  
+  -w       write output to (test) files instead of stdout
 ```
-To generate tests for an entire directory:
-```sh
-$ gotests -all .
-```
-Pass the -w flag to write the output to the test files. gotests appends to existing test files or creates new ones beside the source files.
-```sh
-$ gotests -w -only="Foo|fetchBaz" foo.go bar.go # outputs to foo_test.go and bar_test.go
-```
-Now get that coverage up!
 
 ## License
 
