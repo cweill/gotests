@@ -1,7 +1,0 @@
-[
-	{
-	    "id" : "GoTests",
-	    "caption" : "Generate Go tests",
-	    "command" : "gotests"
-	}
-]

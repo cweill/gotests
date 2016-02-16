@@ -1,4 +1,0 @@
-{
-	// The absolute path to the gotests binary.
-	"gotests_cmd": "/Users/me/gopath/bin/gotests",
-}
