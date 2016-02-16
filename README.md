@@ -1,10 +1,10 @@
 # gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master)
 
-`gotests` is a Golang commandline tool for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). It generates missing tests based on its target source files' function and method signatures. Additionally, any new dependencies in the test files are automatically imported.
+`gotests` is a Golang commandline tool and IDE plugin for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). It generates missing tests based on its target source files' function and method signatures. Additionally, any new dependencies in the test files are automatically imported.
 
 ## Demo
 
-The following demo shows Sublime Text 3 integration with `gotests`.
+The following shows Sublime Text 3 integration with `gotests`.
 
 ![demo](/editors/SublimeText3/gotests.gif)
 
