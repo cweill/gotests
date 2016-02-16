@@ -1,6 +1,6 @@
 # gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master)
 
-`gotests` is a Golang commandline tool for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). For a given source file, `gotests` only generates missing test functions based on the function or method signature. Any new dependencies are automatically imported.
+`gotests` is a Golang commandline tool for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). For a given source file, `gotests` generates missing tests based on its function and method signatures. Any new dependencies in the test file are automatically imported.
 
 ## Demo
 
