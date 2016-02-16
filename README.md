@@ -40,4 +40,4 @@ Available options:
 
 ## License
 
-gotests is released under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
+`gotests` is released under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
