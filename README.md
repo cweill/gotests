@@ -13,6 +13,7 @@ Plugins for emacs and vim are coming soon.
 ## Installation
 
 Use [`go get`](https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies) to install and update:
+
 ```sh
 $ go get -u github.com/cweill/gotests/...
 ```
@@ -20,22 +21,28 @@ $ go get -u github.com/cweill/gotests/...
 ## Usage
 
 From the commandline, `gotests` can generate tests for specific Go source files or an entire directory. By default, it prints its output to stdout.
+
 ```sh
 $ gotests [options] PATH ...
 ```
+
 Available options:
+
 ```
-  -all     generate tests for all functions and methods
+  -all         generate tests for all functions and methods
   
-  -excl    regexp. generate tests for functions and methods that don't match. e.g. -excl="^\p{Ll}" filters unexported
-    	   functions and methods only. Takes precedence over -only and -all
+  -excl        regexp. generate tests for functions and methods that don't 
+               match. Takes precedence over -only, -exp, and -all
     	   
-  -i	   print test inputs in error messages
+  -exported    generate tests for exported functions and methods. Takes 
+               precedence over -only and -all
+
+  -i	       print test inputs in error messages
   
-  -only    regexp. generate tests for functions and methods that match only. e.g. -only="^\p{Lu}" selects exported 
-           functions and methods only. Takes precedence over -all
+  -only        regexp. generate tests for functions and methods that match only.
+               Takes precedence over -all
   
-  -w       write output to (test) files instead of stdout
+  -w           write output to (test) files instead of stdout
 ```
 
 ## License

@@ -10,17 +10,18 @@ import (
 )
 
 var (
-	onlyFuncs   = flag.String("only", "", `regexp. generate tests for functions and methods that match only. e.g. -only="^\p{Lu}" selects exported functions and methods only. Takes precedence over -all`)
-	exclFuncs   = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. e.g. -excl="^\p{Ll}" filters unexported functions and methods only. Takes precedence over -only and -all`)
-	allFuncs    = flag.Bool("all", false, "generate tests for all functions and methods")
-	printInputs = flag.Bool("i", false, "print test inputs in error messages")
-	writeOutput = flag.Bool("w", false, "write output to (test) files instead of stdout")
+	onlyFuncs     = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
+	exclFuncs     = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exp, and -all`)
+	exportedFuncs = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
+	allFuncs      = flag.Bool("all", false, "generate tests for all functions and methods")
+	printInputs   = flag.Bool("i", false, "print test inputs in error messages")
+	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
 )
 
 func main() {
 	flag.Parse()
-	if *onlyFuncs == "" && *exclFuncs == "" && !*allFuncs {
-		fmt.Println("Please specify either the -only, -excl, or -all flag")
+	if *onlyFuncs == "" && *exclFuncs == "" && !*exportedFuncs && !*allFuncs {
+		fmt.Println("Please specify either the -only, -excl, -exp, or -all flag")
 		return
 	}
 	if len(flag.Args()) == 0 {
@@ -57,7 +58,8 @@ func main() {
 		for _, src := range ps {
 			tests, b, err := gotests.GenerateTests(string(src), src.TestPath(), src.TestPath(), &gotests.Options{
 				Only:        onlyRE,
-				Excl:        exclRE,
+				Exclude:     exclRE,
+				Exported:    *exportedFuncs,
 				Write:       *writeOutput,
 				PrintInputs: *printInputs,
 			})

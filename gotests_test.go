@@ -18,6 +18,7 @@ func TestGenerateTests(t *testing.T) {
 		testPath     string
 		only         *regexp.Regexp
 		excl         *regexp.Regexp
+		exported     bool
 		printInputs  bool
 		importer     types.Importer
 		want         string
@@ -1091,9 +1092,9 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
-			name:    "Multiple functions w/ only exported",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile(`^\p{Lu}`),
+			name:     "Multiple functions filtering exported",
+			srcPath:  `testdata/test100.go`,
+			exported: true,
 			want: `package testdata
 
 import (
@@ -1121,6 +1122,64 @@ func TestFoo100(t *testing.T) {
 		}
 	}
 }
+
+func TestBarBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:     "Multiple functions filtering exported w/ only",
+			srcPath:  `testdata/test100.go`,
+			only:     regexp.MustCompile(`Foo100`),
+			exported: true,
+			want: `package testdata
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:     "Multiple functions filtering exported w/ excl",
+			srcPath:  `testdata/test100.go`,
+			excl:     regexp.MustCompile(`Foo100`),
+			exported: true,
+			want: `package testdata
+
+import "testing"
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -1150,54 +1209,6 @@ func TestBarBar100(t *testing.T) {
 			want: `package testdata
 
 import "testing"
-
-func TestBarBar100(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
-		}, {
-			name:    "Multiple functions excluding unexported",
-			srcPath: `testdata/test100.go`,
-			excl:    regexp.MustCompile(`^\p{Ll}`),
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo100(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -1460,7 +1471,8 @@ func TestBar200(t *testing.T) {
 		os.Remove(f.Name())
 		funcs, b, err := GenerateTests(tt.srcPath, tt.testPath, f.Name(), &Options{
 			Only:        tt.only,
-			Excl:        tt.excl,
+			Exclude:     tt.excl,
+			Exported:    tt.exported,
 			Write:       true,
 			PrintInputs: tt.printInputs,
 			Importer:    tt.importer,

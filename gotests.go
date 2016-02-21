@@ -15,7 +15,8 @@ import (
 
 type Options struct {
 	Only        *regexp.Regexp
-	Excl        *regexp.Regexp
+	Exclude     *regexp.Regexp
+	Exported    bool
 	PrintInputs bool
 	Write       bool
 	Importer    types.Importer
@@ -50,7 +51,7 @@ func GenerateTests(srcPath, testPath, destPath string, opt *Options) ([]*models.
 		}
 		header = h
 	}
-	funcs := srcInfo.TestableFuncs(opt.Only, opt.Excl, testFuncs)
+	funcs := srcInfo.TestableFuncs(opt.Only, opt.Exclude, opt.Exported, testFuncs)
 	if len(funcs) == 0 {
 		return nil, nil, nil
 	}

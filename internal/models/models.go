@@ -142,7 +142,7 @@ type SourceInfo struct {
 	Funcs  []*Function
 }
 
-func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, testFuncs []string) []*Function {
+func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, exp bool, testFuncs []string) []*Function {
 	sort.Strings(testFuncs)
 	var fs []*Function
 	for _, f := range i.Funcs {
@@ -153,6 +153,9 @@ func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, testFuncs []string
 			continue
 		}
 		if excl != nil && excl.MatchString(f.Name) {
+			continue
+		}
+		if exp && !f.IsExported {
 			continue
 		}
 		if only != nil && !only.MatchString(f.Name) {
