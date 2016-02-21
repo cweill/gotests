@@ -174,17 +174,6 @@ func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, exp bool, testFunc
 	return fs
 }
 
-func (i *SourceInfo) UsesReflection() bool {
-	for _, f := range i.Funcs {
-		for _, r := range f.Results {
-			if !r.IsBasicType() {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func contains(ss []string, s string) bool {
 	if i := sort.SearchStrings(ss, s); i < len(ss) && ss[i] == s {
 		return true
