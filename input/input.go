@@ -8,7 +8,7 @@ import (
 	"github.com/cweill/gotests/internal/models"
 )
 
-var NoFilesFound = errors.New("no files found")
+var ErrNoFilesFound = errors.New("no files found")
 
 // Returns all the Golang files for the given path. Ignores hidden files.
 func Files(srcPath string) ([]models.Path, error) {
@@ -40,7 +40,7 @@ func Files(srcPath string) ([]models.Path, error) {
 		}
 		return srcPaths, nil
 	}
-	return nil, NoFilesFound
+	return nil, ErrNoFilesFound
 }
 
 func isHiddenFile(path string) bool {

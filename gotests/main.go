@@ -48,7 +48,7 @@ func main() {
 	for _, path := range flag.Args() {
 		ps, err := input.Files(path)
 		if err != nil {
-			if err == input.NoFilesFound {
+			if err == input.ErrNoFilesFound {
 				fmt.Printf("No source files found at %v\n", path)
 			} else {
 				fmt.Println(err.Error())
