@@ -46,3 +46,7 @@ func Files(srcPath string) ([]models.Path, error) {
 func isHiddenFile(path string) bool {
 	return []rune(filepath.Base(path))[0] == '.'
 }
+
+func isHiddenFile(path string) bool {
+	return []rune(filepath.Base(path))[0] == '.'
+}
