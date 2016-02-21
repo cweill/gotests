@@ -1092,6 +1092,53 @@ func TestBaz100(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Multiple functions w/ case-insensitive only",
+			srcPath: `testdata/test100.go`,
+			only:    regexp.MustCompile("(?i)foo100|Baz100"),
+			want: `package testdata
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFoo100(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := Foo100(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBaz100(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Multiple functions w/ only filtering on receiver",
 			srcPath: `testdata/test100.go`,
 			only:    regexp.MustCompile("^BarBar100$"),
@@ -1197,10 +1244,14 @@ func TestFoo100(t *testing.T) {
 }
 `,
 		}, {
-			name:     "Multiple functions filtering exported w/ excl",
-			srcPath:  `testdata/test100.go`,
-			excl:     regexp.MustCompile(`Foo100`),
-			exported: true,
+			name:         "Multiple functions filtering all out",
+			srcPath:      `testdata/test100.go`,
+			only:         regexp.MustCompile("foo100"),
+			wantNoOutput: true,
+		}, {
+			name:    "Multiple functions w/ excl",
+			srcPath: `testdata/test100.go`,
+			excl:    regexp.MustCompile("Foo100|baz100"),
 			want: `package testdata
 
 import "testing"
@@ -1222,14 +1273,34 @@ func TestBarBar100(t *testing.T) {
 }
 `,
 		}, {
-			name:         "Multiple functions filtering all out",
-			srcPath:      `testdata/test100.go`,
-			only:         regexp.MustCompile("foo100"),
-			wantNoOutput: true,
-		}, {
-			name:    "Multiple functions w/ excl",
+			name:    "Multiple functions w/ case-insensitive excl",
 			srcPath: `testdata/test100.go`,
-			excl:    regexp.MustCompile("Foo100|baz100"),
+			excl:    regexp.MustCompile("(?i)foO100|BaZ100"),
+			want: `package testdata
+
+import "testing"
+
+func TestBarBar100(t *testing.T) {
+	tests := []struct {
+		name    string
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:     "Multiple functions filtering exported w/ excl",
+			srcPath:  `testdata/test100.go`,
+			excl:     regexp.MustCompile(`Foo100`),
+			exported: true,
 			want: `package testdata
 
 import "testing"
