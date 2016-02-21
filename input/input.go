@@ -10,6 +10,7 @@ import (
 
 var NoFilesFound = errors.New("no files found")
 
+// Returns all the Golang files for the given path. Ignores hidden files.
 func Files(srcPath string) ([]models.Path, error) {
 	var srcPaths []models.Path
 	srcPath, err := filepath.Abs(srcPath)
@@ -22,6 +23,9 @@ func Files(srcPath string) ([]models.Path, error) {
 			return nil, fmt.Errorf("filepath.Glob: %v\n", err)
 		}
 		for _, p := range ps {
+			if isHiddenFile(p) {
+				continue
+			}
 			src := models.Path(p)
 			if !src.IsTestPath() {
 				srcPaths = append(srcPaths, src)
@@ -29,7 +33,7 @@ func Files(srcPath string) ([]models.Path, error) {
 		}
 		return srcPaths, nil
 	}
-	if filepath.Ext(srcPath) == ".go" {
+	if filepath.Ext(srcPath) == ".go" && !isHiddenFile(srcPath) {
 		src := models.Path(srcPath)
 		if !src.IsTestPath() {
 			srcPaths = append(srcPaths, src)
@@ -37,4 +41,8 @@ func Files(srcPath string) ([]models.Path, error) {
 		return srcPaths, nil
 	}
 	return nil, NoFilesFound
+}
+
+func isHiddenFile(path string) bool {
+	return []rune(filepath.Base(path))[0] == '.'
 }
