@@ -119,6 +119,14 @@ func (f *Function) OnlyReturnsError() bool {
 	return len(f.Results) == 0 && f.ReturnsError
 }
 
+func (f *Function) FullName() string {
+	var r string
+	if f.Receiver != nil {
+		r = f.Receiver.Type.Value
+	}
+	return strings.Title(r) + strings.Title(f.Name)
+}
+
 func (f *Function) TestName() string {
 	var r string
 	if f.Receiver != nil {
@@ -152,13 +160,13 @@ func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, exp bool, testFunc
 		if len(testFuncs) > 0 && contains(testFuncs, f.TestName()) {
 			continue
 		}
-		if excl != nil && excl.MatchString(f.Name) {
+		if excl != nil && (excl.MatchString(f.Name) || excl.MatchString(f.FullName())) {
 			continue
 		}
 		if exp && !f.IsExported {
 			continue
 		}
-		if only != nil && !only.MatchString(f.Name) {
+		if only != nil && !only.MatchString(f.Name) && !only.MatchString(f.FullName()) {
 			continue
 		}
 		fs = append(fs, f)
