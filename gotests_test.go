@@ -1635,6 +1635,13 @@ func TestBar200(t *testing.T) {
 	}
 }
 
+// 163403439 ns/op
+func BenchmarkGenerateTests(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GenerateTests("testdata/", &Options{})
+	}
+}
+
 // A fake importer.
 type fakeImporter struct {
 	err error
