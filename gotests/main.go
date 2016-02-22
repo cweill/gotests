@@ -3,11 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"regexp"
 
 	"github.com/cweill/gotests"
-	"github.com/cweill/gotests/input"
 )
+
+const newFilePerm os.FileMode = 0644
 
 var (
 	onlyFuncs     = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
@@ -44,42 +47,34 @@ func main() {
 			return
 		}
 	}
-	var count int
 	for _, path := range flag.Args() {
-		ps, err := input.Files(path)
+		tests, err := gotests.GenerateTests(path, &gotests.Options{
+			Only:        onlyRE,
+			Exclude:     exclRE,
+			Exported:    *exportedFuncs,
+			PrintInputs: *printInputs,
+		})
 		if err != nil {
-			if err == input.ErrNoFilesFound {
-				fmt.Printf("No source files found at %v\n", path)
-			} else {
-				fmt.Println(err.Error())
-			}
+			fmt.Println(err.Error())
 			continue
 		}
-		for _, src := range ps {
-			tests, b, err := gotests.GenerateTests(string(src), src.TestPath(), src.TestPath(), &gotests.Options{
-				Only:        onlyRE,
-				Exclude:     exclRE,
-				Exported:    *exportedFuncs,
-				Write:       *writeOutput,
-				PrintInputs: *printInputs,
-			})
-			if err != nil {
-				fmt.Println(err.Error())
-				continue
+		if len(tests) == 0 {
+			fmt.Println("No tests generated for %v", path)
+			continue
+		}
+		for _, test := range tests {
+			if *writeOutput {
+				if err := ioutil.WriteFile(test.Path, test.Output, newFilePerm); err != nil {
+					fmt.Println(err)
+					continue
+				}
 			}
-			if len(tests) == 0 {
-				continue
-			}
-			for _, test := range tests {
-				fmt.Printf("Generated %v\n", test.TestName())
-				count++
+			for _, t := range test.Functions {
+				fmt.Printf("Generated %v\n", t.TestName())
 			}
 			if !*writeOutput {
-				fmt.Println(string(b))
+				fmt.Println(string(test.Output))
 			}
 		}
-	}
-	if count == 0 {
-		fmt.Println("No tests generated")
 	}
 }

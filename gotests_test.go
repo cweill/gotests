@@ -3,36 +3,37 @@ package gotests
 import (
 	"errors"
 	"go/types"
-	"io/ioutil"
-	"os"
 	"regexp"
 	"testing"
-
-	"github.com/cweill/gotests/internal/output"
 )
 
 func TestGenerateTests(t *testing.T) {
 	tests := []struct {
-		name         string
-		srcPath      string
-		testPath     string
-		only         *regexp.Regexp
-		excl         *regexp.Regexp
-		exported     bool
-		printInputs  bool
-		importer     types.Importer
-		want         string
-		wantNoOutput bool
-		wantErr      bool
+		name              string
+		srcPath           string
+		only              *regexp.Regexp
+		excl              *regexp.Regexp
+		exported          bool
+		printInputs       bool
+		importer          types.Importer
+		want              string
+		wantNoTests       bool
+		wantMultipleTests bool
+		wantErr           bool
 	}{
 		{
-			name:         "No funcs",
-			srcPath:      `testdata/test000.go`,
-			wantNoOutput: true,
+			name:        "Hidden file",
+			srcPath:     `testdata/.hidden.go`,
+			wantNoTests: true,
+			wantErr:     true,
 		}, {
-			name:         "Function w/ neither receiver, parameters, nor results",
-			srcPath:      `testdata/test001.go`,
-			wantNoOutput: true,
+			name:        "No funcs",
+			srcPath:     `testdata/test000.go`,
+			wantNoTests: true,
+		}, {
+			name:        "Function w/ neither receiver, parameters, nor results",
+			srcPath:     `testdata/test001.go`,
+			wantNoTests: true,
 		}, {
 			name:    "Function w/ anonymous argument",
 			srcPath: `testdata/test002.go`,
@@ -984,7 +985,7 @@ func TestMultiWrite(t *testing.T) {
 `,
 		}, {
 			name:    "Multiple functions",
-			srcPath: `testdata/test100.go`,
+			srcPath: `testdata/test_filter.go`,
 			want: `package testdata
 
 import (
@@ -992,7 +993,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1002,18 +1003,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1023,13 +1024,13 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		f    *float64
@@ -1038,16 +1039,16 @@ func TestBaz100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ only",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile("Foo100|baz100"),
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("FooFilter|bazFilter"),
 			want: `package testdata
 
 import (
@@ -1055,7 +1056,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1065,18 +1066,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		f    *float64
@@ -1085,16 +1086,16 @@ func TestBaz100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ case-insensitive only",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile("(?i)foo100|Baz100"),
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("(?i)fooFilter|BazFilter"),
 			want: `package testdata
 
 import (
@@ -1102,7 +1103,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1112,18 +1113,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		f    *float64
@@ -1132,21 +1133,21 @@ func TestBaz100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ only filtering on receiver",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile("^BarBar100$"),
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("^BarBarFilter$"),
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1156,15 +1157,15 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:     "Multiple functions filtering exported",
-			srcPath:  `testdata/test100.go`,
+			srcPath:  `testdata/test_filter.go`,
 			exported: true,
 			want: `package testdata
 
@@ -1173,7 +1174,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1183,18 +1184,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1204,16 +1205,16 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:     "Multiple functions filtering exported w/ only",
-			srcPath:  `testdata/test100.go`,
-			only:     regexp.MustCompile(`Foo100`),
+			srcPath:  `testdata/test_filter.go`,
+			only:     regexp.MustCompile(`FooFilter`),
 			exported: true,
 			want: `package testdata
 
@@ -1222,7 +1223,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1232,31 +1233,31 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
-			name:         "Multiple functions filtering all out",
-			srcPath:      `testdata/test100.go`,
-			only:         regexp.MustCompile("foo100"),
-			wantNoOutput: true,
+			name:        "Multiple functions filtering all out",
+			srcPath:     `testdata/test_filter.go`,
+			only:        regexp.MustCompile("fooFilter"),
+			wantNoTests: true,
 		}, {
 			name:    "Multiple functions w/ excl",
-			srcPath: `testdata/test100.go`,
-			excl:    regexp.MustCompile("Foo100|baz100"),
+			srcPath: `testdata/test_filter.go`,
+			excl:    regexp.MustCompile("FooFilter|bazFilter"),
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1266,21 +1267,21 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ case-insensitive excl",
-			srcPath: `testdata/test100.go`,
-			excl:    regexp.MustCompile("(?i)foO100|BaZ100"),
+			srcPath: `testdata/test_filter.go`,
+			excl:    regexp.MustCompile("(?i)foOFilter|BaZFilter"),
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1290,22 +1291,22 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:     "Multiple functions filtering exported w/ excl",
-			srcPath:  `testdata/test100.go`,
-			excl:     regexp.MustCompile(`Foo100`),
+			srcPath:  `testdata/test_filter.go`,
+			excl:     regexp.MustCompile(`FooFilter`),
 			exported: true,
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1315,21 +1316,21 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
-			name:         "Multiple functions excluding all",
-			srcPath:      `testdata/test100.go`,
-			excl:         regexp.MustCompile("baz100|Foo100|Bar100"),
-			wantNoOutput: true,
+			name:        "Multiple functions excluding all",
+			srcPath:     `testdata/test_filter.go`,
+			excl:        regexp.MustCompile("bazFilter|FooFilter|BarFilter"),
+			wantNoTests: true,
 		}, {
 			name:    "Multiple functions excluding on receiver",
-			srcPath: `testdata/test100.go`,
-			excl:    regexp.MustCompile("^BarBar100$"),
+			srcPath: `testdata/test_filter.go`,
+			excl:    regexp.MustCompile("^BarBarFilter$"),
 			want: `package testdata
 
 import (
@@ -1337,7 +1338,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1347,18 +1348,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		f    *float64
@@ -1367,22 +1368,22 @@ func TestBaz100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ both only and excl",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile("Bar100"),
-			excl:    regexp.MustCompile("Foo100"),
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("BarFilter"),
+			excl:    regexp.MustCompile("FooFilter"),
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1392,22 +1393,22 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:    "Multiple functions w/ only and excl competing",
-			srcPath: `testdata/test100.go`,
-			only:    regexp.MustCompile("Foo100|Bar100"),
-			excl:    regexp.MustCompile("Foo100|baz100"),
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("FooFilter|BarFilter"),
+			excl:    regexp.MustCompile("FooFilter|bazFilter"),
 			want: `package testdata
 
 import "testing"
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		i       interface{}
@@ -1417,15 +1418,15 @@ func TestBarBar100(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 `,
 		}, {
 			name:     "Custom importer fails",
-			srcPath:  `testdata/test100.go`,
+			srcPath:  `testdata/test_filter.go`,
 			importer: &fakeImporter{err: errors.New("error")},
 			want: `package testdata
 
@@ -1434,7 +1435,7 @@ import (
 	"testing"
 )
 
-func TestFoo100(t *testing.T) {
+func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		strs    []string
@@ -1444,18 +1445,18 @@ func TestFoo100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
+		got, err := FooFilter(tt.strs)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
 		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
-func TestBarBar100(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		b       *Bar
@@ -1465,13 +1466,13 @@ func TestBarBar100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := tt.b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
 }
 
-func TestBaz100(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	tests := []struct {
 		name string
 		f    *float64
@@ -1480,16 +1481,15 @@ func TestBaz100(t *testing.T) {
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 `,
 		}, {
-			name:     "Existing test file",
-			srcPath:  `testdata/test100.go`,
-			testPath: `testdata/test100_test.go`,
+			name:    "Existing test file",
+			srcPath: `testdata/test100.go`,
 			want: `package testdata
 
 import (
@@ -1559,9 +1559,8 @@ func TestFoo100(t *testing.T) {
 }
 `,
 		}, {
-			name:     "Existing test file with multiple imports",
-			srcPath:  `testdata/test200.go`,
-			testPath: `testdata/test200_test.go`,
+			name:    "Existing test file with multiple imports",
+			srcPath: `testdata/test200.go`,
 			want: `package testdata
 
 import (
@@ -1601,21 +1600,17 @@ func TestBar200(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name:              "Entire testdata directory",
+			srcPath:           `testdata/`,
+			wantMultipleTests: true,
 		},
 	}
 	for _, tt := range tests {
-		f, err := ioutil.TempFile("", "")
-		if err != nil {
-			t.Errorf("%q. ioutil.TempFile: %v", tt.name, err)
-			continue
-		}
-		f.Close()
-		os.Remove(f.Name())
-		funcs, b, err := GenerateTests(tt.srcPath, tt.testPath, f.Name(), &Options{
+		gts, err := GenerateTests(tt.srcPath, &Options{
 			Only:        tt.only,
 			Exclude:     tt.excl,
 			Exported:    tt.exported,
-			Write:       true,
 			PrintInputs: tt.printInputs,
 			Importer:    tt.importer,
 		})
@@ -1623,14 +1618,19 @@ func TestBar200(t *testing.T) {
 			t.Errorf("%q. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if got := len(funcs); (got == 0) != tt.wantNoOutput {
-			t.Errorf("%q. TestCases(%v) created %v tests, wantNoOutput %v", tt.name, tt.srcPath, got, tt.wantNoOutput)
+		if len(gts) == 0 && !tt.wantNoTests {
+			t.Errorf("%q. generateTests() returned no tests", tt.name)
+			continue
 		}
-		if got := string(b); got != tt.want {
+		if len(gts) > 1 && !tt.wantMultipleTests {
+			t.Errorf("%q. generateTests() returned too many tests", tt.name)
+			continue
+		}
+		if tt.wantNoTests || tt.wantMultipleTests {
+			continue
+		}
+		if got := string(gts[0].Output); got != tt.want {
 			t.Errorf("%q. TestCases(%v) = \n%v, want \n%v", tt.name, tt.srcPath, got, tt.want)
-		}
-		if got := output.IsFileExist(f.Name()); got == tt.wantNoOutput {
-			t.Errorf("%q. New file created: %v, wantNoOutput: %v", tt.name, got, tt.wantNoOutput)
 		}
 	}
 }

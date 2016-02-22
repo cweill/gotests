@@ -40,7 +40,7 @@ func Files(srcPath string) ([]models.Path, error) {
 		}
 		return srcPaths, nil
 	}
-	return nil, ErrNoFilesFound
+	return nil, fmt.Errorf("no files found at %v", srcPath)
 }
 
 func isHiddenFile(path string) bool {

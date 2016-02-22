@@ -12,8 +12,6 @@ import (
 	"github.com/cweill/gotests/internal/render"
 )
 
-const newFilePerm os.FileMode = 0644
-
 type Options struct {
 	PrintInputs bool
 }
@@ -37,10 +35,6 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
 	return out, nil
-}
-
-func Write(dest string, b []byte) error {
-	return ioutil.WriteFile(dest, b, newFilePerm)
 }
 
 func IsFileExist(path string) bool {

@@ -7,8 +7,8 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/cweill/gotests/input"
 	"github.com/cweill/gotests/internal/goparser"
+	"github.com/cweill/gotests/internal/input"
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/output"
 )
@@ -18,53 +18,77 @@ type Options struct {
 	Exclude     *regexp.Regexp
 	Exported    bool
 	PrintInputs bool
-	Write       bool
 	Importer    types.Importer
 }
 
-func GenerateTests(srcPath, testPath, destPath string, opt *Options) ([]*models.Function, []byte, error) {
+type GeneratedTest struct {
+	Path      string             // The test file's absolute path.
+	Functions []*models.Function // The functions with new test methods.
+	Output    []byte             // The contents of the test file.
+}
+
+func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
+	srcFiles, err := input.Files(srcPath)
+	if err != nil {
+		return nil, fmt.Errorf("input.Files: %v", err)
+	}
 	files, err := input.Files(path.Dir(srcPath))
 	if err != nil {
-		return nil, nil, fmt.Errorf("input.Files: %v", err)
+		return nil, fmt.Errorf("input.Files: %v", err)
 	}
+	var gts []*GeneratedTest
+	for _, src := range srcFiles {
+		gt, err := generateTest(src, files, opt)
+		if err != nil {
+			return nil, err
+		}
+		if gt == nil {
+			continue
+		}
+		gts = append(gts, gt)
+	}
+	return gts, nil
+}
+
+func generateTest(src models.Path, files []models.Path, opt *Options) (*GeneratedTest, error) {
 	if opt.Importer == nil {
 		opt.Importer = importer.Default()
 	}
 	p := goparser.Parser{Importer: opt.Importer}
-	srcInfo, err := p.Parse(srcPath, files)
+	srcInfo, err := p.Parse(string(src), files)
 	if err != nil {
-		return nil, nil, fmt.Errorf("Parser.Parse: %v", err)
+		return nil, fmt.Errorf("Parser.Parse: %v", err)
 	}
 	header := srcInfo.Header
 	var testFuncs []string
-	if models.Path(testPath).IsTestPath() && output.IsFileExist(testPath) {
+	testPath := models.Path(src).TestPath()
+	if output.IsFileExist(testPath) {
 		testInfo, err := p.Parse(testPath, nil)
 		if err != nil {
-			return nil, nil, fmt.Errorf("Parser.Parse: %v", err)
+			return nil, fmt.Errorf("Parser.Parse: %v", err)
 		}
 		for _, fun := range testInfo.Funcs {
 			testFuncs = append(testFuncs, fun.Name)
 		}
-		h, err := goparser.ParseHeader(srcPath, testPath)
+		h, err := goparser.ParseHeader(string(src), testPath)
 		if err != nil {
-			return nil, nil, fmt.Errorf("goparser.ParseHeader: %v", err)
+			return nil, fmt.Errorf("goparser.ParseHeader: %v", err)
 		}
 		header = h
 	}
 	funcs := srcInfo.TestableFuncs(opt.Only, opt.Exclude, opt.Exported, testFuncs)
 	if len(funcs) == 0 {
-		return nil, nil, nil
+		return nil, nil
 	}
 	b, err := output.Process(header, funcs, &output.Options{
 		PrintInputs: opt.PrintInputs,
 	})
 	if err != nil {
-		return nil, nil, fmt.Errorf("output.Process: %v", err)
+		return nil, fmt.Errorf("output.Process: %v", err)
 	}
-	if opt.Write {
-		if err := output.Write(destPath, b); err != nil {
-			return nil, nil, err
-		}
-	}
-	return funcs, b, nil
+	return &GeneratedTest{
+		Path:      testPath,
+		Functions: funcs,
+		Output:    b,
+	}, nil
 }
