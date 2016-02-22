@@ -1612,7 +1612,7 @@ func TestBar200(t *testing.T) {
 			Exclude:     tt.excl,
 			Exported:    tt.exported,
 			PrintInputs: tt.printInputs,
-			Importer:    tt.importer,
+			Importer:    func() types.Importer { return tt.importer },
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)

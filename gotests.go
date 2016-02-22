@@ -18,7 +18,7 @@ type Options struct {
 	Exclude     *regexp.Regexp
 	Exported    bool
 	PrintInputs bool
-	Importer    types.Importer
+	Importer    func() types.Importer
 }
 
 type GeneratedTest struct {
@@ -51,10 +51,10 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 }
 
 func generateTest(src models.Path, files []models.Path, opt *Options) (*GeneratedTest, error) {
-	if opt.Importer == nil {
-		opt.Importer = importer.Default()
+	if opt.Importer == nil || opt.Importer() == nil {
+		opt.Importer = importer.Default
 	}
-	p := goparser.Parser{Importer: opt.Importer}
+	p := goparser.Parser{Importer: opt.Importer()}
 	srcInfo, err := p.Parse(string(src), files)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.Parse: %v", err)
