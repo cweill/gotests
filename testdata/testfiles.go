@@ -28,3 +28,9 @@ type Doctor struct {
 	numPatients int
 	string
 }
+
+type name string
+
+type Name struct {
+	Name string
+}

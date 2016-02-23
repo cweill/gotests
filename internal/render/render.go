@@ -11,6 +11,8 @@ import (
 	"github.com/cweill/gotests/internal/render/bindata"
 )
 
+const name = "name"
+
 var tmpls *template.Template
 
 func init() {
@@ -27,24 +29,42 @@ func init() {
 }
 
 func fieldName(f *models.Field) string {
+	var n string
 	if f.IsNamed() {
-		return unexport(f.Name)
+		n = unexport(f.Name)
+	} else {
+		n = unexport(f.Type.String())
 	}
-	return unexport(f.Type.String())
+	if n == name {
+		return "f" + n
+	}
+	return n
 }
 
 func receiverName(f *models.Receiver) string {
+	var n string
 	if f.IsNamed() {
-		return f.Name
+		n = f.Name
+	} else {
+		n = f.ShortName()
 	}
-	return f.ShortName()
+	if n == name {
+		return "r" + n
+	}
+	return n
 }
 
 func parameterName(f *models.Field) string {
+	var n string
 	if f.IsNamed() {
-		return f.Name
+		n = f.Name
+	} else {
+		n = fmt.Sprintf("in%v", f.Index)
 	}
-	return fmt.Sprintf("in%v", f.Index)
+	if n == name {
+		return "p" + n
+	}
+	return n
 }
 
 func wantName(f *models.Field) string {
