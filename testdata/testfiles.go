@@ -34,3 +34,32 @@ type name string
 type Name struct {
 	Name string
 }
+
+type Reserved struct {
+	Name        string
+	Break       string
+	Default     string
+	Func        string
+	Interface   string
+	Select      string
+	Case        string
+	Defer       string
+	Go          string
+	Map         string
+	Struct      string
+	Chan        string
+	Else        string
+	Goto        string
+	Package     string
+	Switch      string
+	Const       string
+	Fallthrough string
+	If          string
+	Range       string
+	Type        string
+	Continue    string
+	For         string
+	Import      string
+	Return      string
+	Var         string
+}

@@ -13,7 +13,38 @@ import (
 
 const name = "name"
 
-var tmpls *template.Template
+var (
+	tmpls *template.Template
+
+	reserved = map[string]bool{
+		"name":        true,
+		"break":       true,
+		"default":     true,
+		"func":        true,
+		"interface":   true,
+		"select":      true,
+		"case":        true,
+		"defer":       true,
+		"go":          true,
+		"map":         true,
+		"struct":      true,
+		"chan":        true,
+		"else":        true,
+		"goto":        true,
+		"package":     true,
+		"switch":      true,
+		"const":       true,
+		"fallthrough": true,
+		"if":          true,
+		"range":       true,
+		"type":        true,
+		"continue":    true,
+		"for":         true,
+		"import":      true,
+		"return":      true,
+		"var":         true,
+	}
+)
 
 func init() {
 	tmpls = template.New("render").Funcs(map[string]interface{}{
@@ -35,7 +66,7 @@ func fieldName(f *models.Field) string {
 	} else {
 		n = unexport(f.Type.String())
 	}
-	if n == name {
+	if reserved[n] {
 		return "f" + n
 	}
 	return n
@@ -48,7 +79,7 @@ func receiverName(f *models.Receiver) string {
 	} else {
 		n = f.ShortName()
 	}
-	if n == name {
+	if reserved[n] {
 		return "r" + n
 	}
 	return n
@@ -61,7 +92,7 @@ func parameterName(f *models.Field) string {
 	} else {
 		n = fmt.Sprintf("in%v", f.Index)
 	}
-	if n == name {
+	if reserved[n] {
 		return "p" + n
 	}
 	return n
