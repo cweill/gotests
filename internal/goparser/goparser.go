@@ -81,12 +81,20 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
 	}
+	if furthestPos < token.Pos(len(b)) {
+		furthestPos++
+	}
 	h := &models.Header{
 		Package: tf.Name.String(),
 		Imports: parseImports(tf.Imports),
-		Code:    b[furthestPos+1:],
+		Code:    b[furthestPos:],
 	}
 	return h, nil
+}
+
+func IsValidGoTestFile(testPath string) bool {
+	_, err := parser.ParseFile(token.NewFileSet(), testPath, nil, parser.PackageClauseOnly)
+	return err == nil
 }
 
 func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type) *models.Function {

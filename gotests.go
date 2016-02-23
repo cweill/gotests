@@ -64,7 +64,7 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 	var gts []*GeneratedTest
 	for r := range rs {
 		if r.err != nil {
-			return nil, err
+			return nil, r.err
 		}
 		gts = append(gts, r.gt)
 	}
@@ -80,7 +80,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	header := srcInfo.Header
 	var testFuncs []string
 	testPath := models.Path(src).TestPath()
-	if output.IsFileExist(testPath) {
+	if output.IsFileExist(testPath) && goparser.IsValidGoTestFile(testPath) {
 		testInfo, err := p.Parse(testPath, nil)
 		if err != nil {
 			return nil, fmt.Errorf("Parser.Parse: %v", err)

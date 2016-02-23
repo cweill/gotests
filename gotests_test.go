@@ -1559,6 +1559,50 @@ func TestFoo100(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Existing blank test file",
+			srcPath: `testdata/test101.go`,
+			want: `package testdata
+
+import "testing"
+
+func TestFoo101(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo101(tt.s); got != tt.want {
+			t.Errorf("%q. Foo101() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:    "Existing test file with just package declaration",
+			srcPath: `testdata/test102.go`,
+			want: `package testdata
+
+import "testing"
+
+func TestFoo102(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Foo102(tt.s); got != tt.want {
+			t.Errorf("%q. Foo102() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
 			name:    "Existing test file with multiple imports",
 			srcPath: `testdata/test200.go`,
 			want: `package testdata
