@@ -59,7 +59,7 @@ func main() {
 			continue
 		}
 		if len(tests) == 0 {
-			fmt.Println("No tests generated for %v", path)
+			fmt.Println("No tests generated for", path)
 			continue
 		}
 		for _, test := range tests {
