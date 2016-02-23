@@ -1201,6 +1201,30 @@ func TestBarBarFilter(t *testing.T) {
 }
 `,
 		}, {
+			name:    "Multiple functions w/ only filtering on method",
+			srcPath: `testdata/test_filter.go`,
+			only:    regexp.MustCompile("^(BarFilter)$"),
+			want: `package testdata
+
+import "testing"
+
+func TestBarBarFilter(t *testing.T) {
+	tests := []struct {
+		name    string
+		i       interface{}
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{}
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
 			name:     "Multiple functions filtering exported",
 			srcPath:  `testdata/test_filter.go`,
 			exported: true,
@@ -1368,6 +1392,53 @@ func TestBarBarFilter(t *testing.T) {
 			name:    "Multiple functions excluding on receiver",
 			srcPath: `testdata/test_filter.go`,
 			excl:    regexp.MustCompile("^BarBarFilter$"),
+			want: `package testdata
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestFooFilter(t *testing.T) {
+	tests := []struct {
+		name    string
+		strs    []string
+		want    []*Bar
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		got, err := FooFilter(tt.strs)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+
+func TestBazFilter(t *testing.T) {
+	tests := []struct {
+		name string
+		f    *float64
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := bazFilter(tt.f); got != tt.want {
+			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
+		}, {
+			name:    "Multiple functions excluding on method",
+			srcPath: `testdata/test_filter.go`,
+			excl:    regexp.MustCompile("^BarFilter$"),
 			want: `package testdata
 
 import (
