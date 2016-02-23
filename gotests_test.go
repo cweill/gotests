@@ -1559,7 +1559,7 @@ func TestFoo100(t *testing.T) {
 }
 `,
 		}, {
-			name:    "Existing blank test file",
+			name:    "Existing test file with just package declaration",
 			srcPath: `testdata/test101.go`,
 			want: `package testdata
 
@@ -1581,11 +1581,16 @@ func TestFoo101(t *testing.T) {
 }
 `,
 		}, {
-			name:    "Existing test file with just package declaration",
+			name:    "Existing test file with no functions",
 			srcPath: `testdata/test102.go`,
 			want: `package testdata
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
+
+var example102 = fmt.Sprintf("test%", 1)
 
 func TestFoo102(t *testing.T) {
 	tests := []struct {

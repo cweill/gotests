@@ -92,11 +92,6 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	return h, nil
 }
 
-func IsValidGoTestFile(testPath string) bool {
-	_, err := parser.ParseFile(token.NewFileSet(), testPath, nil, parser.PackageClauseOnly)
-	return err == nil
-}
-
 func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type) *models.Function {
 	f := &models.Function{
 		Name:       fDecl.Name.String(),
