@@ -6,6 +6,7 @@ import (
 	"go/types"
 	"path"
 	"regexp"
+	"sync"
 
 	"github.com/cweill/gotests/internal/goparser"
 	"github.com/cweill/gotests/internal/input"
@@ -36,25 +37,42 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 	if err != nil {
 		return nil, fmt.Errorf("input.Files: %v", err)
 	}
-	var gts []*GeneratedTest
+	if opt.Importer == nil || opt.Importer() == nil {
+		opt.Importer = importer.Default
+	}
+	type result struct {
+		gt  *GeneratedTest
+		err error
+	}
+	var wg sync.WaitGroup
+	rs := make(chan *result, len(srcFiles))
 	for _, src := range srcFiles {
-		gt, err := generateTest(src, files, opt)
-		if err != nil {
+		wg.Add(1)
+		// Worker.
+		go func(s models.Path) {
+			defer wg.Done()
+			r := &result{}
+			r.gt, r.err = generateTest(s, files, opt)
+			rs <- r
+		}(src)
+	}
+	// Closer.
+	go func() {
+		wg.Wait()
+		close(rs)
+	}()
+	var gts []*GeneratedTest
+	for r := range rs {
+		if r.err != nil {
 			return nil, err
 		}
-		if gt == nil {
-			continue
-		}
-		gts = append(gts, gt)
+		gts = append(gts, r.gt)
 	}
 	return gts, nil
 }
 
 func generateTest(src models.Path, files []models.Path, opt *Options) (*GeneratedTest, error) {
-	if opt.Importer == nil || opt.Importer() == nil {
-		opt.Importer = importer.Default
-	}
-	p := goparser.Parser{Importer: opt.Importer()}
+	p := &goparser.Parser{Importer: opt.Importer()}
 	srcInfo, err := p.Parse(string(src), files)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.Parse: %v", err)
