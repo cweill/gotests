@@ -112,10 +112,12 @@ func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Stru
 		f.Receiver = parseReceiver(fDecl.Recv.List[0], ul, el)
 	}
 	if fDecl.Type.Params != nil {
+		i := 0
 		for _, fi := range fDecl.Type.Params.List {
-			for i, pf := range parseFields(fi, ul) {
+			for _, pf := range parseFields(fi, ul) {
 				pf.Index = i
 				f.Parameters = append(f.Parameters, pf)
+				i++
 			}
 		}
 	}
