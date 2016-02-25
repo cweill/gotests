@@ -1886,7 +1886,7 @@ import (
 	"testing"
 )
 
-var example102 = fmt.Sprintf("test%", 1)
+var example102 = fmt.Sprintf("test%v", 1)
 
 func TestFoo102(t *testing.T) {
 	tests := []struct {

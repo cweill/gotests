@@ -1,11 +1,11 @@
 package testdata
 
-import "fmt"
+import "strconv"
 
 func (c Celsius) String() string {
-	return fmt.Sprintf("%v", c)
+	return strconv.Itoa(int(c))
 }
 
 func (f Fahrenheit) String() string {
-	return fmt.Sprintf("%v", f)
+	return strconv.Itoa(int(f))
 }
