@@ -33,7 +33,12 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 		}
 		fs = append(fs, ff)
 	}
-	conf := &types.Config{Importer: p.Importer}
+	conf := &types.Config{
+		Importer: p.Importer,
+		// Adding a NO-OP error function ignores errors and performs best-effort
+		// type checking. https://godoc.org/golang.org/x/tools/go/types#Config
+		Error: func(error) {},
+	}
 	ti := &types.Info{
 		Types: make(map[ast.Expr]types.TypeAndValue),
 	}

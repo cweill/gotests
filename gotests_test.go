@@ -1754,14 +1754,14 @@ func TestFooFilter(t *testing.T) {
 func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
 		name    string
-		b       *Bar
 		i       interface{}
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := tt.b.BarFilter(tt.i); (err != nil) != tt.wantErr {
+		b := &Bar{}
+		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
