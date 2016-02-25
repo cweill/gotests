@@ -40,8 +40,14 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 	// Note: conf.Check can fail, but since Info is not required data, it's ok.
 	conf.Check("", fset, fs, ti)
 	ul := make(map[string]types.Type)
-	for _, t := range ti.Types {
-		ul[t.Type.String()] = t.Type
+	el := make(map[*types.Struct]ast.Expr)
+	for e, t := range ti.Types {
+		// Collect the underlying types.
+		ul[t.Type.String()] = t.Type.Underlying()
+		// Collect structs to determine the fields of a receiver.
+		if v, ok := t.Type.(*types.Struct); ok {
+			el[v] = e
+		}
 	}
 	info := &models.SourceInfo{
 		Header: &models.Header{
@@ -54,7 +60,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 		if !ok {
 			continue
 		}
-		info.Funcs = append(info.Funcs, parseFunc(fDecl, ul))
+		info.Funcs = append(info.Funcs, parseFunc(fDecl, ul, el))
 	}
 	return info, nil
 }
@@ -92,13 +98,13 @@ func ParseHeader(srcPath, testPath string) (*models.Header, error) {
 	return h, nil
 }
 
-func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type) *models.Function {
+func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Function {
 	f := &models.Function{
 		Name:       fDecl.Name.String(),
 		IsExported: fDecl.Name.IsExported(),
 	}
 	if fDecl.Recv != nil && fDecl.Recv.List != nil {
-		f.Receiver = parseReceiver(fDecl.Recv.List[0], ul)
+		f.Receiver = parseReceiver(fDecl.Recv.List[0], ul, el)
 	}
 	if fDecl.Type.Params != nil {
 		for _, fi := range fDecl.Type.Params.List {
@@ -140,7 +146,7 @@ func parseImports(imps []*ast.ImportSpec) []*models.Import {
 	return is
 }
 
-func parseReceiver(f *ast.Field, ul map[string]types.Type) *models.Receiver {
+func parseReceiver(f *ast.Field, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Receiver {
 	r := &models.Receiver{
 		Field: parseFields(f, ul)[0],
 	}
@@ -148,18 +154,19 @@ func parseReceiver(f *ast.Field, ul map[string]types.Type) *models.Receiver {
 	if !ok {
 		return r
 	}
-	s, ok := t.Underlying().(*types.Struct)
+	s, ok := t.(*types.Struct)
 	if !ok {
 		return r
 	}
-	for i := 0; i < s.NumFields(); i++ {
-		fi := s.Field(i)
-		r.Fields = append(r.Fields, &models.Field{
-			Name: fi.Name(),
-			Type: &models.Expression{
-				Value: fi.Type().String(),
-			},
-		})
+	st := el[s].(*ast.StructType)
+	if st.Fields == nil {
+		return r
+	}
+	for _, f := range st.Fields.List {
+		r.Fields = append(r.Fields, parseFields(f, ul)...)
+	}
+	for i, f := range r.Fields {
+		f.Name = s.Field(i).Name()
 	}
 	return r
 
@@ -191,7 +198,7 @@ func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
 	case *ast.StarExpr:
 		val := types.ExprString(v.X)
 		if ul[val] != nil {
-			u = ul[val].Underlying().String()
+			u = ul[val].String()
 		}
 		return &models.Expression{
 			Value:      val,
@@ -201,7 +208,7 @@ func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
 	case *ast.Ellipsis:
 		exp := parseExpr(v.Elt, ul)
 		if ul[exp.Value] != nil {
-			u = ul[exp.Value].Underlying().String()
+			u = ul[exp.Value].String()
 		}
 		return &models.Expression{
 			Value:      exp.Value,
@@ -212,7 +219,7 @@ func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
 	default:
 		val := types.ExprString(e)
 		if ul[val] != nil {
-			u = ul[val].Underlying().String()
+			u = ul[val].String()
 		}
 		return &models.Expression{
 			Value:      val,

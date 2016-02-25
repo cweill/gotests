@@ -1,5 +1,7 @@
 package testdata
 
+import "go/types"
+
 type Bar struct{}
 
 type Bazzar interface {
@@ -62,4 +64,9 @@ type Reserved struct {
 	Import      string
 	Return      string
 	Var         string
+}
+
+type Importer struct {
+	Importer types.Importer
+	Field    *types.Var
 }
