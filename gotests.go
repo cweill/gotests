@@ -66,7 +66,9 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 		if r.err != nil {
 			return nil, r.err
 		}
-		gts = append(gts, r.gt)
+		if r.gt != nil {
+			gts = append(gts, r.gt)
+		}
 	}
 	return gts, nil
 }

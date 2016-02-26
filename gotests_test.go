@@ -1318,6 +1318,11 @@ func TestBazFilter(t *testing.T) {
 }
 `,
 		}, {
+			name:        "Multiple functions w/ only regexp without matches",
+			srcPath:     `testdata/test_filter.go`,
+			only:        regexp.MustCompile("asdf"),
+			wantNoTests: true,
+		}, {
 			name:    "Multiple functions w/ case-insensitive only",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("(?i)fooFilter|BazFilter"),
