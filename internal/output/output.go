@@ -52,8 +52,5 @@ func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Functi
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}
-	if err := w.Flush(); err != nil {
-		return fmt.Errorf("bufio.Flush: %v", err)
-	}
-	return nil
+	return w.Flush()
 }
