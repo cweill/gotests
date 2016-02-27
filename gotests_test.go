@@ -1956,7 +1956,7 @@ func TestBar200(t *testing.T) {
 			wantMultipleTests: true,
 		}, {
 			name:    "Different packages in same directory - part 1",
-			srcPath: `testdata/baddata/bar.go`,
+			srcPath: `testdata/mixedpkg/bar.go`,
 			want: `package bar
 
 import "testing"
@@ -1982,7 +1982,7 @@ func TestBarBar(t *testing.T) {
 `,
 		}, {
 			name:    "Different packages in same directory - part 2",
-			srcPath: `testdata/baddata/foo.go`,
+			srcPath: `testdata/mixedpkg/foo.go`,
 			want: `package foo
 
 import "testing"
