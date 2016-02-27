@@ -82,20 +82,12 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	}
 	h := sr.Header
 	h.Code = nil // Code is only needed from parsed test files.
-	var testFuncs []string
 	testPath := models.Path(src).TestPath()
-	if output.IsFileExist(testPath) {
-		tr, err := p.Parse(testPath, nil)
-		if err != nil {
-			return nil, fmt.Errorf("Parser.Parse test file: %v", err)
-		}
-		for _, fun := range tr.Funcs {
-			testFuncs = append(testFuncs, fun.Name)
-		}
-		tr.Header.Imports = append(tr.Header.Imports, h.Imports...)
-		h = tr.Header
+	h, tf, err := parseTestFile(p, testPath, h)
+	if err != nil {
+		return nil, err
 	}
-	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported, testFuncs)
+	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported, tf)
 	if len(funcs) == 0 {
 		return nil, nil
 	}
@@ -110,6 +102,27 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Functions: funcs,
 		Output:    b,
 	}, nil
+}
+
+func parseTestFile(p *goparser.Parser, testPath string, h *models.Header) (*models.Header, []string, error) {
+	if !output.IsFileExist(testPath) {
+		return h, nil, nil
+	}
+	tr, err := p.Parse(testPath, nil)
+	if err != nil {
+		if err == goparser.ErrEmptyFile {
+			// Overwrite empty test files.
+			return h, nil, nil
+		}
+		return nil, nil, fmt.Errorf("Parser.Parse test file: %v", err)
+	}
+	var testFuncs []string
+	for _, fun := range tr.Funcs {
+		testFuncs = append(testFuncs, fun.Name)
+	}
+	tr.Header.Imports = append(tr.Header.Imports, h.Imports...)
+	h = tr.Header
+	return h, testFuncs, nil
 }
 
 func testableFuncs(funcs []*models.Function, only, excl *regexp.Regexp, exp bool, testFuncs []string) []*models.Function {

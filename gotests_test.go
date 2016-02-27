@@ -32,6 +32,11 @@ func TestGenerateTests(t *testing.T) {
 			wantNoTests: true,
 			wantErr:     true,
 		}, {
+			name:        "Test file with garbage data",
+			srcPath:     `testdata/invalidtest/invalid.go`,
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
 			name:        "Hidden file",
 			srcPath:     `testdata/.hidden.go`,
 			wantNoTests: true,
@@ -2016,6 +2021,31 @@ func TestFooFoo(t *testing.T) {
 	}
 }
 `,
+		}, {
+			name:    "Empty test file",
+			srcPath: `testdata/blanktest/blank.go`,
+			want: `package blanktest
+
+import (
+	"os"
+	"testing"
+)
+
+func TestNot(t *testing.T) {
+	tests := []struct {
+		name string
+		this *os.File
+		want string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := Not(tt.this); got != tt.want {
+			t.Errorf("%q. Not() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {
@@ -2027,22 +2057,22 @@ func TestFooFoo(t *testing.T) {
 			Importer:    func() types.Importer { return tt.importer },
 		})
 		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. generateTests() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.srcPath, err, tt.wantErr)
 			continue
 		}
 		if len(gts) == 0 && !tt.wantNoTests {
-			t.Errorf("%q. generateTests() returned no tests", tt.name)
+			t.Errorf("%q. GenerateTests(%v) returned no tests", tt.name, tt.srcPath)
 			continue
 		}
 		if len(gts) > 1 && !tt.wantMultipleTests {
-			t.Errorf("%q. generateTests() returned too many tests", tt.name)
+			t.Errorf("%q. GenerateTests(%v) returned too many tests", tt.name, tt.srcPath)
 			continue
 		}
 		if tt.wantNoTests || tt.wantMultipleTests {
 			continue
 		}
 		if got := string(gts[0].Output); got != tt.want {
-			t.Errorf("%q. TestCases(%v) = \n%v, want \n%v", tt.name, tt.srcPath, got, tt.want)
+			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.srcPath, got, tt.want)
 		}
 	}
 }

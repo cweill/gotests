@@ -1,6 +1,7 @@
 package goparser
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/cweill/gotests/internal/models"
 )
+
+var ErrEmptyFile = errors.New("file is empty")
 
 type Result struct {
 	Header *models.Header
@@ -21,6 +24,13 @@ type Parser struct {
 }
 
 func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
+	b, err := ioutil.ReadFile(srcPath)
+	if err != nil {
+		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
+	}
+	if len(b) == 0 {
+		return nil, ErrEmptyFile
+	}
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
@@ -59,15 +69,11 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			el[v] = e
 		}
 	}
-	b, err := goCode(f, srcPath)
-	if err != nil {
-		return nil, err
-	}
 	r := &Result{
 		Header: &models.Header{
 			Package: pkg,
 			Imports: parseImports(f.Imports),
-			Code:    b,
+			Code:    goCode(b, f),
 		},
 	}
 	for _, d := range f.Decls {
@@ -80,21 +86,18 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	return r, nil
 }
 
-func goCode(f *ast.File, path string) ([]byte, error) {
+// Returns the Go code below the imports block.
+func goCode(b []byte, f *ast.File) []byte {
 	furthestPos := f.Name.End()
 	for _, node := range f.Imports {
 		if pos := node.End(); pos > furthestPos {
 			furthestPos = pos
 		}
 	}
-	b, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
-	}
 	if furthestPos < token.Pos(len(b)) {
 		furthestPos++
 	}
-	return b[furthestPos:], nil
+	return b[furthestPos:]
 }
 
 func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Function {
