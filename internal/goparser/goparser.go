@@ -177,9 +177,6 @@ func parseReceiver(f *ast.Field, ul map[string]types.Type, el map[*types.Struct]
 }
 
 func parseFields(f *ast.Field, ul map[string]types.Type) []*models.Field {
-	if f == nil {
-		return nil
-	}
 	t := parseExpr(f.Type, ul)
 	if len(f.Names) == 0 {
 		return []*models.Field{{
