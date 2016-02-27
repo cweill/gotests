@@ -22,6 +22,16 @@ func TestGenerateTests(t *testing.T) {
 		wantErr           bool
 	}{
 		{
+			name:        "Blank Go file",
+			srcPath:     `testdata/blankfile/blank.go`,
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name:        "Blank Go file in directory",
+			srcPath:     `testdata/blankfile/notblank.go`,
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
 			name:        "Hidden file",
 			srcPath:     `testdata/.hidden.go`,
 			wantNoTests: true,

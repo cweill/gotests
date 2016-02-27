@@ -19,14 +19,14 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
-		return nil, fmt.Errorf("parser.ParseFile: %v", err)
+		return nil, fmt.Errorf("target parser.ParseFile(): %v", err)
 	}
 	pkg := f.Name.String()
 	var fs []*ast.File
 	for _, file := range files {
 		ff, err := parser.ParseFile(fset, string(file), nil, 0)
 		if err != nil {
-			return nil, fmt.Errorf("parser.ParseFile: %v", err)
+			return nil, fmt.Errorf("other file parser.ParseFile: %v", err)
 		}
 		if name := ff.Name.String(); name != pkg {
 			continue
