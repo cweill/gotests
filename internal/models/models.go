@@ -1,10 +1,6 @@
 package models
 
-import (
-	"regexp"
-	"sort"
-	"strings"
-)
+import "strings"
 
 type Expression struct {
 	Value      string
@@ -135,50 +131,14 @@ func (f *Function) TestName() string {
 	return "Test" + strings.Title(r) + strings.Title(f.Name)
 }
 
-type Header struct {
-	Package string
-	Imports []*Import
-	Code    []byte
-}
-
 type Import struct {
 	Name, Path string
 }
 
-type SourceInfo struct {
-	Header *Header
-	Funcs  []*Function
-}
-
-func (i *SourceInfo) TestableFuncs(only, excl *regexp.Regexp, exp bool, testFuncs []string) []*Function {
-	sort.Strings(testFuncs)
-	var fs []*Function
-	for _, f := range i.Funcs {
-		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
-			continue
-		}
-		if len(testFuncs) > 0 && contains(testFuncs, f.TestName()) {
-			continue
-		}
-		if excl != nil && (excl.MatchString(f.Name) || excl.MatchString(f.FullName())) {
-			continue
-		}
-		if exp && !f.IsExported {
-			continue
-		}
-		if only != nil && !only.MatchString(f.Name) && !only.MatchString(f.FullName()) {
-			continue
-		}
-		fs = append(fs, f)
-	}
-	return fs
-}
-
-func contains(ss []string, s string) bool {
-	if i := sort.SearchStrings(ss, s); i < len(ss) && ss[i] == s {
-		return true
-	}
-	return false
+type Header struct {
+	Package string
+	Imports []*Import
+	Code    []byte
 }
 
 type Path string

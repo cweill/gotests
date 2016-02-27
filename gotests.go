@@ -6,6 +6,7 @@ import (
 	"go/types"
 	"path"
 	"regexp"
+	"sort"
 	"sync"
 
 	"github.com/cweill/gotests/internal/goparser"
@@ -75,32 +76,30 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 
 func generateTest(src models.Path, files []models.Path, opt *Options) (*GeneratedTest, error) {
 	p := &goparser.Parser{Importer: opt.Importer()}
-	srcInfo, err := p.Parse(string(src), files)
+	sr, err := p.Parse(string(src), files)
 	if err != nil {
-		return nil, fmt.Errorf("Parser.Parse: %v", err)
+		return nil, fmt.Errorf("Parser.Parse source file: %v", err)
 	}
-	header := srcInfo.Header
+	h := sr.Header
+	h.Code = nil // Code is only needed from parsed test files.
 	var testFuncs []string
 	testPath := models.Path(src).TestPath()
 	if output.IsFileExist(testPath) {
-		testInfo, err := p.Parse(testPath, nil)
+		tr, err := p.Parse(testPath, nil)
 		if err != nil {
-			return nil, fmt.Errorf("Parser.Parse: %v", err)
+			return nil, fmt.Errorf("Parser.Parse test file: %v", err)
 		}
-		for _, fun := range testInfo.Funcs {
+		for _, fun := range tr.Funcs {
 			testFuncs = append(testFuncs, fun.Name)
 		}
-		h, err := goparser.ParseHeader(string(src), testPath)
-		if err != nil {
-			return nil, fmt.Errorf("goparser.ParseHeader: %v", err)
-		}
-		header = h
+		tr.Header.Imports = append(tr.Header.Imports, h.Imports...)
+		h = tr.Header
 	}
-	funcs := srcInfo.TestableFuncs(opt.Only, opt.Exclude, opt.Exported, testFuncs)
+	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported, testFuncs)
 	if len(funcs) == 0 {
 		return nil, nil
 	}
-	b, err := output.Process(header, funcs, &output.Options{
+	b, err := output.Process(h, funcs, &output.Options{
 		PrintInputs: opt.PrintInputs,
 	})
 	if err != nil {
@@ -111,4 +110,35 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Functions: funcs,
 		Output:    b,
 	}, nil
+}
+
+func testableFuncs(funcs []*models.Function, only, excl *regexp.Regexp, exp bool, testFuncs []string) []*models.Function {
+	sort.Strings(testFuncs)
+	var fs []*models.Function
+	for _, f := range funcs {
+		if f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0 {
+			continue
+		}
+		if len(testFuncs) > 0 && contains(testFuncs, f.TestName()) {
+			continue
+		}
+		if excl != nil && (excl.MatchString(f.Name) || excl.MatchString(f.FullName())) {
+			continue
+		}
+		if exp && !f.IsExported {
+			continue
+		}
+		if only != nil && !only.MatchString(f.Name) && !only.MatchString(f.FullName()) {
+			continue
+		}
+		fs = append(fs, f)
+	}
+	return fs
+}
+
+func contains(ss []string, s string) bool {
+	if i := sort.SearchStrings(ss, s); i < len(ss) && ss[i] == s {
+		return true
+	}
+	return false
 }

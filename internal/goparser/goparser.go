@@ -11,11 +11,16 @@ import (
 	"github.com/cweill/gotests/internal/models"
 )
 
+type Result struct {
+	Header *models.Header
+	Funcs  []*models.Function
+}
+
 type Parser struct {
 	Importer types.Importer
 }
 
-func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo, error) {
+func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
@@ -54,10 +59,15 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 			el[v] = e
 		}
 	}
-	info := &models.SourceInfo{
+	b, err := goCode(f, srcPath)
+	if err != nil {
+		return nil, err
+	}
+	r := &Result{
 		Header: &models.Header{
 			Package: pkg,
 			Imports: parseImports(f.Imports),
+			Code:    b,
 		},
 	}
 	for _, d := range f.Decls {
@@ -65,42 +75,26 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 		if !ok {
 			continue
 		}
-		info.Funcs = append(info.Funcs, parseFunc(fDecl, ul, el))
+		r.Funcs = append(r.Funcs, parseFunc(fDecl, ul, el))
 	}
-	return info, nil
+	return r, nil
 }
 
-func ParseHeader(srcPath, testPath string) (*models.Header, error) {
-	fset := token.NewFileSet()
-	sf, err := parser.ParseFile(fset, srcPath, nil, 0)
-	if err != nil {
-		return nil, fmt.Errorf("parser.ParseFile: %v", err)
-	}
-	fset = token.NewFileSet()
-	tf, err := parser.ParseFile(fset, testPath, nil, parser.ParseComments)
-	if err != nil {
-		return nil, fmt.Errorf("parser.ParseFile: %v", err)
-	}
-	furthestPos := tf.Name.End()
-	for _, node := range tf.Imports {
+func goCode(f *ast.File, path string) ([]byte, error) {
+	furthestPos := f.Name.End()
+	for _, node := range f.Imports {
 		if pos := node.End(); pos > furthestPos {
 			furthestPos = pos
 		}
 	}
-	tf.Imports = append(tf.Imports, sf.Imports...)
-	b, err := ioutil.ReadFile(testPath)
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
 	}
 	if furthestPos < token.Pos(len(b)) {
 		furthestPos++
 	}
-	h := &models.Header{
-		Package: tf.Name.String(),
-		Imports: parseImports(tf.Imports),
-		Code:    b[furthestPos:],
-	}
-	return h, nil
+	return b[furthestPos:], nil
 }
 
 func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Function {
