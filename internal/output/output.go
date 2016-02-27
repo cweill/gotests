@@ -2,7 +2,9 @@ package output
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
@@ -23,14 +25,11 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 	}
 	defer tf.Close()
 	defer os.Remove(tf.Name())
-	if err := writeTestsToTemp(tf, head, funcs, opt); err != nil {
+	b := &bytes.Buffer{}
+	if err := writeTests(b, head, funcs, opt); err != nil {
 		return nil, err
 	}
-	b, err := ioutil.ReadFile(tf.Name())
-	if err != nil {
-		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
-	}
-	out, err := imports.Process(tf.Name(), b, nil)
+	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
@@ -42,15 +41,15 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTestsToTemp(temp *os.File, head *models.Header, funcs []*models.Function, opt *Options) error {
-	w := bufio.NewWriter(temp)
-	if err := render.Header(w, head); err != nil {
+func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt *Options) error {
+	b := bufio.NewWriter(w)
+	if err := render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 	for _, fun := range funcs {
-		if err := render.TestFunction(w, fun, opt.PrintInputs); err != nil {
+		if err := render.TestFunction(b, fun, opt.PrintInputs); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}
-	return w.Flush()
+	return b.Flush()
 }
