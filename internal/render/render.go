@@ -127,10 +127,8 @@ func Header(w io.Writer, h *models.Header) error {
 	if err := tmpls.ExecuteTemplate(w, "header", h); err != nil {
 		return err
 	}
-	if _, err := w.Write(h.Code); err != nil {
-		return err
-	}
-	return nil
+	_, err := w.Write(h.Code)
+	return err
 }
 
 func TestFunction(w io.Writer, f *models.Function, printInputs bool) error {
