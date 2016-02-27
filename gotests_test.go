@@ -1954,6 +1954,58 @@ func TestBar200(t *testing.T) {
 			name:              "Entire testdata directory",
 			srcPath:           `testdata/`,
 			wantMultipleTests: true,
+		}, {
+			name:    "Different packages in same directory - part 1",
+			srcPath: `testdata/baddata/bar.go`,
+			want: `package bar
+
+import "testing"
+
+func TestBarBar(t *testing.T) {
+	tests := []struct {
+		name    string
+		foo     string
+		s       string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{
+			Foo: tt.foo,
+		}
+		if err := b.Bar(tt.s); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.Bar() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
+		}, {
+			name:    "Different packages in same directory - part 2",
+			srcPath: `testdata/baddata/foo.go`,
+			want: `package foo
+
+import "testing"
+
+func TestFooFoo(t *testing.T) {
+	tests := []struct {
+		name    string
+		bar     string
+		s       string
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		f := &Foo{
+			Bar: tt.bar,
+		}
+		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+`,
 		},
 	}
 	for _, tt := range tests {

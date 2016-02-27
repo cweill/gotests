@@ -28,7 +28,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*models.SourceInfo,
 		if err != nil {
 			return nil, fmt.Errorf("parser.ParseFile: %v", err)
 		}
-		if name := f.Name.String(); name != pkg {
+		if name := ff.Name.String(); name != pkg {
 			continue
 		}
 		fs = append(fs, ff)
