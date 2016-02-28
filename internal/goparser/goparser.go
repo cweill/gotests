@@ -24,6 +24,30 @@ type Parser struct {
 }
 
 func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
+	b, err := p.readFile(srcPath)
+	if err != nil {
+		return nil, err
+	}
+	fset := token.NewFileSet()
+	f, err := p.parseFile(fset, srcPath)
+	if err != nil {
+		return nil, err
+	}
+	fs, err := p.parseFiles(fset, f, files)
+	if err != nil {
+		return nil, err
+	}
+	return &Result{
+		Header: &models.Header{
+			Package: f.Name.String(),
+			Imports: parseImports(f.Imports),
+			Code:    goCode(b, f),
+		},
+		Funcs: p.parseFunctions(fset, f, fs),
+	}, nil
+}
+
+func (p *Parser) readFile(srcPath string) ([]byte, error) {
 	b, err := ioutil.ReadFile(srcPath)
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadFile: %v", err)
@@ -31,11 +55,18 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	if len(b) == 0 {
 		return nil, ErrEmptyFile
 	}
-	fset := token.NewFileSet()
+	return b, nil
+}
+
+func (p *Parser) parseFile(fset *token.FileSet, srcPath string) (*ast.File, error) {
 	f, err := parser.ParseFile(fset, srcPath, nil, 0)
 	if err != nil {
 		return nil, fmt.Errorf("target parser.ParseFile(): %v", err)
 	}
+	return f, nil
+}
+
+func (p *Parser) parseFiles(fset *token.FileSet, f *ast.File, files []models.Path) ([]*ast.File, error) {
 	pkg := f.Name.String()
 	var fs []*ast.File
 	for _, file := range files {
@@ -48,6 +79,23 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 		}
 		fs = append(fs, ff)
 	}
+	return fs, nil
+}
+
+func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File) []*models.Function {
+	ul, el := p.parseTypes(fset, fs)
+	var funcs []*models.Function
+	for _, d := range f.Decls {
+		fDecl, ok := d.(*ast.FuncDecl)
+		if !ok {
+			continue
+		}
+		funcs = append(funcs, parseFunc(fDecl, ul, el))
+	}
+	return funcs
+}
+
+func (p *Parser) parseTypes(fset *token.FileSet, fs []*ast.File) (map[string]types.Type, map[*types.Struct]ast.Expr) {
 	conf := &types.Config{
 		Importer: p.Importer,
 		// Adding a NO-OP error function ignores errors and performs best-effort
@@ -69,21 +117,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			el[v] = e
 		}
 	}
-	r := &Result{
-		Header: &models.Header{
-			Package: pkg,
-			Imports: parseImports(f.Imports),
-			Code:    goCode(b, f),
-		},
-	}
-	for _, d := range f.Decls {
-		fDecl, ok := d.(*ast.FuncDecl)
-		if !ok {
-			continue
-		}
-		r.Funcs = append(r.Funcs, parseFunc(fDecl, ul, el))
-	}
-	return r, nil
+	return ul, el
 }
 
 // Returns the Go code below the imports block.
