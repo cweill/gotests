@@ -41,19 +41,26 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 	if opt.Importer == nil || opt.Importer() == nil {
 		opt.Importer = importer.Default
 	}
-	type result struct {
-		gt  *GeneratedTest
-		err error
-	}
+	return parallelize(srcFiles, files, opt)
+}
+
+// result stores a generateTest result.
+type result struct {
+	gt  *GeneratedTest
+	err error
+}
+
+// parallelize generates tests for the given source files concurrently.
+func parallelize(srcFiles, files []models.Path, opt *Options) ([]*GeneratedTest, error) {
 	var wg sync.WaitGroup
 	rs := make(chan *result, len(srcFiles))
 	for _, src := range srcFiles {
 		wg.Add(1)
-		// Worker.
-		go func(s models.Path) {
+		// Worker
+		go func(src models.Path) {
 			defer wg.Done()
 			r := &result{}
-			r.gt, r.err = generateTest(s, files, opt)
+			r.gt, r.err = generateTest(src, files, opt)
 			rs <- r
 		}(src)
 	}
@@ -62,6 +69,11 @@ func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 		wg.Wait()
 		close(rs)
 	}()
+	return readResults(rs)
+}
+
+// readResults reads the result channel.
+func readResults(rs <-chan *result) ([]*GeneratedTest, error) {
 	var gts []*GeneratedTest
 	for r := range rs {
 		if r.err != nil {
