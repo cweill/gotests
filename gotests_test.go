@@ -42,6 +42,11 @@ func TestGenerateTests(t *testing.T) {
 			wantNoTests: true,
 			wantErr:     true,
 		}, {
+			name:        "Nonexistant file",
+			srcPath:     `testdata/nonexistant.go`,
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
 			name:        "Target test file",
 			srcPath:     `testdata/test100_test.go`,
 			wantNoTests: true,
