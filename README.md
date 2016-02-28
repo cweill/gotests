@@ -8,7 +8,7 @@ The following shows `gotests` in action using the [official Sublime Text 3 plugi
 
 ![demo](https://github.com/cweill/GoTests-Sublime/blob/master/gotests.gif)
 
-Plugins for emacs and vim are coming soon.
+There's a [plugin for Emacs](https://github.com/damienlevin/GoTests-Emacs) too.
 
 ## Installation
 
