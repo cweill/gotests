@@ -2,6 +2,7 @@ package input
 
 import (
 	"fmt"
+	"path"
 	"path/filepath"
 
 	"github.com/cweill/gotests/internal/models"
@@ -20,7 +21,7 @@ func Files(srcPath string) ([]models.Path, error) {
 }
 
 func dirFiles(srcPath string) ([]models.Path, error) {
-	ps, err := filepath.Glob(srcPath + "/*.go")
+	ps, err := filepath.Glob(path.Join(srcPath, "*.go"))
 	if err != nil {
 		return nil, fmt.Errorf("filepath.Glob: %v\n", err)
 	}
