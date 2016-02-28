@@ -43,21 +43,15 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		fmt.Fprintln(out, "Please specify either the -only, -excl, -export, or -all flag")
 		return nil
 	}
-	var onlyRE, exclRE *regexp.Regexp
-	var err error
-	if opt.OnlyFuncs != "" {
-		onlyRE, err = regexp.Compile(opt.OnlyFuncs)
-		if err != nil {
-			fmt.Fprintln(out, "Invalid -only regex:", err)
-			return nil
-		}
+	onlyRE, err := parseRegexp(opt.OnlyFuncs)
+	if err != nil {
+		fmt.Fprintln(out, "Invalid -only regex:", err)
+		return nil
 	}
-	if opt.ExclFuncs != "" {
-		exclRE, err = regexp.Compile(opt.ExclFuncs)
-		if err != nil {
-			fmt.Fprintln(out, "Invalid -excl regex:", err)
-			return nil
-		}
+	exclRE, err := parseRegexp(opt.ExclFuncs)
+	if err != nil {
+		fmt.Fprintln(out, "Invalid -excl regex:", err)
+		return nil
 	}
 	return &gotests.Options{
 		Only:        onlyRE,
@@ -65,6 +59,17 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		Exported:    opt.ExportedFuncs,
 		PrintInputs: opt.PrintInputs,
 	}
+}
+
+func parseRegexp(s string) (*regexp.Regexp, error) {
+	if s == "" {
+		return nil, nil
+	}
+	re, err := regexp.Compile(s)
+	if err != nil {
+		return nil, err
+	}
+	return re, nil
 }
 
 func generateTests(out io.Writer, path string, writeOutput bool, opt *gotests.Options) {
