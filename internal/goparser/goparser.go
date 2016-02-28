@@ -228,38 +228,35 @@ func parseFields(f *ast.Field, ul map[string]types.Type) []*models.Field {
 }
 
 func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
-	var u string
 	switch v := e.(type) {
 	case *ast.StarExpr:
 		val := types.ExprString(v.X)
-		if ul[val] != nil {
-			u = ul[val].String()
-		}
 		return &models.Expression{
 			Value:      val,
 			IsStar:     true,
-			Underlying: u,
+			Underlying: underlying(val, ul),
 		}
 	case *ast.Ellipsis:
 		exp := parseExpr(v.Elt, ul)
-		if ul[exp.Value] != nil {
-			u = ul[exp.Value].String()
-		}
 		return &models.Expression{
 			Value:      exp.Value,
 			IsStar:     exp.IsStar,
 			IsVariadic: true,
-			Underlying: u,
+			Underlying: underlying(exp.Value, ul),
 		}
 	default:
 		val := types.ExprString(e)
-		if ul[val] != nil {
-			u = ul[val].String()
-		}
 		return &models.Expression{
 			Value:      val,
-			Underlying: u,
+			Underlying: underlying(val, ul),
 			IsWriter:   val == "io.Writer",
 		}
 	}
+}
+
+func underlying(val string, ul map[string]types.Type) string {
+	if ul[val] != nil {
+		return ul[val].String()
+	}
+	return ""
 }
