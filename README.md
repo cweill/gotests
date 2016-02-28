@@ -32,7 +32,7 @@ Available options:
   -all         generate tests for all functions and methods
   
   -excl        regexp. generate tests for functions and methods that don't 
-               match. Takes precedence over -only, -exp, and -all
+               match. Takes precedence over -only, -exported, and -all
     	   
   -exported    generate tests for exported functions and methods. Takes 
                precedence over -only and -all
