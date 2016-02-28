@@ -144,9 +144,6 @@ type Header struct {
 type Path string
 
 func (p Path) TestPath() string {
-	if p.IsTestPath() {
-		return string(p)
-	}
 	return strings.TrimSuffix(string(p), ".go") + "_test.go"
 }
 
