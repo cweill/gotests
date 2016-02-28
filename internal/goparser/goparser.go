@@ -138,33 +138,19 @@ func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Stru
 	f := &models.Function{
 		Name:       fDecl.Name.String(),
 		IsExported: fDecl.Name.IsExported(),
+		Receiver:   parseReceiver(fDecl.Recv, ul, el),
+		Parameters: parseFieldList(fDecl.Type.Params, ul),
 	}
-	if fDecl.Recv != nil && fDecl.Recv.List != nil {
-		f.Receiver = parseReceiver(fDecl.Recv.List[0], ul, el)
-	}
-	if fDecl.Type.Params != nil {
-		i := 0
-		for _, fi := range fDecl.Type.Params.List {
-			for _, pf := range parseFields(fi, ul) {
-				pf.Index = i
-				f.Parameters = append(f.Parameters, pf)
-				i++
-			}
+	fs := parseFieldList(fDecl.Type.Results, ul)
+	i := 0
+	for _, fi := range fs {
+		if fi.Type.String() == "error" {
+			f.ReturnsError = true
+			continue
 		}
-	}
-	if fDecl.Type.Results != nil {
-		i := 0
-		for _, fi := range fDecl.Type.Results.List {
-			for _, pf := range parseFields(fi, ul) {
-				if pf.Type.String() == "error" {
-					f.ReturnsError = true
-				} else {
-					pf.Index = i
-					f.Results = append(f.Results, pf)
-					i++
-				}
-			}
-		}
+		fi.Index = i
+		f.Results = append(f.Results, fi)
+		i++
 	}
 	return f
 }
@@ -184,9 +170,12 @@ func parseImports(imps []*ast.ImportSpec) []*models.Import {
 	return is
 }
 
-func parseReceiver(f *ast.Field, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Receiver {
+func parseReceiver(fl *ast.FieldList, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Receiver {
+	if fl == nil {
+		return nil
+	}
 	r := &models.Receiver{
-		Field: parseFields(f, ul)[0],
+		Field: parseFieldList(fl, ul)[0],
 	}
 	t, ok := ul[r.Type.Value]
 	if !ok {
@@ -200,14 +189,28 @@ func parseReceiver(f *ast.Field, ul map[string]types.Type, el map[*types.Struct]
 	if st.Fields == nil {
 		return r
 	}
-	for _, f := range st.Fields.List {
-		r.Fields = append(r.Fields, parseFields(f, ul)...)
-	}
+	r.Fields = append(r.Fields, parseFieldList(st.Fields, ul)...)
 	for i, f := range r.Fields {
 		f.Name = s.Field(i).Name()
 	}
 	return r
 
+}
+
+func parseFieldList(fl *ast.FieldList, ul map[string]types.Type) []*models.Field {
+	if fl == nil {
+		return nil
+	}
+	i := 0
+	var fs []*models.Field
+	for _, f := range fl.List {
+		for _, pf := range parseFields(f, ul) {
+			pf.Index = i
+			fs = append(fs, pf)
+			i++
+		}
+	}
+	return fs
 }
 
 func parseFields(f *ast.Field, ul map[string]types.Type) []*models.Field {
