@@ -56,9 +56,23 @@ func TestGenerateTests(t *testing.T) {
 			srcPath:     `testdata/test000.go`,
 			wantNoTests: true,
 		}, {
-			name:        "Function w/ neither receiver, parameters, nor results",
-			srcPath:     `testdata/test001.go`,
-			wantNoTests: true,
+			name:    "Function w/ neither receiver, parameters, nor results",
+			srcPath: `testdata/test001.go`,
+			want: `package testdata
+
+import "testing"
+
+func TestFoo1(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+	// TODO: Add test cases.
+	}
+	for range tests {
+		Foo1()
+	}
+}
+`,
 		}, {
 			name:    "Function w/ anonymous arguments",
 			srcPath: `testdata/test002.go`,
@@ -2133,11 +2147,11 @@ func TestUndefinedDo(t *testing.T) {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.srcPath, err, tt.wantErr)
 			continue
 		}
-		if len(gts) == 0 && !tt.wantNoTests {
+		if (len(gts) == 0) != tt.wantNoTests {
 			t.Errorf("%q. GenerateTests(%v) returned no tests", tt.name, tt.srcPath)
 			continue
 		}
-		if len(gts) > 1 && !tt.wantMultipleTests {
+		if (len(gts) > 1) != tt.wantMultipleTests {
 			t.Errorf("%q. GenerateTests(%v) returned too many tests", tt.name, tt.srcPath)
 			continue
 		}

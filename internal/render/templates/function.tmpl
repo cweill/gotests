@@ -11,7 +11,7 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests { {{with .Receiver}}{{if .IsStruct}}
+	for {{if not .IsNaked}} _, tt := {{end}} range tests { {{with .Receiver}}{{if .IsStruct}}
 		{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{ {{range .Fields}}
 		{{.Name}}: tt.{{Field .}}, {{end}}
 		} {{end}} {{end}} {{range .Parameters}}{{if .IsWriter}}

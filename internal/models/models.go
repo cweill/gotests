@@ -131,6 +131,10 @@ func (f *Function) TestName() string {
 	return "Test" + strings.Title(r) + strings.Title(f.Name)
 }
 
+func (f *Function) IsNaked() bool {
+	return f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0
+}
+
 type Import struct {
 	Name, Path string
 }
