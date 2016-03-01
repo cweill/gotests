@@ -1,3 +1,4 @@
+// Package gotests contains the core logic for generating table-driven tests.
 package gotests
 
 import (
@@ -15,20 +16,25 @@ import (
 	"github.com/cweill/gotests/internal/output"
 )
 
+// Options provides custom filters and parameters for generating tests.
 type Options struct {
-	Only        *regexp.Regexp
-	Exclude     *regexp.Regexp
-	Exported    bool
-	PrintInputs bool
-	Importer    func() types.Importer
+	Only        *regexp.Regexp        // Includes only functions that match.
+	Exclude     *regexp.Regexp        // Excludes functions that match.
+	Exported    bool                  // Include only exported methods
+	PrintInputs bool                  // Print function parameters in error messages
+	Importer    func() types.Importer // A custom importer.
 }
 
+// A GeneratedTest contains information about a test file with generated tests.
 type GeneratedTest struct {
 	Path      string             // The test file's absolute path.
 	Functions []*models.Function // The functions with new test methods.
 	Output    []byte             // The contents of the test file.
 }
 
+// GenerateTests generates table-driven tests for the function and method
+// signatures defined in the target source path file(s). The source path
+// parameter can be either a Go source file or directory containing Go files.
 func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
 	srcFiles, err := input.Files(srcPath)
 	if err != nil {
