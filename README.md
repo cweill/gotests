@@ -1,6 +1,6 @@
 # gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master) [![codebeat badge](https://codebeat.co/badges/7ef052e3-35ff-4cab-88f9-e13393c8ab35)](https://codebeat.co/projects/github-com-cweill-gotests)
 
-`gotests` is a Golang commandline tool for automatically generating [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). It generates missing tests based on its target source files' function and method signatures. Additionally, any new dependencies in the test files are automatically imported.
+`gotests` makes writing Go tests easier. It's a Golang commandline tool that generates [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests). It generates missing tests based on its target source files' function and method signatures. Additionally, any new dependencies in the test files are automatically imported.
 
 ## Demo
 
@@ -20,7 +20,7 @@ $ go get -u github.com/cweill/gotests/...
 
 ## Usage
 
-From the commandline, `gotests` can generate tests for specific Go source files or an entire directory. By default, it prints its output to stdout.
+From the commandline, `gotests` can generate tests for specific Go source files or an entire directory. By default, it prints its output to `stdout`.
 
 ```sh
 $ gotests [options] PATH ...
