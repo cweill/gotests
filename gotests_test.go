@@ -754,14 +754,14 @@ func TestFoo26(t *testing.T) {
 		name    string
 		v       interface{}
 		want    string
-		want1   int
+		wantI   int
 		want2   []byte
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, got1, got2, err := Foo26(tt.v)
+		got, gotI, got2, err := Foo26(tt.v)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo26() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -769,8 +769,8 @@ func TestFoo26(t *testing.T) {
 		if got != tt.want {
 			t.Errorf("%q. Foo26() got = %v, want %v", tt.name, got, tt.want)
 		}
-		if got1 != tt.want1 {
-			t.Errorf("%q. Foo26() got1 = %v, want %v", tt.name, got1, tt.want1)
+		if gotI != tt.wantI {
+			t.Errorf("%q. Foo26() gotI = %v, want %v", tt.name, gotI, tt.wantI)
 		}
 		if !reflect.DeepEqual(got2, tt.want2) {
 			t.Errorf("%q. Foo26() got2 = %v, want %v", tt.name, got2, tt.want2)
@@ -949,7 +949,7 @@ import (
 func TestBarWrite(t *testing.T) {
 	tests := []struct {
 		name    string
-		want    string
+		wantW   string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -961,8 +961,8 @@ func TestBarWrite(t *testing.T) {
 			t.Errorf("%q. Bar.Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if got := w.String(); got != tt.want {
-			t.Errorf("%q. Bar.Write() = %v, want %v", tt.name, got, tt.want)
+		if gotW := w.String(); gotW != tt.wantW {
+			t.Errorf("%q. Bar.Write() = %v, want %v", tt.name, gotW, tt.wantW)
 		}
 	}
 }
@@ -971,7 +971,7 @@ func TestWrite(t *testing.T) {
 	tests := []struct {
 		name    string
 		data    string
-		want    string
+		wantW   string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -982,8 +982,8 @@ func TestWrite(t *testing.T) {
 			t.Errorf("%q. Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if got := w.String(); got != tt.want {
-			t.Errorf("%q. Write() = %v, want %v", tt.name, got, tt.want)
+		if gotW := w.String(); gotW != tt.wantW {
+			t.Errorf("%q. Write() = %v, want %v", tt.name, gotW, tt.wantW)
 		}
 	}
 }
@@ -994,8 +994,8 @@ func TestMultiWrite(t *testing.T) {
 		data    string
 		want    int
 		want1   string
-		want2   string
-		want3   string
+		wantW1  string
+		wantW2  string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -1014,11 +1014,11 @@ func TestMultiWrite(t *testing.T) {
 		if got1 != tt.want1 {
 			t.Errorf("%q. MultiWrite() got1 = %v, want %v", tt.name, got1, tt.want1)
 		}
-		if got2 := w1.String(); got2 != tt.want2 {
-			t.Errorf("%q. MultiWrite() got2 = %v, want %v", tt.name, got2, tt.want2)
+		if gotW1 := w1.String(); gotW1 != tt.wantW1 {
+			t.Errorf("%q. MultiWrite() gotW1 = %v, want %v", tt.name, gotW1, tt.wantW1)
 		}
-		if got3 := w2.String(); got3 != tt.want3 {
-			t.Errorf("%q. MultiWrite() got3 = %v, want %v", tt.name, got3, tt.want3)
+		if gotW2 := w2.String(); gotW2 != tt.wantW2 {
+			t.Errorf("%q. MultiWrite() gotW2 = %v, want %v", tt.name, gotW2, tt.wantW2)
 		}
 	}
 }
@@ -1123,10 +1123,10 @@ func TestNameName2(t *testing.T) {
 
 func TestNameName3(t *testing.T) {
 	tests := []struct {
-		name  string
-		fname string
-		nn    string
-		want  string
+		name     string
+		fname    string
+		nn       string
+		wantName string
 	}{
 	// TODO: Add test cases.
 	}
@@ -1134,8 +1134,8 @@ func TestNameName3(t *testing.T) {
 		n := &Name{
 			Name: tt.fname,
 		}
-		if got := n.Name3(tt.nn); got != tt.want {
-			t.Errorf("%q. Name.Name3() = %v, want %v", tt.name, got, tt.want)
+		if gotName := n.Name3(tt.nn); gotName != tt.wantName {
+			t.Errorf("%q. Name.Name3() = %v, want %v", tt.name, gotName, tt.wantName)
 		}
 	}
 }

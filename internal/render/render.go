@@ -4,6 +4,7 @@ package render
 import (
 	"fmt"
 	"io"
+	"strings"
 	"text/template"
 	"unicode"
 
@@ -99,17 +100,27 @@ func parameterName(f *models.Field) string {
 }
 
 func wantName(f *models.Field) string {
-	if f.Index == 0 {
-		return "want"
+	var n string
+	if f.IsNamed() {
+		n = "want" + strings.ToUpper(f.Name[:1]) + f.Name[1:]
+	} else if f.Index == 0 {
+		n = "want"
+	} else {
+		n = fmt.Sprintf("want%v", f.Index)
 	}
-	return fmt.Sprintf("want%v", f.Index)
+	return n
 }
 
 func gotName(f *models.Field) string {
-	if f.Index == 0 {
-		return "got"
+	var n string
+	if f.IsNamed() {
+		n = "got" + strings.ToUpper(f.Name[:1]) + f.Name[1:]
+	} else if f.Index == 0 {
+		n = "got"
+	} else {
+		n = fmt.Sprintf("got%v", f.Index)
 	}
-	return fmt.Sprintf("got%v", f.Index)
+	return n
 }
 
 func unexport(s string) string {
