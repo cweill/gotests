@@ -6,7 +6,6 @@ import (
 	"io"
 	"strings"
 	"text/template"
-	"unicode"
 
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/render/bindata"
@@ -18,32 +17,7 @@ var (
 	tmpls *template.Template
 
 	reserved = map[string]bool{
-		"name":        true,
-		"break":       true,
-		"default":     true,
-		"func":        true,
-		"interface":   true,
-		"select":      true,
-		"case":        true,
-		"defer":       true,
-		"go":          true,
-		"map":         true,
-		"struct":      true,
-		"chan":        true,
-		"else":        true,
-		"goto":        true,
-		"package":     true,
-		"switch":      true,
-		"const":       true,
-		"fallthrough": true,
-		"if":          true,
-		"range":       true,
-		"type":        true,
-		"continue":    true,
-		"for":         true,
-		"import":      true,
-		"return":      true,
-		"var":         true,
+		"name": true,
 	}
 )
 
@@ -118,17 +92,6 @@ func gotName(f *models.Field) string {
 		n = fmt.Sprintf("got%v", f.Index)
 	}
 	return n
-}
-
-func unexport(s string) string {
-	r := []rune(s)
-	for i := range r {
-		if i != 0 && i+1 < len(r)-1 && unicode.IsLower(r[i+1]) {
-			break
-		}
-		r[i] = unicode.ToLower(r[i])
-	}
-	return string(r)
 }
 
 func Header(w io.Writer, h *models.Header) error {
