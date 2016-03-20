@@ -3,8 +3,11 @@ package gotests
 import (
 	"errors"
 	"go/types"
+	"io/ioutil"
+	"path"
 	"regexp"
 	"testing"
+	"unicode"
 )
 
 func TestGenerateTests(t *testing.T) {
@@ -56,1565 +59,216 @@ func TestGenerateTests(t *testing.T) {
 			srcPath:     `testdata/test000.go`,
 			wantNoTests: true,
 		}, {
-			name:    "Function w/ neither receiver, parameters, nor results",
+			name:    "Function with neither receiver, parameters, nor results",
 			srcPath: `testdata/test001.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo1(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-	// TODO: Add test cases.
-	}
-	for range tests {
-		Foo1()
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_neither_receiver_parameters_nor_results.go"),
 		}, {
-			name:    "Function w/ anonymous arguments",
+			name:    "Function with anonymous arguments",
 			srcPath: `testdata/test002.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo2(t *testing.T) {
-	tests := []struct {
-		name string
-		in0  string
-		in1  int
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		Foo2(tt.in0, tt.in1)
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_anonymous_arguments.go"),
 		}, {
-			name:    "Function w/ named argument",
+			name:    "Function with named argument",
 			srcPath: `testdata/test003.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo3(t *testing.T) {
-	tests := []struct {
-		name string
-		s    string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		Foo3(tt.s)
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_named_argument.go"),
 		}, {
-			name:    "Function w/ return value",
+			name:    "Function with return value",
 			srcPath: `testdata/test004.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo4(t *testing.T) {
-	tests := []struct {
-		name string
-		want bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo4(); got != tt.want {
-			t.Errorf("%q. Foo4() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_return_value.go"),
 		}, {
 			name:    "Function returning an error",
 			srcPath: `testdata/test005.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo5(t *testing.T) {
-	tests := []struct {
-		name    string
-		want    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo5()
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo5() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. Foo5() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_returning_an_error.go"),
 		}, {
-			name:    "Function w/ multiple arguments",
+			name:    "Function with multiple arguments",
 			srcPath: `testdata/test006.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo6(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       int
-		b       bool
-		want    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo6(tt.i, tt.b)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo6() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. Foo6() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_multiple_arguments.go"),
 		}, {
-			name:        "Print inputs with multiple arguments ",
+			name:        "Print inputs with multiple arguments",
 			srcPath:     `testdata/test006.go`,
 			printInputs: true,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo6(t *testing.T) {
-	tests := []struct {
-		i       int
-		b       bool
-		want    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo6(tt.i, tt.b)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("Foo6(%v, %v) error = %v, wantErr %v", tt.i, tt.b, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("Foo6(%v, %v) = %v, want %v", tt.i, tt.b, got, tt.want)
-		}
-	}
-}
-`,
+			want:        mustReadFile(t, "testdata/goldens/print_inputs_with_multiple_arguments.go"),
 		}, {
 			name:    "Method on a struct pointer",
 			srcPath: `testdata/test007.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestBarFoo7(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       int
-		want    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		got, err := b.Foo7(tt.i)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. Bar.Foo7() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/method_on_a_struct_pointer.go"),
 		}, {
 			name:        "Print inputs with single argument",
 			srcPath:     `testdata/test007.go`,
 			printInputs: true,
-			want: `package testdata
-
-import "testing"
-
-func TestBarFoo7(t *testing.T) {
-	tests := []struct {
-		i       int
-		want    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		got, err := b.Foo7(tt.i)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("Bar.Foo7(%v) error = %v, wantErr %v", tt.i, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("Bar.Foo7(%v) = %v, want %v", tt.i, got, tt.want)
-		}
-	}
-}
-`,
+			want:        mustReadFile(t, "testdata/goldens/print_inputs_with_single_argument.go"),
 		}, {
-			name:    "Function w/ struct pointer argument and return type",
+			name:    "Function with struct pointer argument and return type",
 			srcPath: `testdata/test008.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo8(t *testing.T) {
-	tests := []struct {
-		name    string
-		b       *Bar
-		want    *Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo8(tt.b)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo8() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo8() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_struct_pointer_argument_and_return_type.go"),
 		}, {
-			name:    "Struct value method w/ struct value return type",
+			name:    "Struct value method with struct value return type",
 			srcPath: `testdata/test009.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestBarFoo9(t *testing.T) {
-	tests := []struct {
-		name string
-		want Bar
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := Bar{}
-		if got := b.Foo9(); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Bar.Foo9() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/struct_value_method_with_struct_value_return_type.go"),
 		}, {
-			name:    "Function w/ map argument and return type",
+			name:    "Function with map argument and return type",
 			srcPath: `testdata/test010.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo10(t *testing.T) {
-	tests := []struct {
-		name string
-		m    map[string]int32
-		want map[string]*Bar
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo10(tt.m); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo10() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_map_argument_and_return_type.go"),
 		}, {
-			name:    "Function w/ slice argument and return type",
+			name:    "Function with slice argument and return type",
 			srcPath: `testdata/test011.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo11(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo11(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo11() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo11() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_slice_argument_and_return_type.go"),
 		}, {
 			name:    "Function returning only an error",
 			srcPath: `testdata/test012.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo12(t *testing.T) {
-	tests := []struct {
-		name    string
-		str     string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if err := Foo12(tt.str); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo12() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_returning_only_an_error.go"),
 		}, {
-			name:    "Function w/ a function parameter",
+			name:    "Function with a function parameter",
 			srcPath: `testdata/test013.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo13(t *testing.T) {
-	tests := []struct {
-		name    string
-		f       func()
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if err := Foo13(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo13() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_a_function_parameter.go"),
 		}, {
-			name:    "Function w/ a function parameter w/ its own parameters and result",
+			name:    "Function with a function parameter with its own parameters and result",
 			srcPath: `testdata/test014.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo14(t *testing.T) {
-	tests := []struct {
-		name    string
-		f       func(string, int) string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if err := Foo14(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo14() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_a_function_parameter_with_its_own_parameters_and_result.go"),
 		}, {
-			name:    "Function w/ a function parameter that returns two results",
+			name:    "Function with a function parameter that returns two results",
 			srcPath: `testdata/test015.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo15(t *testing.T) {
-	tests := []struct {
-		name    string
-		f       func(string) (string, error)
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if err := Foo15(tt.f); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo15() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_a_function_parameter_that_returns_two_results.go"),
 		}, {
-			name:    "Function w/ interface parameter and result",
+			name:    "Function with defined interface type parameter and result",
 			srcPath: `testdata/test016.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo16(t *testing.T) {
-	tests := []struct {
-		name string
-		in   Bazzar
-		want Bazzar
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo16(tt.in); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo16() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_defined_interface_type_parameter_and_result.go"),
 		}, {
-			name:    "Function w/ imported interface receiver, parameter, and result",
+			name:    "Function with imported interface receiver, parameter, and result",
 			srcPath: `testdata/test017.go`,
-			want: `package testdata
-
-import (
-	"io"
-	"reflect"
-	"testing"
-)
-
-func TestFoo17(t *testing.T) {
-	tests := []struct {
-		name string
-		r    io.Reader
-		want io.Reader
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo17(tt.r); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo17() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_imported_interface_receiver_parameter_and_result.go"),
 		}, {
-			name:    "Function w/ imported struct receiver, parameter, and result",
+			name:    "Function with imported struct receiver, parameter, and result",
 			srcPath: `testdata/test018.go`,
-			want: `package testdata
-
-import (
-	"os"
-	"reflect"
-	"testing"
-)
-
-func TestFoo18(t *testing.T) {
-	tests := []struct {
-		name string
-		t    *os.File
-		want *os.File
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo18(tt.t); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo18() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_imported_struct_receiver_parameter_and_result.go"),
 		}, {
-			name:    "Function w/ multiple parameters of the same type",
+			name:    "Function with multiple parameters of the same type",
 			srcPath: `testdata/test019.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo19(t *testing.T) {
-	tests := []struct {
-		name string
-		in1  string
-		in2  string
-		in3  string
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo19(tt.in1, tt.in2, tt.in3); got != tt.want {
-			t.Errorf("%q. Foo19() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_multiple_parameters_of_the_same_type.go"),
 		}, {
-			name:    "Function w/ a variadic parameter",
+			name:    "Function with a variadic parameter",
 			srcPath: `testdata/test020.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo20(t *testing.T) {
-	tests := []struct {
-		name string
-		strs []string
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo20(tt.strs...); got != tt.want {
-			t.Errorf("%q. Foo20() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_a_variadic_parameter.go"),
 		}, {
-			name:    "Function w/ interface{} parameter and result",
+			name:    "Function with interface{} parameter and result",
 			srcPath: `testdata/test021.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo21(t *testing.T) {
-	tests := []struct {
-		name string
-		i    interface{}
-		want interface{}
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo21(tt.i); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo21() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_interface_parameter_and_result.go"),
 		}, {
-			name:    "Function w/ named imports",
+			name:    "Function with named imports",
 			srcPath: `testdata/test022.go`,
-			want: `package testdata
-
-import (
-	ht "html/template"
-	"reflect"
-	"testing"
-)
-
-func TestFoo22(t *testing.T) {
-	tests := []struct {
-		name string
-		t    *ht.Template
-		want *ht.Template
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo22(tt.t); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo22() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_named_imports.go"),
 		}, {
-			name:    "Function w/ channel parameter and result",
+			name:    "Function with channel parameter and result",
 			srcPath: `testdata/test023.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo23(t *testing.T) {
-	tests := []struct {
-		name string
-		ch   chan bool
-		want chan string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo23(tt.ch); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo23() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_with_channel_parameter_and_result.go"),
 		}, {
 			name:    "File with multiple imports",
 			srcPath: `testdata/test024.go`,
-			want: `package testdata
-
-import (
-	"go/ast"
-	"go/types"
-	"io"
-	"testing"
-)
-
-func TestFoo24(t *testing.T) {
-	tests := []struct {
-		name    string
-		r       io.Reader
-		x       ast.Expr
-		t       types.Type
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if err := Foo24(tt.r, tt.x, tt.t); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo24() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/file_with_multiple_imports.go"),
 		}, {
 			name:    "Function returning two results and an error",
 			srcPath: `testdata/test025.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo25(t *testing.T) {
-	tests := []struct {
-		name    string
-		in0     interface{}
-		want    string
-		want1   []byte
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, got1, err := Foo25(tt.in0)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo25() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. Foo25() got = %v, want %v", tt.name, got, tt.want)
-		}
-		if !reflect.DeepEqual(got1, tt.want1) {
-			t.Errorf("%q. Foo25() got1 = %v, want %v", tt.name, got1, tt.want1)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/function_returning_two_results_and_an_error.go"),
 		}, {
 			name:    "Multiple named results",
 			srcPath: `testdata/test026.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFoo26(t *testing.T) {
-	tests := []struct {
-		name    string
-		v       interface{}
-		want    string
-		wantI   int
-		want2   []byte
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, gotI, got2, err := Foo26(tt.v)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo26() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. Foo26() got = %v, want %v", tt.name, got, tt.want)
-		}
-		if gotI != tt.wantI {
-			t.Errorf("%q. Foo26() gotI = %v, want %v", tt.name, gotI, tt.wantI)
-		}
-		if !reflect.DeepEqual(got2, tt.want2) {
-			t.Errorf("%q. Foo26() got2 = %v, want %v", tt.name, got2, tt.want2)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_named_results.go"),
 		}, {
 			name:    "Two different structs with same method name",
 			srcPath: `testdata/test027.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestBookOpen(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Book{}
-		if err := b.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Book.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func TestDoorOpen(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		d := &door{}
-		if err := d.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. door.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func TestXmlOpen(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		x := &xml{}
-		if err := x.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. xml.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/two_different_structs_with_same_method_name.go"),
 		}, {
 			name:    "Underlying types",
 			srcPath: `testdata/test028.go`,
-			want: `package testdata
-
-import (
-	"testing"
-	"time"
-)
-
-func TestCelsiusToFahrenheit(t *testing.T) {
-	tests := []struct {
-		name string
-		c    Celsius
-		want Fahrenheit
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := tt.c.ToFahrenheit(); got != tt.want {
-			t.Errorf("%q. Celsius.ToFahrenheit() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestHourToSecond(t *testing.T) {
-	tests := []struct {
-		name string
-		h    time.Duration
-		want time.Duration
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := HourToSecond(tt.h); got != tt.want {
-			t.Errorf("%q. HourToSecond() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/underlying_types.go"),
 		}, {
 			name:    "Struct receiver with multiple fields",
 			srcPath: `testdata/test029.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestPersonSayHello(t *testing.T) {
-	tests := []struct {
-		name      string
-		firstName string
-		lastName  string
-		age       int
-		gender    string
-		siblings  []*Person
-		r         *Person
-		want      string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		p := &Person{
-			FirstName: tt.firstName,
-			LastName:  tt.lastName,
-			Age:       tt.age,
-			Gender:    tt.gender,
-			Siblings:  tt.siblings,
-		}
-		if got := p.SayHello(tt.r); got != tt.want {
-			t.Errorf("%q. Person.SayHello() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/struct_receiver_with_multiple_fields.go"),
 		}, {
 			name:    "Struct receiver with anonymous fields",
 			srcPath: `testdata/test030.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestDoctorSayHello(t *testing.T) {
-	tests := []struct {
-		name        string
-		person      *Person
-		id          string
-		numPatients int
-		string      string
-		r           *Person
-		want        string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		d := &Doctor{
-			Person:      tt.person,
-			ID:          tt.id,
-			numPatients: tt.numPatients,
-			string:      tt.string,
-		}
-		if got := d.SayHello(tt.r); got != tt.want {
-			t.Errorf("%q. Doctor.SayHello() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/struct_receiver_with_anonymous_fields.go"),
 		}, {
 			name:    "io.Writer parameters",
 			srcPath: `testdata/test031.go`,
-			want: `package testdata
-
-import (
-	"bytes"
-	"testing"
-)
-
-func TestBarWrite(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantW   string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		w := &bytes.Buffer{}
-		if err := b.Write(w); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if gotW := w.String(); gotW != tt.wantW {
-			t.Errorf("%q. Bar.Write() = %v, want %v", tt.name, gotW, tt.wantW)
-		}
-	}
-}
-
-func TestWrite(t *testing.T) {
-	tests := []struct {
-		name    string
-		data    string
-		wantW   string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		w := &bytes.Buffer{}
-		if err := Write(w, tt.data); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if gotW := w.String(); gotW != tt.wantW {
-			t.Errorf("%q. Write() = %v, want %v", tt.name, gotW, tt.wantW)
-		}
-	}
-}
-
-func TestMultiWrite(t *testing.T) {
-	tests := []struct {
-		name    string
-		data    string
-		want    int
-		want1   string
-		wantW1  string
-		wantW2  string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		w1 := &bytes.Buffer{}
-		w2 := &bytes.Buffer{}
-		got, got1, err := MultiWrite(w1, w2, tt.data)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. MultiWrite() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. MultiWrite() got = %v, want %v", tt.name, got, tt.want)
-		}
-		if got1 != tt.want1 {
-			t.Errorf("%q. MultiWrite() got1 = %v, want %v", tt.name, got1, tt.want1)
-		}
-		if gotW1 := w1.String(); gotW1 != tt.wantW1 {
-			t.Errorf("%q. MultiWrite() gotW1 = %v, want %v", tt.name, gotW1, tt.wantW1)
-		}
-		if gotW2 := w2.String(); gotW2 != tt.wantW2 {
-			t.Errorf("%q. MultiWrite() gotW2 = %v, want %v", tt.name, gotW2, tt.wantW2)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/io_writer_parameters.go"),
 		}, {
 			name:    "Two structs with same method name",
 			srcPath: `testdata/test032.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestCelsiusString(t *testing.T) {
-	tests := []struct {
-		name string
-		c    Celsius
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := tt.c.String(); got != tt.want {
-			t.Errorf("%q. Celsius.String() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestFahrenheitString(t *testing.T) {
-	tests := []struct {
-		name string
-		f    Fahrenheit
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := tt.f.String(); got != tt.want {
-			t.Errorf("%q. Fahrenheit.String() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/two_structs_with_same_method_name.go"),
 		}, {
 			name:    "Functions and methods with 'name' receivers, parameters, and results",
 			srcPath: `testdata/test033.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestNameName(t *testing.T) {
-	tests := []struct {
-		name  string
-		rname name
-		n     string
-		want  string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := tt.rname.Name(tt.n); got != tt.want {
-			t.Errorf("%q. name.Name() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestNameName1(t *testing.T) {
-	tests := []struct {
-		name  string
-		fname string
-		n     string
-		want  string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		rname := &Name{
-			Name: tt.fname,
-		}
-		if got := rname.Name1(tt.n); got != tt.want {
-			t.Errorf("%q. Name.Name1() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestNameName2(t *testing.T) {
-	tests := []struct {
-		name  string
-		fname string
-		pname string
-		want  string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		n := &Name{
-			Name: tt.fname,
-		}
-		if got := n.Name2(tt.pname); got != tt.want {
-			t.Errorf("%q. Name.Name2() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestNameName3(t *testing.T) {
-	tests := []struct {
-		name     string
-		fname    string
-		nn       string
-		wantName string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		n := &Name{
-			Name: tt.fname,
-		}
-		if gotName := n.Name3(tt.nn); gotName != tt.wantName {
-			t.Errorf("%q. Name.Name3() = %v, want %v", tt.name, gotName, tt.wantName)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/functions_and_methods_with_name_receivers_parameters_and_results.go"),
 		}, {
 			name:    "Receiver struct with reserved field names",
 			srcPath: `testdata/test034.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestReservedDontFail(t *testing.T) {
-	tests := []struct {
-		name         string
-		fname        string
-		fbreak       string
-		fdefault     string
-		ffunc        string
-		finterface   string
-		fselect      string
-		fcase        string
-		fdefer       string
-		fgo          string
-		fmap         string
-		fstruct      string
-		fchan        string
-		felse        string
-		fgoto        string
-		fpackage     string
-		fswitch      string
-		fconst       string
-		ffallthrough string
-		fif          string
-		frange       string
-		ftype        string
-		fcontinue    string
-		ffor         string
-		fimport      string
-		freturn      string
-		fvar         string
-		want         string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		r := &Reserved{
-			Name:        tt.fname,
-			Break:       tt.fbreak,
-			Default:     tt.fdefault,
-			Func:        tt.ffunc,
-			Interface:   tt.finterface,
-			Select:      tt.fselect,
-			Case:        tt.fcase,
-			Defer:       tt.fdefer,
-			Go:          tt.fgo,
-			Map:         tt.fmap,
-			Struct:      tt.fstruct,
-			Chan:        tt.fchan,
-			Else:        tt.felse,
-			Goto:        tt.fgoto,
-			Package:     tt.fpackage,
-			Switch:      tt.fswitch,
-			Const:       tt.fconst,
-			Fallthrough: tt.ffallthrough,
-			If:          tt.fif,
-			Range:       tt.frange,
-			Type:        tt.ftype,
-			Continue:    tt.fcontinue,
-			For:         tt.ffor,
-			Import:      tt.fimport,
-			Return:      tt.freturn,
-			Var:         tt.fvar,
-		}
-		if got := r.DontFail(); got != tt.want {
-			t.Errorf("%q. Reserved.DontFail() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/receiver_struct_with_reserved_field_names.go"),
 		}, {
 			name:    "Receiver struct with fields with complex package names",
 			srcPath: `testdata/test035.go`,
-			want: `package testdata
-
-import (
-	"go/types"
-	"reflect"
-	"testing"
-)
-
-func TestImporterFoo35(t *testing.T) {
-	tests := []struct {
-		name     string
-		importer types.Importer
-		field    *types.Var
-		t        types.Type
-		want     *types.Var
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		i := &Importer{
-			Importer: tt.importer,
-			Field:    tt.field,
-		}
-		if got := i.Foo35(tt.t); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Importer.Foo35() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/receiver_struct_with_fields_with_complex_package_names.go"),
 		}, {
 			name:    "Multiple functions",
 			srcPath: `testdata/test_filter.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions.go"),
 		}, {
-			name:    "Multiple functions w/ only",
+			name:    "Multiple functions with only",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("FooFilter|bazFilter"),
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_only.go"),
 		}, {
-			name:        "Multiple functions w/ only regexp without matches",
+			name:        "Multiple functions with only regexp without matches",
 			srcPath:     `testdata/test_filter.go`,
 			only:        regexp.MustCompile("asdf"),
 			wantNoTests: true,
 		}, {
-			name:    "Multiple functions w/ case-insensitive only",
+			name:    "Multiple functions with case-insensitive only",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("(?i)fooFilter|BazFilter"),
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_case-insensitive_only.go"),
 		}, {
-			name:    "Multiple functions w/ only filtering on receiver",
+			name:    "Multiple functions with only filtering on receiver",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("^BarBarFilter$"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_only_filtering_on_receiver.go"),
 		}, {
-			name:    "Multiple functions w/ only filtering on method",
+			name:    "Multiple functions with only filtering on method",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("^(BarFilter)$"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_only_filtering_on_method.go"),
 		}, {
 			name:     "Multiple functions filtering exported",
 			srcPath:  `testdata/test_filter.go`,
 			exported: true,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:     mustReadFile(t, "testdata/goldens/multiple_functions_filtering_exported.go"),
 		}, {
-			name:     "Multiple functions filtering exported w/ only",
+			name:     "Multiple functions filtering exported with only",
 			srcPath:  `testdata/test_filter.go`,
 			only:     regexp.MustCompile(`FooFilter`),
 			exported: true,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:     mustReadFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_only.go"),
 		}, {
 			name:        "Multiple functions filtering all out",
 			srcPath:     `testdata/test_filter.go`,
 			only:        regexp.MustCompile("fooFilter"),
 			wantNoTests: true,
 		}, {
-			name:    "Multiple functions w/ excl",
+			name:    "Multiple functions with excl",
 			srcPath: `testdata/test_filter.go`,
 			excl:    regexp.MustCompile("FooFilter|bazFilter"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_excl.go"),
 		}, {
-			name:    "Multiple functions w/ case-insensitive excl",
+			name:    "Multiple functions with case-insensitive excl",
 			srcPath: `testdata/test_filter.go`,
 			excl:    regexp.MustCompile("(?i)foOFilter|BaZFilter"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_case-insensitive_excl.go"),
 		}, {
-			name:     "Multiple functions filtering exported w/ excl",
+			name:     "Multiple functions filtering exported with excl",
 			srcPath:  `testdata/test_filter.go`,
 			excl:     regexp.MustCompile(`FooFilter`),
 			exported: true,
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:     mustReadFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_excl.go"),
 		}, {
 			name:        "Multiple functions excluding all",
 			srcPath:     `testdata/test_filter.go`,
@@ -1624,371 +278,45 @@ func TestBarBarFilter(t *testing.T) {
 			name:    "Multiple functions excluding on receiver",
 			srcPath: `testdata/test_filter.go`,
 			excl:    regexp.MustCompile("^BarBarFilter$"),
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_excluding_on_receiver.go"),
 		}, {
 			name:    "Multiple functions excluding on method",
 			srcPath: `testdata/test_filter.go`,
 			excl:    regexp.MustCompile("^BarFilter$"),
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_excluding_on_method.go"),
 		}, {
-			name:    "Multiple functions w/ both only and excl",
+			name:    "Multiple functions with both only and excl",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("BarFilter"),
 			excl:    regexp.MustCompile("FooFilter"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_both_only_and_excl.go"),
 		}, {
-			name:    "Multiple functions w/ only and excl competing",
+			name:    "Multiple functions with only and excl competing",
 			srcPath: `testdata/test_filter.go`,
 			only:    regexp.MustCompile("FooFilter|BarFilter"),
 			excl:    regexp.MustCompile("FooFilter|bazFilter"),
-			want: `package testdata
-
-import "testing"
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/multiple_functions_with_only_and_excl_competing.go"),
 		}, {
 			name:     "Custom importer fails",
 			srcPath:  `testdata/test_filter.go`,
 			importer: &fakeImporter{err: errors.New("error")},
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestFooFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBarBarFilter(t *testing.T) {
-	tests := []struct {
-		name    string
-		i       interface{}
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func TestBazFilter(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := bazFilter(tt.f); got != tt.want {
-			t.Errorf("%q. bazFilter() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:     mustReadFile(t, "testdata/goldens/custom_importer_fails.go"),
 		}, {
 			name:    "Existing test file",
 			srcPath: `testdata/test100.go`,
-			want: `package testdata
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestBarBar100(t *testing.T) {
-	tests := []struct {
-		name    string
-		b       *Bar
-		i       interface{}
-		wantErr bool
-	}{
-		{
-			name:    "Basic test",
-			b:       &Bar{},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		if err := tt.b.Bar100(tt.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func TestBaz100(t *testing.T) {
-	tests := []struct {
-		name string
-		f    *float64
-		want float64
-	}{
-		{
-			name: "Basic test",
-			f:    func() *float64 { var x float64 = 64; return &x }(),
-			want: 64,
-		},
-	}
-	// TestBaz100 contains a comment.
-	for _, tt := range tests {
-		if got := baz100(tt.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestFoo100(t *testing.T) {
-	tests := []struct {
-		name    string
-		strs    []string
-		want    []*Bar
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := Foo100(tt.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/existing_test_file.go"),
 		}, {
 			name:    "Existing test file with just package declaration",
 			srcPath: `testdata/test101.go`,
-			want: `package testdata
-
-import "testing"
-
-func TestFoo101(t *testing.T) {
-	tests := []struct {
-		name string
-		s    string
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo101(tt.s); got != tt.want {
-			t.Errorf("%q. Foo101() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/existing_test_file_with_just_package_declaration.go"),
 		}, {
 			name:    "Existing test file with no functions",
 			srcPath: `testdata/test102.go`,
-			want: `package testdata
-
-import (
-	"fmt"
-	"testing"
-)
-
-var example102 = fmt.Sprintf("test%v", 1)
-
-func TestFoo102(t *testing.T) {
-	tests := []struct {
-		name string
-		s    string
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo102(tt.s); got != tt.want {
-			t.Errorf("%q. Foo102() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/existing_test_file_with_no_functions.go"),
 		}, {
 			name:    "Existing test file with multiple imports",
 			srcPath: `testdata/test200.go`,
-			want: `package testdata
-
-import (
-	"go/ast"
-	"go/types"
-	"testing"
-)
-
-func TestFoo200(t *testing.T) {
-	tests := []struct {
-		name string
-		x    ast.Expr
-		t    types.Type
-		want bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Foo200(tt.x, tt.t); got != tt.want {
-			t.Errorf("%q. Foo200() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBar200(t *testing.T) {
-	tests := []struct {
-		name string
-		t    types.Type
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Bar200(tt.t); got != tt.want {
-			t.Errorf("%q. Bar200() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/existing_test_file_with_multiple_imports.go"),
 		}, {
 			name:              "Entire testdata directory",
 			srcPath:           `testdata/`,
@@ -1996,144 +324,28 @@ func TestBar200(t *testing.T) {
 		}, {
 			name:    "Different packages in same directory - part 1",
 			srcPath: `testdata/mixedpkg/bar.go`,
-			want: `package bar
-
-import "testing"
-
-func TestBarBar(t *testing.T) {
-	tests := []struct {
-		name    string
-		foo     string
-		s       string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{
-			Foo: tt.foo,
-		}
-		if err := b.Bar(tt.s); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/different_packages_in_same_directory_-_part_1.go"),
 		}, {
 			name:    "Different packages in same directory - part 2",
 			srcPath: `testdata/mixedpkg/foo.go`,
-			want: `package foo
-
-import "testing"
-
-func TestFooFoo(t *testing.T) {
-	tests := []struct {
-		name    string
-		bar     string
-		s       string
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		f := &Foo{
-			Bar: tt.bar,
-		}
-		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/different_packages_in_same_directory_-_part_2.go"),
 		}, {
 			name:    "Empty test file",
 			srcPath: `testdata/blanktest/blank.go`,
-			want: `package blanktest
-
-import (
-	"os"
-	"testing"
-)
-
-func TestNot(t *testing.T) {
-	tests := []struct {
-		name string
-		this *os.File
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Not(tt.this); got != tt.want {
-			t.Errorf("%q. Not() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/empty_test_file.go"),
 		}, {
-			name:    "Test file w/ syntax errors",
+			name:    "Test file with syntax errors",
 			srcPath: `testdata/syntaxtest/syntax.go`,
-			want: `package syntaxtest
-
-import (
-	"os"
-	"testing"
-)
-
-// Plural all the types.
-func Foo(s strings) errors {
-	// Incorrect return type.
-	return ""
-}
-
-func TestNot(t *testing.T) {
-	tests := []struct {
-		name string
-		this *os.File
-		want string
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := Not(tt.this); got != tt.want {
-			t.Errorf("%q. Not() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/test_file_with_syntax_errors.go"),
 		}, {
 			name:    "Undefined types",
 			srcPath: `testdata/undefinedtypes/undefined.go`,
-			want: `package undefinedtypes
-
-import (
-	"reflect"
-	"testing"
-)
-
-func TestUndefinedDo(t *testing.T) {
-	tests := []struct {
-		name    string
-		u       *Undefined
-		es      Something
-		want    *Unknown
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		got, err := tt.u.Do(tt.es)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Undefined.Do() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Undefined.Do() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-`,
+			want:    mustReadFile(t, "testdata/goldens/undefined_types.go"),
 		},
+	}
+	tmp, err := ioutil.TempDir("", "gotests_test")
+	if err != nil {
+		t.Fatalf("ioutil.TempDir: %v", err)
 	}
 	for _, tt := range tests {
 		gts, err := GenerateTests(tt.srcPath, &Options{
@@ -2160,8 +372,40 @@ func TestUndefinedDo(t *testing.T) {
 		}
 		if got := string(gts[0].Output); got != tt.want {
 			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.srcPath, got, tt.want)
+			outputResult(t, tmp, tt.name, gts[0].Output)
 		}
 	}
+}
+
+func mustReadFile(t *testing.T, filename string) string {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
+	tmpResult := path.Join(tmpDir, toSnakeCase(testName)+".go")
+	if err := ioutil.WriteFile(tmpResult, got, 0644); err != nil {
+		t.Errorf("ioutil.WriteFile: %v", err)
+	}
+	t.Logf(tmpResult)
+}
+
+func toSnakeCase(s string) string {
+	var res []rune
+	for _, r := range []rune(s) {
+		r = unicode.ToLower(r)
+		switch r {
+		case ' ', '.':
+			r = '_'
+		case ',', '\'', '{', '}':
+			continue
+		}
+		res = append(res, r)
+	}
+	return string(res)
 }
 
 // 249032394 ns/op
