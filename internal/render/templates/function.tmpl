@@ -2,10 +2,15 @@
 
 func {{.TestName}}(t *testing.T) {
 	tests := []struct { {{if not $f.PrintInputs}}
-		name string {{end}} {{with .Receiver}} {{if .IsStruct}} {{range .Fields}}
+		// Test description.
+		name string {{end}} {{with .Receiver}} {{if .IsStruct}} {{if .Fields}}
+		// Receiver fields.{{end}} {{range .Fields}}
 		{{Field .}} {{.Type}} {{end}} {{else}}
-		{{Receiver .}} {{.Type}} {{end}} {{end}} {{range .TestParameters}}
-		{{Param .}} {{.Type}} {{end}} {{range .TestResults}}
+		// Receiver.
+		{{Receiver .}} {{.Type}} {{end}} {{end}} {{if .TestParameters}}
+		// Parameters. {{end}} {{range .TestParameters}}
+		{{Param .}} {{.Type}} {{end}} {{if or .TestResults .ReturnsError}}
+		// Expected results. {{end}} {{range .TestResults}}
 		{{Want .}} {{.Type}} {{end}} {{if .ReturnsError}}
 		wantErr bool {{end}}
 	}{

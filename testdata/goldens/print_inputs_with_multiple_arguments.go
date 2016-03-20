@@ -4,8 +4,10 @@ import "testing"
 
 func TestFoo6(t *testing.T) {
 	tests := []struct {
-		i       int
-		b       bool
+		// Parameters.
+		i int
+		b bool
+		// Expected results.
 		want    string
 		wantErr bool
 	}{

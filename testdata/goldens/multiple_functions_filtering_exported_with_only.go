@@ -7,8 +7,11 @@ import (
 
 func TestFooFilter(t *testing.T) {
 	tests := []struct {
-		name    string
-		strs    []string
+		// Test description.
+		name string
+		// Parameters.
+		strs []string
+		// Expected results.
 		want    []*Bar
 		wantErr bool
 	}{

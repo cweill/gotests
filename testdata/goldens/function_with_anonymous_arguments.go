@@ -4,9 +4,11 @@ import "testing"
 
 func TestFoo2(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		in0  string
-		in1  int
+		// Parameters.
+		in0 string
+		in1 int
 	}{
 	// TODO: Add test cases.
 	}

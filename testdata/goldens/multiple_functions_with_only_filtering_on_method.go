@@ -4,8 +4,11 @@ import "testing"
 
 func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
-		name    string
-		i       interface{}
+		// Test description.
+		name string
+		// Parameters.
+		i interface{}
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.

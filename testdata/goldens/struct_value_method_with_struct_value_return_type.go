@@ -7,7 +7,9 @@ import (
 
 func TestBarFoo9(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
+		// Expected results.
 		want Bar
 	}{
 	// TODO: Add test cases.

@@ -4,8 +4,11 @@ import "testing"
 
 func TestBarFoo7(t *testing.T) {
 	tests := []struct {
-		name    string
-		i       int
+		// Test description.
+		name string
+		// Parameters.
+		i int
+		// Expected results.
 		want    string
 		wantErr bool
 	}{

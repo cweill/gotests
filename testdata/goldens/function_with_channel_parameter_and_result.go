@@ -7,8 +7,11 @@ import (
 
 func TestFoo23(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		ch   chan bool
+		// Parameters.
+		ch chan bool
+		// Expected results.
 		want chan string
 	}{
 	// TODO: Add test cases.

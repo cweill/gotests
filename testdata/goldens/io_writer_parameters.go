@@ -7,7 +7,9 @@ import (
 
 func TestBarWrite(t *testing.T) {
 	tests := []struct {
-		name    string
+		// Test description.
+		name string
+		// Expected results.
 		wantW   string
 		wantErr bool
 	}{
@@ -28,8 +30,11 @@ func TestBarWrite(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	tests := []struct {
-		name    string
-		data    string
+		// Test description.
+		name string
+		// Parameters.
+		data string
+		// Expected results.
 		wantW   string
 		wantErr bool
 	}{
@@ -49,8 +54,11 @@ func TestWrite(t *testing.T) {
 
 func TestMultiWrite(t *testing.T) {
 	tests := []struct {
-		name    string
-		data    string
+		// Test description.
+		name string
+		// Parameters.
+		data string
+		// Expected results.
 		want    int
 		want1   string
 		wantW1  string

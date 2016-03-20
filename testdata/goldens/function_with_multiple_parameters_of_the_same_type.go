@@ -4,10 +4,13 @@ import "testing"
 
 func TestFoo19(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		in1  string
-		in2  string
-		in3  string
+		// Parameters.
+		in1 string
+		in2 string
+		in3 string
+		// Expected results.
 		want string
 	}{
 	// TODO: Add test cases.

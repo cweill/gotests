@@ -7,9 +7,13 @@ import (
 
 func TestUndefinedDo(t *testing.T) {
 	tests := []struct {
-		name    string
-		u       *Undefined
-		es      Something
+		// Test description.
+		name string
+		// Receiver.
+		u *Undefined
+		// Parameters.
+		es Something
+		// Expected results.
 		want    *Unknown
 		wantErr bool
 	}{

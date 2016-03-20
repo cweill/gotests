@@ -7,8 +7,11 @@ import (
 
 func TestFooFilter(t *testing.T) {
 	tests := []struct {
-		name    string
-		strs    []string
+		// Test description.
+		name string
+		// Parameters.
+		strs []string
+		// Expected results.
 		want    []*Bar
 		wantErr bool
 	}{
@@ -28,8 +31,11 @@ func TestFooFilter(t *testing.T) {
 
 func TestBarBarFilter(t *testing.T) {
 	tests := []struct {
-		name    string
-		i       interface{}
+		// Test description.
+		name string
+		// Parameters.
+		i interface{}
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -44,8 +50,11 @@ func TestBarBarFilter(t *testing.T) {
 
 func TestBazFilter(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		f    *float64
+		// Parameters.
+		f *float64
+		// Expected results.
 		want float64
 	}{
 	// TODO: Add test cases.

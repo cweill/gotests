@@ -7,8 +7,11 @@ import (
 
 func TestCelsiusToFahrenheit(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		c    Celsius
+		// Receiver.
+		c Celsius
+		// Expected results.
 		want Fahrenheit
 	}{
 	// TODO: Add test cases.
@@ -22,8 +25,11 @@ func TestCelsiusToFahrenheit(t *testing.T) {
 
 func TestHourToSecond(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		h    time.Duration
+		// Parameters.
+		h time.Duration
+		// Expected results.
 		want time.Duration
 	}{
 	// TODO: Add test cases.

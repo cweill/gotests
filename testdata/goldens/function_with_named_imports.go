@@ -8,8 +8,11 @@ import (
 
 func TestFoo22(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		t    *ht.Template
+		// Parameters.
+		t *ht.Template
+		// Expected results.
 		want *ht.Template
 	}{
 	// TODO: Add test cases.

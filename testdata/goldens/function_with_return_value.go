@@ -4,7 +4,9 @@ import "testing"
 
 func TestFoo4(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
+		// Expected results.
 		want bool
 	}{
 	// TODO: Add test cases.

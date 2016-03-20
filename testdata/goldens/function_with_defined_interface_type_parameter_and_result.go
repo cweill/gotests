@@ -7,8 +7,11 @@ import (
 
 func TestFoo16(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		in   Bazzar
+		// Parameters.
+		in Bazzar
+		// Expected results.
 		want Bazzar
 	}{
 	// TODO: Add test cases.

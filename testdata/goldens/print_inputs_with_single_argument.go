@@ -4,7 +4,9 @@ import "testing"
 
 func TestBarFoo7(t *testing.T) {
 	tests := []struct {
-		i       int
+		// Parameters.
+		i int
+		// Expected results.
 		want    string
 		wantErr bool
 	}{

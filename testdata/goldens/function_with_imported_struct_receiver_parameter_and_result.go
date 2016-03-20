@@ -8,8 +8,11 @@ import (
 
 func TestFoo18(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		t    *os.File
+		// Parameters.
+		t *os.File
+		// Expected results.
 		want *os.File
 	}{
 	// TODO: Add test cases.

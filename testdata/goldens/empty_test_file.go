@@ -7,8 +7,11 @@ import (
 
 func TestNot(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
+		// Parameters.
 		this *os.File
+		// Expected results.
 		want string
 	}{
 	// TODO: Add test cases.

@@ -7,8 +7,11 @@ import (
 
 func TestFoo21(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		i    interface{}
+		// Parameters.
+		i interface{}
+		// Expected results.
 		want interface{}
 	}{
 	// TODO: Add test cases.

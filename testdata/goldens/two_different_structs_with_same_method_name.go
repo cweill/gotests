@@ -4,7 +4,9 @@ import "testing"
 
 func TestBookOpen(t *testing.T) {
 	tests := []struct {
-		name    string
+		// Test description.
+		name string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -19,7 +21,9 @@ func TestBookOpen(t *testing.T) {
 
 func TestDoorOpen(t *testing.T) {
 	tests := []struct {
-		name    string
+		// Test description.
+		name string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -34,7 +38,9 @@ func TestDoorOpen(t *testing.T) {
 
 func TestXmlOpen(t *testing.T) {
 	tests := []struct {
-		name    string
+		// Test description.
+		name string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.

@@ -7,8 +7,11 @@ import (
 
 func TestFoo8(t *testing.T) {
 	tests := []struct {
-		name    string
-		b       *Bar
+		// Test description.
+		name string
+		// Parameters.
+		b *Bar
+		// Expected results.
 		want    *Bar
 		wantErr bool
 	}{

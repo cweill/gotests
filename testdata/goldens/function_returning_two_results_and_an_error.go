@@ -7,8 +7,11 @@ import (
 
 func TestFoo25(t *testing.T) {
 	tests := []struct {
-		name    string
-		in0     interface{}
+		// Test description.
+		name string
+		// Parameters.
+		in0 interface{}
+		// Expected results.
 		want    string
 		want1   []byte
 		wantErr bool

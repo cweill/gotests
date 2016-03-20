@@ -8,8 +8,11 @@ import (
 
 func TestFoo17(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		r    io.Reader
+		// Parameters.
+		r io.Reader
+		// Expected results.
 		want io.Reader
 	}{
 	// TODO: Add test cases.

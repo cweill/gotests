@@ -24,8 +24,11 @@ func TestFoo200(t *testing.T) {
 
 func TestBar200(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		t    types.Type
+		// Parameters.
+		t types.Type
+		// Expected results.
 		want string
 	}{
 	// TODO: Add test cases.

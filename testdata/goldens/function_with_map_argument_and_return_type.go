@@ -7,8 +7,11 @@ import (
 
 func TestFoo10(t *testing.T) {
 	tests := []struct {
+		// Test description.
 		name string
-		m    map[string]int32
+		// Parameters.
+		m map[string]int32
+		// Expected results.
 		want map[string]*Bar
 	}{
 	// TODO: Add test cases.

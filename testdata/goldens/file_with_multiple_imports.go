@@ -9,10 +9,13 @@ import (
 
 func TestFoo24(t *testing.T) {
 	tests := []struct {
-		name    string
-		r       io.Reader
-		x       ast.Expr
-		t       types.Type
+		// Test description.
+		name string
+		// Parameters.
+		r io.Reader
+		x ast.Expr
+		t types.Type
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.

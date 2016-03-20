@@ -4,8 +4,11 @@ import "testing"
 
 func TestFoo12(t *testing.T) {
 	tests := []struct {
-		name    string
-		str     string
+		// Test description.
+		name string
+		// Parameters.
+		str string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.

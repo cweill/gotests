@@ -63,14 +63,11 @@ func init() {
 func fieldName(f *models.Field) string {
 	var n string
 	if f.IsNamed() {
-		n = unexport(f.Name)
+		n = f.Name
 	} else {
-		n = unexport(f.Type.String())
+		n = f.Type.String()
 	}
-	if reserved[n] {
-		return "f" + n
-	}
-	return n
+	return "r" + n
 }
 
 func receiverName(f *models.Receiver) string {
@@ -102,7 +99,7 @@ func parameterName(f *models.Field) string {
 func wantName(f *models.Field) string {
 	var n string
 	if f.IsNamed() {
-		n = "want" + strings.ToUpper(f.Name[:1]) + f.Name[1:]
+		n = "want" + strings.Title(f.Name)
 	} else if f.Index == 0 {
 		n = "want"
 	} else {
@@ -114,7 +111,7 @@ func wantName(f *models.Field) string {
 func gotName(f *models.Field) string {
 	var n string
 	if f.IsNamed() {
-		n = "got" + strings.ToUpper(f.Name[:1]) + f.Name[1:]
+		n = "got" + strings.Title(f.Name)
 	} else if f.Index == 0 {
 		n = "got"
 	} else {
