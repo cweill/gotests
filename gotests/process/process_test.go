@@ -45,16 +45,20 @@ import "testing"
 
 func TestFooFoo(t *testing.T) {
 	tests := []struct {
-		name    string
-		bar     string
-		s       string
+		// Test description.
+		name string
+		// Receiver fields.
+		rBar string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		f := &Foo{
-			Bar: tt.bar,
+			Bar: tt.rBar,
 		}
 		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
@@ -64,16 +68,20 @@ func TestFooFoo(t *testing.T) {
 
 func TestBarBar(t *testing.T) {
 	tests := []struct {
-		name    string
-		foo     string
-		s       string
+		// Test description.
+		name string
+		// Receiver fields.
+		rFoo string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{
-			Foo: tt.foo,
+			Foo: tt.rFoo,
 		}
 		if err := b.bar(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Bar.bar() error = %v, wantErr %v", tt.name, err, tt.wantErr)
@@ -93,15 +101,18 @@ import "testing"
 
 func TestFooFoo(t *testing.T) {
 	tests := []struct {
-		bar     string
-		s       string
+		// Receiver fields.
+		rBar string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		f := &Foo{
-			Bar: tt.bar,
+			Bar: tt.rBar,
 		}
 		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("Foo.Foo(%v) error = %v, wantErr %v", tt.s, err, tt.wantErr)
@@ -111,15 +122,18 @@ func TestFooFoo(t *testing.T) {
 
 func TestBarBar(t *testing.T) {
 	tests := []struct {
-		foo     string
-		s       string
+		// Receiver fields.
+		rFoo string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{
-			Foo: tt.foo,
+			Foo: tt.rFoo,
 		}
 		if err := b.bar(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("Bar.bar(%v) error = %v, wantErr %v", tt.s, err, tt.wantErr)
@@ -138,16 +152,20 @@ import "testing"
 
 func TestFooFoo(t *testing.T) {
 	tests := []struct {
-		name    string
-		bar     string
-		s       string
+		// Test description.
+		name string
+		// Receiver fields.
+		rBar string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		f := &Foo{
-			Bar: tt.bar,
+			Bar: tt.rBar,
 		}
 		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
@@ -176,16 +194,20 @@ import "testing"
 
 func TestBarBar(t *testing.T) {
 	tests := []struct {
-		name    string
-		foo     string
-		s       string
+		// Test description.
+		name string
+		// Receiver fields.
+		rFoo string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{
-			Foo: tt.foo,
+			Foo: tt.rFoo,
 		}
 		if err := b.bar(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Bar.bar() error = %v, wantErr %v", tt.name, err, tt.wantErr)
@@ -209,16 +231,20 @@ import "testing"
 
 func TestFooFoo(t *testing.T) {
 	tests := []struct {
-		name    string
-		bar     string
-		s       string
+		// Test description.
+		name string
+		// Receiver fields.
+		rBar string
+		// Parameters.
+		s string
+		// Expected results.
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		f := &Foo{
-			Bar: tt.bar,
+			Bar: tt.rBar,
 		}
 		if err := f.Foo(tt.s); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
