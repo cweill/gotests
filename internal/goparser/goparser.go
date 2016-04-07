@@ -1,5 +1,5 @@
-// Package goparse contains logic for parsing Go source and test files into
-// domain models for generating go tests.
+// Package goparse contains logic for parsing Go files. Specifically it parses
+// source and test files into domain models for generating tests.
 package goparser
 
 import (
