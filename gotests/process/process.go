@@ -1,3 +1,6 @@
+// Package process is a thin wrapper around the gotests library. It is intended
+// to be called from a binary and handle its arguments, flags, and output when
+// generating tests.
 package process
 
 import (
@@ -12,15 +15,19 @@ import (
 
 const newFilePerm os.FileMode = 0644
 
+// Set of options to use when generating tests.
 type Options struct {
-	OnlyFuncs     string
-	ExclFuncs     string
-	ExportedFuncs bool
-	AllFuncs      bool
-	PrintInputs   bool
-	WriteOutput   bool
+	OnlyFuncs     string // Regexp string for filter matches.
+	ExclFuncs     string // Regexp string for excluding matches.
+	ExportedFuncs bool   // Only include exported functions.
+	AllFuncs      bool   // Include all non-tested functions.
+	PrintInputs   bool   // Print function parameters as part of error messages.
+	WriteOutput   bool   // Write output to test file(s).
 }
 
+// Generates tests for the Go files defined in args with the given options.
+// Logs information and errors to out. By default outputs generated tests to
+// out unless specified by opt.
 func Run(out io.Writer, args []string, opts *Options) {
 	if opts == nil {
 		opts = &Options{}
