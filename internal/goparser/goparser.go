@@ -1,3 +1,5 @@
+// Package goparse contains logic for parsing Go source and test files into
+// domain models for generating go tests.
 package goparser
 
 import (
@@ -12,17 +14,25 @@ import (
 	"github.com/cweill/gotests/internal/models"
 )
 
+// ErrEmptyFile represents an empty file error.
 var ErrEmptyFile = errors.New("file is empty")
 
+// Result representats a parsed Go file.
 type Result struct {
+	// The package name and imports of a Go file.
 	Header *models.Header
-	Funcs  []*models.Function
+	// All the functions and methods in a Go file.
+	Funcs []*models.Function
 }
 
+// Parser can parse Go files.
 type Parser struct {
+	// The importer to resolve packages from import paths.
 	Importer types.Importer
 }
 
+// Parse parses a given Go file at srcPath, along any files that share the same
+// package, into a domain model for generating tests.
 func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	b, err := p.readFile(srcPath)
 	if err != nil {
