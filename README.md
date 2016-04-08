@@ -20,7 +20,7 @@ $ go get -u github.com/cweill/gotests/...
 
 ## Usage
 
-From the commandline, `gotests` can generate tests for specific Go source files or an entire directory. By default, it prints its output to `stdout`.
+From the commandline, `gotests` can generate Go tests for specific source files or an entire directory. By default, it prints its output to `stdout`.
 
 ```sh
 $ gotests [options] PATH ...
@@ -29,17 +29,17 @@ $ gotests [options] PATH ...
 Available options:
 
 ```
-  -all         generate tests for all functions and methods
+  -all         generate go tests for all functions and methods
   
-  -excl        regexp. generate tests for functions and methods that don't 
+  -excl        regexp. generate go tests for functions and methods that don't 
                match. Takes precedence over -only, -exported, and -all
     	   
-  -exported    generate tests for exported functions and methods. Takes 
+  -exported    generate go tests for exported functions and methods. Takes 
                precedence over -only and -all
 
   -i	       print test inputs in error messages
   
-  -only        regexp. generate tests for functions and methods that match only.
+  -only        regexp. generate go tests for functions and methods that match only.
                Takes precedence over -all
   
   -w           write output to (test) files instead of stdout
