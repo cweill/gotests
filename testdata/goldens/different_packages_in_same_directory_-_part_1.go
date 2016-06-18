@@ -2,7 +2,7 @@ package bar
 
 import "testing"
 
-func TestBarBar(t *testing.T) {
+func TestBar_Bar(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

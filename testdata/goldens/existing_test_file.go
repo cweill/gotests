@@ -68,3 +68,40 @@ func TestFoo100(t *testing.T) {
 		}
 	}
 }
+
+func TestBar_Bar100(t *testing.T) {
+	tests := []struct {
+		// Test description.
+		name string
+		// Parameters.
+		i interface{}
+		// Expected results.
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		b := &Bar{}
+		if err := b.Bar100(tt.i); (err != nil) != tt.wantErr {
+			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		}
+	}
+}
+
+func Test_baz100(t *testing.T) {
+	tests := []struct {
+		// Test description.
+		name string
+		// Parameters.
+		f *float64
+		// Expected results.
+		want float64
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		if got := baz100(tt.f); got != tt.want {
+			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+		}
+	}
+}

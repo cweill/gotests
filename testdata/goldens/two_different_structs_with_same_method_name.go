@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestBookOpen(t *testing.T) {
+func TestBook_Open(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -19,7 +19,7 @@ func TestBookOpen(t *testing.T) {
 	}
 }
 
-func TestDoorOpen(t *testing.T) {
+func Test_door_Open(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -36,7 +36,7 @@ func TestDoorOpen(t *testing.T) {
 	}
 }
 
-func TestXmlOpen(t *testing.T) {
+func Test_xml_Open(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

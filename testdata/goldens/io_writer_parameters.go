@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestBarWrite(t *testing.T) {
+func TestBar_Write(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

@@ -29,7 +29,7 @@ func TestFooFilter(t *testing.T) {
 	}
 }
 
-func TestBarBarFilter(t *testing.T) {
+func TestBar_BarFilter(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -48,7 +48,7 @@ func TestBarBarFilter(t *testing.T) {
 	}
 }
 
-func TestBazFilter(t *testing.T) {
+func Test_bazFilter(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

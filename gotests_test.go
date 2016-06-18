@@ -209,6 +209,10 @@ func TestGenerateTests(t *testing.T) {
 			srcPath: `testdata/test035.go`,
 			want:    mustReadFile(t, "testdata/goldens/receiver_struct_with_fields_with_complex_package_names.go"),
 		}, {
+			name:    "Functions and receivers with same names except exporting",
+			srcPath: `testdata/test036.go`,
+			want:    mustReadFile(t, "testdata/goldens/functions_and_receivers_with_same_names_except_exporting.go"),
+		}, {
 			name:    "Multiple functions",
 			srcPath: `testdata/test_filter.go`,
 			want:    mustReadFile(t, "testdata/goldens/multiple_functions.go"),

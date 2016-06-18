@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestCelsiusString(t *testing.T) {
+func TestCelsius_String(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -20,7 +20,7 @@ func TestCelsiusString(t *testing.T) {
 	}
 }
 
-func TestFahrenheitString(t *testing.T) {
+func TestFahrenheit_String(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

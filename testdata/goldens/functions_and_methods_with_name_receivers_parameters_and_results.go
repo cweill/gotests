@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestNameName(t *testing.T) {
+func Test_name_Name(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -22,7 +22,7 @@ func TestNameName(t *testing.T) {
 	}
 }
 
-func TestNameName1(t *testing.T) {
+func TestName_Name1(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -45,7 +45,7 @@ func TestNameName1(t *testing.T) {
 	}
 }
 
-func TestNameName2(t *testing.T) {
+func TestName_Name2(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -68,7 +68,7 @@ func TestNameName2(t *testing.T) {
 	}
 }
 
-func TestNameName3(t *testing.T) {
+func TestName_Name3(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

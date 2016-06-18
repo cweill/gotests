@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestUndefinedDo(t *testing.T) {
+func TestUndefined_Do(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

@@ -1,6 +1,9 @@
 package models
 
-import "strings"
+import (
+	"strings"
+	"unicode"
+)
 
 type Expression struct {
 	Value      string
@@ -124,11 +127,17 @@ func (f *Function) FullName() string {
 }
 
 func (f *Function) TestName() string {
-	var r string
 	if f.Receiver != nil {
-		r = f.Receiver.Type.Value
+		receiverType := f.Receiver.Type.Value
+		if unicode.IsLower([]rune(receiverType)[0]) {
+			receiverType = "_" + receiverType
+		}
+		return "Test" + receiverType + "_" + f.Name
 	}
-	return "Test" + strings.Title(r) + strings.Title(f.Name)
+	if unicode.IsLower([]rune(f.Name)[0]) {
+		return "Test_" + f.Name
+	}
+	return "Test" + f.Name
 }
 
 func (f *Function) IsNaked() bool {

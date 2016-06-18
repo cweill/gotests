@@ -29,7 +29,7 @@ func TestFooFilter(t *testing.T) {
 	}
 }
 
-func TestBazFilter(t *testing.T) {
+func Test_bazFilter(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

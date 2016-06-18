@@ -70,3 +70,7 @@ type Importer struct {
 	Importer types.Importer
 	Field    *types.Var
 }
+
+type SameTypeName struct{}
+
+type sameTypeName struct{}

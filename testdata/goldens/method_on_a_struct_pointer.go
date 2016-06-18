@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestBarFoo7(t *testing.T) {
+func TestBar_Foo7(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

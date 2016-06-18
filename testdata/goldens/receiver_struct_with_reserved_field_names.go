@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestReservedDontFail(t *testing.T) {
+func TestReserved_DontFail(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

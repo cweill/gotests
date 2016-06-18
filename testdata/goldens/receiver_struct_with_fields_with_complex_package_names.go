@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestImporterFoo35(t *testing.T) {
+func TestImporter_Foo35(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestBarBarFilter(t *testing.T) {
+func TestBar_BarFilter(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string

@@ -2,7 +2,7 @@ package foo
 
 import "testing"
 
-func TestFooFoo(t *testing.T) {
+func TestFoo_Foo(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
