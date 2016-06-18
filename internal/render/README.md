@@ -1,7 +1,7 @@
 bindata.go must be generated with https://github.com/jteeuwen/go-bindata.
 
-From the gotests root run `go generate ./...`.
+From the gotests root run `$ go generate ./...`.
 
-Or from this directory run `go-bindata -pkg=bindata -o "./bindata/bindata.go" templates`.
+Or run `$ go-bindata -pkg=bindata -o "internal/render/bindata/bindata.go" internal/render/templates/`.
 
-During development run `go-bindata -pkg=bindata -o "./bindata/bindata.go" -debug templates` instead.
+During development run `$ go-bindata -pkg=bindata -o "internal/render/bindata/bindata.go" -debug internal/render/templates/` instead.
