@@ -1,1 +1,1 @@
-{{define "inputs"}}{{$f := .}}{{if $f.PrintInputs}}{{range $f.Parameters}}tt.args.{{Param .}}, {{end}}{{else}}tt.name, {{end}}{{end}}
+{{define "inputs"}}{{$f := .}}tt.name, {{if $f.PrintInputs}}{{range $f.Parameters}}tt.args.{{Param .}}, {{end}}{{end}}{{end}}
