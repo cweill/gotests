@@ -23,18 +23,18 @@ func TestFoo200(t *testing.T) {
 }
 
 func TestBar200(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		t types.Type
-		// Expected results.
+	}
+	tests := []struct {
+		name string
+		args args
 		want string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Bar200(tt.t); got != tt.want {
+		if got := Bar200(tt.args.t); got != tt.want {
 			t.Errorf("%q. Bar200() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

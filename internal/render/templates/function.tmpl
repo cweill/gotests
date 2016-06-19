@@ -2,32 +2,37 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
-	tests := []struct {
-		{{- if not $f.PrintInputs}}
-			// Test description.
-			name string
-		{{- end}}
-		{{- with .Receiver}}
-			{{- if .IsStruct}}
-				{{- if .Fields}}
-					// Receiver fields.
-				{{- end}}
+	{{- with .Receiver}}
+		{{- if .IsStruct}}
+			{{- if .Fields}}
+				type fields struct {
 				{{- range .Fields}}
 					{{Field .}} {{.Type}}
 				{{- end}}
+				}
+			{{- end}}
+		{{- end}}
+	{{- end}}
+	{{- if .TestParameters}}
+	type args struct {
+		{{- range .TestParameters}}
+				{{Param .}} {{.Type}}
+		{{- end}}
+	}
+	{{- end}}
+	tests := []struct {
+		{{- if not $f.PrintInputs}}
+			name string
+		{{- end}}
+		{{- with .Receiver}}
+			{{- if and .IsStruct .Fields}}
+				fields fields
 			{{- else}}
-				// Receiver.
 				{{Receiver .}} {{.Type}} 
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}
-			// Parameters.
-		{{- end}}
-		{{- range .TestParameters}}
-			{{Param .}} {{.Type}}
-		{{- end}}
-		{{- if or .TestResults .ReturnsError}}
-			// Expected results.
+			args args
 		{{- end}}
 		{{- range .TestResults}}
 			{{Want .}} {{.Type}}
@@ -43,7 +48,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- if .IsStruct}}
 				{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{ 
 				{{- range .Fields}}
-					{{.Name}}: tt.{{Field .}}, 
+					{{.Name}}: tt.fields.{{Field .}}, 
 				{{- end}}
 				}
 			{{- end}}

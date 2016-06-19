@@ -7,18 +7,18 @@ import (
 )
 
 func TestFoo22(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		t *ht.Template
-		// Expected results.
+	}
+	tests := []struct {
+		name string
+		args args
 		want *ht.Template
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Foo22(tt.t); !reflect.DeepEqual(got, tt.want) {
+		if got := Foo22(tt.args.t); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Foo22() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

@@ -4,9 +4,7 @@ import "testing"
 
 func TestSameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -20,9 +18,7 @@ func TestSameName(t *testing.T) {
 
 func Test_sameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -36,9 +32,8 @@ func Test_sameName(t *testing.T) {
 
 func TestSameTypeName_SameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
+		t       *SameTypeName
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -53,9 +48,8 @@ func TestSameTypeName_SameName(t *testing.T) {
 
 func TestSameTypeName_sameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
+		t       *SameTypeName
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -70,9 +64,8 @@ func TestSameTypeName_sameName(t *testing.T) {
 
 func Test_sameTypeName_SameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
+		t       *sameTypeName
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -87,9 +80,8 @@ func Test_sameTypeName_SameName(t *testing.T) {
 
 func Test_sameTypeName_sameName(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
+		t       *sameTypeName
 		wantErr bool
 	}{
 	// TODO: Add test cases.

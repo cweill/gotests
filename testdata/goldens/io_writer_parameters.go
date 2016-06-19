@@ -7,9 +7,8 @@ import (
 
 func TestBar_Write(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
+		b       *Bar
 		wantW   string
 		wantErr bool
 	}{
@@ -29,12 +28,12 @@ func TestBar_Write(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		data string
-		// Expected results.
+	}
+	tests := []struct {
+		name    string
+		args    args
 		wantW   string
 		wantErr bool
 	}{
@@ -42,7 +41,7 @@ func TestWrite(t *testing.T) {
 	}
 	for _, tt := range tests {
 		w := &bytes.Buffer{}
-		if err := Write(w, tt.data); (err != nil) != tt.wantErr {
+		if err := Write(w, tt.args.data); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
@@ -53,12 +52,12 @@ func TestWrite(t *testing.T) {
 }
 
 func TestMultiWrite(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		data string
-		// Expected results.
+	}
+	tests := []struct {
+		name    string
+		args    args
 		want    int
 		want1   string
 		wantW1  string
@@ -70,7 +69,7 @@ func TestMultiWrite(t *testing.T) {
 	for _, tt := range tests {
 		w1 := &bytes.Buffer{}
 		w2 := &bytes.Buffer{}
-		got, got1, err := MultiWrite(w1, w2, tt.data)
+		got, got1, err := MultiWrite(w1, w2, tt.args.data)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. MultiWrite() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

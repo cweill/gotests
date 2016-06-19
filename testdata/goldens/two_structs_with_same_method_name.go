@@ -4,11 +4,8 @@ import "testing"
 
 func TestCelsius_String(t *testing.T) {
 	tests := []struct {
-		// Test description.
 		name string
-		// Receiver.
-		c Celsius
-		// Expected results.
+		c    Celsius
 		want string
 	}{
 	// TODO: Add test cases.
@@ -22,11 +19,8 @@ func TestCelsius_String(t *testing.T) {
 
 func TestFahrenheit_String(t *testing.T) {
 	tests := []struct {
-		// Test description.
 		name string
-		// Receiver.
-		f Fahrenheit
-		// Expected results.
+		f    Fahrenheit
 		want string
 	}{
 	// TODO: Add test cases.

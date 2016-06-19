@@ -7,11 +7,8 @@ import (
 
 func TestCelsius_ToFahrenheit(t *testing.T) {
 	tests := []struct {
-		// Test description.
 		name string
-		// Receiver.
-		c Celsius
-		// Expected results.
+		c    Celsius
 		want Fahrenheit
 	}{
 	// TODO: Add test cases.
@@ -24,18 +21,18 @@ func TestCelsius_ToFahrenheit(t *testing.T) {
 }
 
 func TestHourToSecond(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		h time.Duration
-		// Expected results.
+	}
+	tests := []struct {
+		name string
+		args args
 		want time.Duration
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := HourToSecond(tt.h); got != tt.want {
+		if got := HourToSecond(tt.args.h); got != tt.want {
 			t.Errorf("%q. HourToSecond() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

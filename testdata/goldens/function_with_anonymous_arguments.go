@@ -3,16 +3,17 @@ package testdata
 import "testing"
 
 func TestFoo2(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		in0 string
 		in1 int
+	}
+	tests := []struct {
+		name string
+		args args
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		Foo2(tt.in0, tt.in1)
+		Foo2(tt.args.in0, tt.args.in1)
 	}
 }

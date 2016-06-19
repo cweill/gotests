@@ -8,20 +8,20 @@ import (
 )
 
 func TestFoo24(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Parameters.
+	type args struct {
 		r io.Reader
 		x ast.Expr
 		t types.Type
-		// Expected results.
+	}
+	tests := []struct {
+		name    string
+		args    args
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if err := Foo24(tt.r, tt.x, tt.t); (err != nil) != tt.wantErr {
+		if err := Foo24(tt.args.r, tt.args.x, tt.args.t); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo24() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}

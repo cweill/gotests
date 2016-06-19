@@ -15,10 +15,6 @@ const name = "name"
 
 var (
 	tmpls *template.Template
-
-	reserved = map[string]bool{
-		"name": true,
-	}
 )
 
 func init() {
@@ -41,7 +37,7 @@ func fieldName(f *models.Field) string {
 	} else {
 		n = f.Type.String()
 	}
-	return "r" + n
+	return n
 }
 
 func receiverName(f *models.Receiver) string {
@@ -51,8 +47,9 @@ func receiverName(f *models.Receiver) string {
 	} else {
 		n = f.ShortName()
 	}
-	if reserved[n] {
-		return "r" + n
+	if n == "name" {
+		// Avoid conflict with test struct's "name" field.
+		n = "n"
 	}
 	return n
 }
@@ -63,9 +60,6 @@ func parameterName(f *models.Field) string {
 		n = f.Name
 	} else {
 		n = fmt.Sprintf("in%v", f.Index)
-	}
-	if reserved[n] {
-		return "p" + n
 	}
 	return n
 }

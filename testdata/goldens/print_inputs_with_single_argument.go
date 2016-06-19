@@ -3,10 +3,12 @@ package testdata
 import "testing"
 
 func TestBar_Foo7(t *testing.T) {
-	tests := []struct {
-		// Parameters.
+	type args struct {
 		i int
-		// Expected results.
+	}
+	tests := []struct {
+		b       *Bar
+		args    args
 		want    string
 		wantErr bool
 	}{
@@ -14,13 +16,13 @@ func TestBar_Foo7(t *testing.T) {
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		got, err := b.Foo7(tt.i)
+		got, err := b.Foo7(tt.args.i)
 		if (err != nil) != tt.wantErr {
-			t.Errorf("Bar.Foo7(%v) error = %v, wantErr %v", tt.i, err, tt.wantErr)
+			t.Errorf("Bar.Foo7(%v) error = %v, wantErr %v", tt.args.i, err, tt.wantErr)
 			continue
 		}
 		if got != tt.want {
-			t.Errorf("Bar.Foo7(%v) = %v, want %v", tt.i, got, tt.want)
+			t.Errorf("Bar.Foo7(%v) = %v, want %v", tt.args.i, got, tt.want)
 		}
 	}
 }

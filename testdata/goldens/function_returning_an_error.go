@@ -4,9 +4,7 @@ import "testing"
 
 func TestFoo5(t *testing.T) {
 	tests := []struct {
-		// Test description.
-		name string
-		// Expected results.
+		name    string
 		want    string
 		wantErr bool
 	}{

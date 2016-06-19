@@ -3,89 +3,94 @@ package testdata
 import "testing"
 
 func Test_name_Name(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Receiver.
-		rname name
-		// Parameters.
+	type args struct {
 		n string
-		// Expected results.
+	}
+	tests := []struct {
+		name string
+		n    name
+		args args
 		want string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := tt.rname.Name(tt.n); got != tt.want {
+		if got := tt.n.Name(tt.args.n); got != tt.want {
 			t.Errorf("%q. name.Name() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
 func TestName_Name1(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Receiver fields.
-		rName string
-		// Parameters.
+	type fields struct {
+		Name string
+	}
+	type args struct {
 		n string
-		// Expected results.
-		want string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		rname := &Name{
-			Name: tt.rName,
+		n := &Name{
+			Name: tt.fields.Name,
 		}
-		if got := rname.Name1(tt.n); got != tt.want {
+		if got := n.Name1(tt.args.n); got != tt.want {
 			t.Errorf("%q. Name.Name1() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
 func TestName_Name2(t *testing.T) {
-	tests := []struct {
-		// Test description.
+	type fields struct {
+		Name string
+	}
+	type args struct {
 		name string
-		// Receiver fields.
-		rName string
-		// Parameters.
-		pname string
-		// Expected results.
-		want string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		n := &Name{
-			Name: tt.rName,
+			Name: tt.fields.Name,
 		}
-		if got := n.Name2(tt.pname); got != tt.want {
+		if got := n.Name2(tt.args.name); got != tt.want {
 			t.Errorf("%q. Name.Name2() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }
 
 func TestName_Name3(t *testing.T) {
-	tests := []struct {
-		// Test description.
-		name string
-		// Receiver fields.
-		rName string
-		// Parameters.
+	type fields struct {
+		Name string
+	}
+	type args struct {
 		nn string
-		// Expected results.
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
 		wantName string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		n := &Name{
-			Name: tt.rName,
+			Name: tt.fields.Name,
 		}
-		if gotName := n.Name3(tt.nn); gotName != tt.wantName {
+		if gotName := n.Name3(tt.args.nn); gotName != tt.wantName {
 			t.Errorf("%q. Name.Name3() = %v, want %v", tt.name, gotName, tt.wantName)
 		}
 	}

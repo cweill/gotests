@@ -36,6 +36,9 @@ type GeneratedTest struct {
 // signatures defined in the target source path file(s). The source path
 // parameter can be either a Go source file or directory containing Go files.
 func GenerateTests(srcPath string, opt *Options) ([]*GeneratedTest, error) {
+	if opt == nil {
+		opt = &Options{}
+	}
 	srcFiles, err := input.Files(srcPath)
 	if err != nil {
 		return nil, fmt.Errorf("input.Files: %v", err)
