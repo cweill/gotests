@@ -37,13 +37,13 @@ func TestRun(t *testing.T) {
 			name: "AllFuncs option",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{AllFuncs: true},
-			want: `Generated TestFooFoo
-Generated TestBarBar
+			want: `Generated TestFoo_Foo
+Generated TestBar_bar
 package foobar
 
 import "testing"
 
-func TestFooFoo(t *testing.T) {
+func TestFoo_Foo(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -66,7 +66,7 @@ func TestFooFoo(t *testing.T) {
 	}
 }
 
-func TestBarBar(t *testing.T) {
+func TestBar_bar(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -93,13 +93,13 @@ func TestBarBar(t *testing.T) {
 			name: "AllFuncs and PrintInputs option",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{AllFuncs: true, PrintInputs: true},
-			want: `Generated TestFooFoo
-Generated TestBarBar
+			want: `Generated TestFoo_Foo
+Generated TestBar_bar
 package foobar
 
 import "testing"
 
-func TestFooFoo(t *testing.T) {
+func TestFoo_Foo(t *testing.T) {
 	tests := []struct {
 		// Receiver fields.
 		rBar string
@@ -120,7 +120,7 @@ func TestFooFoo(t *testing.T) {
 	}
 }
 
-func TestBarBar(t *testing.T) {
+func TestBar_bar(t *testing.T) {
 	tests := []struct {
 		// Receiver fields.
 		rFoo string
@@ -145,12 +145,12 @@ func TestBarBar(t *testing.T) {
 			name: "OnlyFuncs option",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{OnlyFuncs: "Foo"},
-			want: `Generated TestFooFoo
+			want: `Generated TestFoo_Foo
 package foobar
 
 import "testing"
 
-func TestFooFoo(t *testing.T) {
+func TestFoo_Foo(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -187,12 +187,12 @@ func TestFooFoo(t *testing.T) {
 			name: "ExclFuncs option",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{ExclFuncs: "Foo"},
-			want: `Generated TestBarBar
+			want: `Generated TestBar_bar
 package foobar
 
 import "testing"
 
-func TestBarBar(t *testing.T) {
+func TestBar_bar(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -224,12 +224,12 @@ func TestBarBar(t *testing.T) {
 			name: "Exported option",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{ExportedFuncs: true},
-			want: `Generated TestFooFoo
+			want: `Generated TestFoo_Foo
 package foobar
 
 import "testing"
 
-func TestFooFoo(t *testing.T) {
+func TestFoo_Foo(t *testing.T) {
 	tests := []struct {
 		// Test description.
 		name string
@@ -258,7 +258,7 @@ func TestFooFoo(t *testing.T) {
 		out := &bytes.Buffer{}
 		Run(out, tt.args, tt.opts)
 		if got := out.String(); got != tt.want {
-			t.Errorf("%q. Run() =\n%v, want %v", tt.name, got, tt.want)
+			t.Errorf("%q. Run() =\n%v, want\n%v", tt.name, got, tt.want)
 		}
 	}
 }
