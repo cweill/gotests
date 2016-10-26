@@ -22,6 +22,8 @@
 //   -only        regexp. generate tests for functions and methods that match only.
 //                Takes precedence over -all
 //
+//   -subtests    generate tests using Go 1.7 subtests feature
+//
 //   -w           write output to (test) files instead of stdout
 package main
 
@@ -38,6 +40,7 @@ var (
 	exportedFuncs = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
 	allFuncs      = flag.Bool("all", false, "generate tests for all functions and methods")
 	printInputs   = flag.Bool("i", false, "print test inputs in error messages")
+	subtests      = flag.Bool("subtests", false, "generate tests using the Go 1.7 subtests feature")
 	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
 )
 
@@ -50,6 +53,7 @@ func main() {
 		ExportedFuncs: *exportedFuncs,
 		AllFuncs:      *allFuncs,
 		PrintInputs:   *printInputs,
+		Subtests:      *subtests,
 		WriteOutput:   *writeOutput,
 	})
 }

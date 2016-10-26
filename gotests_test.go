@@ -17,6 +17,7 @@ func TestGenerateTests(t *testing.T) {
 		excl        *regexp.Regexp
 		exported    bool
 		printInputs bool
+		subtests    bool
 		importer    types.Importer
 	}
 	tests := []struct {
@@ -494,6 +495,13 @@ func TestGenerateTests(t *testing.T) {
 				srcPath: `testdata/undefinedtypes/undefined.go`,
 			},
 			want: mustReadFile(t, "testdata/goldens/undefined_types.go"),
+		}, {
+			name: "Subtest Edition - Functions and methods with 'name' receivers, parameters, and results",
+			args: args{
+				srcPath:  `testdata/test033.go`,
+				subtests: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/functions_and_methods_with_name_receivers_parameters_and_results-subtests.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
@@ -506,6 +514,7 @@ func TestGenerateTests(t *testing.T) {
 			Exclude:     tt.args.excl,
 			Exported:    tt.args.exported,
 			PrintInputs: tt.args.printInputs,
+			Subtests:    tt.args.subtests,
 			Importer:    func() types.Importer { return tt.args.importer },
 		})
 		if (err != nil) != tt.wantErr {
