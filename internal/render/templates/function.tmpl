@@ -42,8 +42,7 @@ func {{.TestName}}(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for {{if not .IsNaked}} _, tt := {{end}} range tests {
-        {{- if .Subtests -}}
-        t.Run(tt.name, func(t *testing.T) {
+        {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
 					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
@@ -80,45 +79,7 @@ func {{.TestName}}(t *testing.T) {
 				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
 				}
 			{{- end}}
-		})
-        {{- else -}}
-		{{ with .Receiver}}
-			{{- if .IsStruct}}
-				{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
-				{{- range .Fields}}
-					{{.Name}}: tt.fields.{{Field .}},
-				{{- end}}
-				}
-			{{- end}}
-		{{- end}}
-		{{- range .Parameters}}
-			{{- if .IsWriter}}
-				{{Param .}} := &bytes.Buffer{}
-			{{- end}}
-		{{- end}}
-		{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
-			{{template "results" $f}} {{template "call" $f}}
-		{{- end}}
-		{{- if .ReturnsError}}
-			if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-				t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
-				{{- if .TestResults}}
-					continue
-				{{- end}}
-			}
-		{{- end}}
-		{{- range .TestResults}}
-			{{- if .IsWriter}}
-				if {{Got .}} := {{Param .}}.String(); {{Got .}} != tt.{{Want .}} {
-			{{- else if .IsBasicType}}
-				if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != tt.{{Want .}} {
-			{{- else}}
-				if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) {
-			{{- end}}
-			t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
-			}
-		{{- end -}}
-		{{end}}
+		{{- if .Subtests }} }) {{- end -}}
 	}
 }
 
