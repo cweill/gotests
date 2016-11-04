@@ -2,4 +2,6 @@
 
 package main
 
-subtests = false
+func init() {
+	subtests = false
+}
