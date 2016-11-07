@@ -66,6 +66,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		Exclude:     exclRE,
 		Exported:    opt.ExportedFuncs,
 		PrintInputs: opt.PrintInputs,
+		Subtests:    opt.Subtests,
 	}
 }
 
