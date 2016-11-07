@@ -43,6 +43,8 @@ Available options:
                Takes precedence over -all
   
   -w           write output to (test) files instead of stdout
+  
+  -nosubtests  disable subtest generation. Only available for Go 1.7+
 ```
 
 ## Contributions
