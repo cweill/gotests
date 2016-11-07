@@ -43,9 +43,10 @@ var (
 	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
 )
 
-// Subtests is always set to false when Go < 1.7.
-// When >= Go 1.7 the default value is true but can be overriden by enabling the nosubtests flag
-var subtests bool
+// nosubtests is always set to default value of true when Go < 1.7.
+// When >= Go 1.7 the default value is changed to false by the
+// flag.BoolVar but can be overriden by setting nosubtests to true
+var nosubtests = true
 
 func main() {
 	flag.Parse()
@@ -57,7 +58,7 @@ func main() {
 		ExportedFuncs: *exportedFuncs,
 		AllFuncs:      *allFuncs,
 		PrintInputs:   *printInputs,
-		Subtests:      subtests,
+		Subtests:      !nosubtests,
 		WriteOutput:   *writeOutput,
 	})
 }
