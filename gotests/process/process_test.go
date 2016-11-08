@@ -51,10 +51,12 @@ func TestRun(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		out := &bytes.Buffer{}
-		Run(out, tt.args, tt.opts)
-		if got := out.String(); got != tt.want {
-			t.Errorf("%q. Run() =\n%v, want\n%v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			out := &bytes.Buffer{}
+			Run(out, tt.args, tt.opts)
+			if got := out.String(); got != tt.want {
+				t.Errorf("Run() =\n%v, want\n%v", got, tt.want)
+			}
+		})
 	}
 }
