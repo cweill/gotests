@@ -1,25 +1,25 @@
 package testdata
 
-func SameName() error {
-	return nil
+func SameName() (int, error) {
+	return 0, nil
 }
 
-func sameName() error {
-	return nil
+func sameName() (int, error) {
+	return 0, nil
 }
 
-func (t *SameTypeName) SameName() error {
-	return nil
+func (t *SameTypeName) SameName() (int, error) {
+	return 0, nil
 }
 
-func (t *SameTypeName) sameName() error {
-	return nil
+func (t *SameTypeName) sameName() (int, error) {
+	return 0, nil
 }
 
-func (t *sameTypeName) SameName() error {
-	return nil
+func (t *sameTypeName) SameName() (int, error) {
+	return 0, nil
 }
 
-func (t *sameTypeName) sameName() error {
-	return nil
+func (t *sameTypeName) sameName() (int, error) {
+	return 0, nil
 }

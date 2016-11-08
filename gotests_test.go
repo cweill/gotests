@@ -496,12 +496,12 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/undefined_types.go"),
 		}, {
-			name: "Subtest Edition - Functions and methods with 'name' receivers, parameters, and results",
+			name: "Subtest Edition - Functions and receivers with same names except exporting",
 			args: args{
-				srcPath:  `testdata/test033.go`,
+				srcPath:  `testdata/test036.go`,
 				subtests: true,
 			},
-			want: mustReadFile(t, "testdata/goldens/functions_and_methods_with_name_receivers_parameters_and_results-subtests.go"),
+			want: mustReadFile(t, "testdata/goldens/subtest_edition_-_functions_and_receivers_with_same_names_except_exporting.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
