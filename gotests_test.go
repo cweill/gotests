@@ -509,35 +509,33 @@ func TestGenerateTests(t *testing.T) {
 		t.Fatalf("ioutil.TempDir: %v", err)
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gts, err := GenerateTests(tt.args.srcPath, &Options{
-				Only:        tt.args.only,
-				Exclude:     tt.args.excl,
-				Exported:    tt.args.exported,
-				PrintInputs: tt.args.printInputs,
-				Subtests:    tt.args.subtests,
-				Importer:    func() types.Importer { return tt.args.importer },
-			})
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GenerateTests(%v) error = %v, wantErr %v", tt.args.srcPath, err, tt.wantErr)
-				return
-			}
-			if (len(gts) == 0) != tt.wantNoTests {
-				t.Errorf("GenerateTests(%v) returned no tests", tt.args.srcPath)
-				return
-			}
-			if (len(gts) > 1) != tt.wantMultipleTests {
-				t.Errorf("GenerateTests(%v) returned too many tests", tt.args.srcPath)
-				return
-			}
-			if tt.wantNoTests || tt.wantMultipleTests {
-				return
-			}
-			if got := string(gts[0].Output); got != tt.want {
-				t.Errorf("GenerateTests(%v) = \n%v, want \n%v", tt.args.srcPath, got, tt.want)
-				outputResult(t, tmp, tt.name, gts[0].Output)
-			}
+		gts, err := GenerateTests(tt.args.srcPath, &Options{
+			Only:        tt.args.only,
+			Exclude:     tt.args.excl,
+			Exported:    tt.args.exported,
+			PrintInputs: tt.args.printInputs,
+			Subtests:    tt.args.subtests,
+			Importer:    func() types.Importer { return tt.args.importer },
 		})
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
+			continue
+		}
+		if (len(gts) == 0) != tt.wantNoTests {
+			t.Errorf("%q. GenerateTests(%v) returned no tests", tt.name, tt.args.srcPath)
+			continue
+		}
+		if (len(gts) > 1) != tt.wantMultipleTests {
+			t.Errorf("%q. GenerateTests(%v) returned too many tests", tt.name, tt.args.srcPath)
+			continue
+		}
+		if tt.wantNoTests || tt.wantMultipleTests {
+			continue
+		}
+		if got := string(gts[0].Output); got != tt.want {
+			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
+			outputResult(t, tmp, tt.name, gts[0].Output)
+		}
 	}
 }
 
