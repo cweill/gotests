@@ -45,7 +45,7 @@ var (
 
 // nosubtests is always set to default value of true when Go < 1.7.
 // When >= Go 1.7 the default value is changed to false by the
-// flag.BoolVar but can be overriden by setting nosubtests to true
+// flag.BoolVar but can be overridden by setting nosubtests to true
 var nosubtests = true
 
 func main() {
