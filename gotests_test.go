@@ -503,6 +503,13 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/subtest_edition_-_functions_and_receivers_with_same_names_except_exporting.go"),
 		},
+		{
+			name: "Init function",
+			args: args{
+				srcPath: `testdata/init_func.go`,
+			},
+			want: mustReadFile(t, "testdata/goldens/no_init_funcs.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
