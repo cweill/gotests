@@ -149,9 +149,10 @@ type Import struct {
 }
 
 type Header struct {
-	Package string
-	Imports []*Import
-	Code    []byte
+	Comments []string
+	Package  string
+	Imports  []*Import
+	Code     []byte
 }
 
 type Path string
