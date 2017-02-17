@@ -1,4 +1,6 @@
 {{define "header"}}
+{{range .Comments}}{{.}}
+{{end}}
 package {{.Package}}
 
 import (

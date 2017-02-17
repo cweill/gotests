@@ -510,6 +510,20 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/no_init_funcs.go"),
 		},
+		{
+			name: "Existing test file with package level comments",
+			args: args{
+				srcPath: `testdata/test_existing_test_file_with_comments.go`,
+			},
+			want: mustReadFile(t, "testdata/goldens/existing_test_file_with_package_level_comments.go"),
+		},
+		{
+			name: "Existing test file with package level comments with newline",
+			args: args{
+				srcPath: `testdata/test_existing_test_file_with_comments.go`,
+			},
+			want: mustReadFile(t, "testdata/goldens/existing_test_file_with_package_level_comments.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
