@@ -62,7 +62,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 			{{- if .ReturnsError}}
 				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
+					t.Errorf("{{template "message" $f}} %s error = %v, wantErr %v", tt.name, {{template "inputs" $f}} err, tt.wantErr)
 					{{- if .TestResults}}
 						{{if .Subtests }}return{{else}}continue{{end}}
 					{{- end}}
@@ -76,7 +76,7 @@ func {{.TestName}}(t *testing.T) {
 				{{- else}}
 					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) {
 				{{- end}}
-				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
+				t.Errorf("{{template "message" $f}} %s {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", tt.name, {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
 				}
 			{{- end}}
 		{{- if .Subtests }} }) {{- end -}}
