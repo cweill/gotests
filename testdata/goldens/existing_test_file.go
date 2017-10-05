@@ -1,6 +1,7 @@
 package testdata
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -43,6 +44,14 @@ func TestBaz100(t *testing.T) {
 			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
+}
+
+func wrapToString(in []int) []string {
+	var result []string
+	for _, x := range in {
+		result = append(result, fmt.Sprintf("%v", x))
+	}
+	return result
 }
 
 func TestFoo100(t *testing.T) {

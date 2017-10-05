@@ -1,7 +1,10 @@
 package testdata
 
-import "testing"
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+	"testing"
+)
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -49,4 +52,24 @@ func wrapToString(in []int) []string {
 		result = append(result, fmt.Sprintf("%v", x))
 	}
 	return result
+}
+
+func Test_wrapToString(t *testing.T) {
+	type args struct {
+		in []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := wrapToString(tt.args.in); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("wrapToString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
