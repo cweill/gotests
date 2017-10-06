@@ -1,6 +1,7 @@
 package testdata
 
 import "testing"
+import "fmt"
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -40,4 +41,12 @@ func TestBaz100(t *testing.T) {
 			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
+}
+
+func wrapToString(in []int) []string {
+	var result []string
+	for _, x := range in {
+		result = append(result, fmt.Sprintf("%v", x))
+	}
+	return result
 }
