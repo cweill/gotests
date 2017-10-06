@@ -72,7 +72,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			wantNoTests: false,
 			wantErr:     false,
-			want:        mustReadFile(t, `testdata/test100result/result.go`),
+			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
 		}, {
 			name: "No funcs",
 			args: args{
