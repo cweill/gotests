@@ -127,6 +127,9 @@ func (f *Function) FullName() string {
 }
 
 func (f *Function) TestName() string {
+	if strings.HasPrefix(f.Name, "Test") {
+		return f.Name
+	}
 	if f.Receiver != nil {
 		receiverType := f.Receiver.Type.Value
 		if unicode.IsLower([]rune(receiverType)[0]) {

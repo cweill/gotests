@@ -74,6 +74,15 @@ func TestGenerateTests(t *testing.T) {
 			wantErr:     false,
 			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
 		}, {
+			name: "Target test file without only flag",
+			args: args{
+				srcPath:  `testdata/test103_test.go`,
+				subtests: true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
+		}, {
 			name: "No funcs",
 			args: args{
 				srcPath: `testdata/test000.go`,
