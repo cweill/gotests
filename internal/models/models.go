@@ -127,6 +127,9 @@ func (f *Function) FullName() string {
 }
 
 func (f *Function) TestName() string {
+	if strings.HasPrefix(f.Name, "Test") {
+		return f.Name
+	}
 	if f.Receiver != nil {
 		receiverType := f.Receiver.Type.Value
 		if unicode.IsLower([]rune(receiverType)[0]) {
@@ -158,7 +161,10 @@ type Header struct {
 type Path string
 
 func (p Path) TestPath() string {
-	return strings.TrimSuffix(string(p), ".go") + "_test.go"
+	if !p.IsTestPath() {
+		return strings.TrimSuffix(string(p), ".go") + "_test.go"
+	}
+	return string(p)
 }
 
 func (p Path) IsTestPath() bool {

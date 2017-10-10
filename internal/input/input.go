@@ -38,7 +38,7 @@ func dirFiles(srcPath string) ([]models.Path, error) {
 
 func file(srcPath string) ([]models.Path, error) {
 	src := models.Path(srcPath)
-	if filepath.Ext(srcPath) != ".go" || isHiddenFile(srcPath) || src.IsTestPath() {
+	if filepath.Ext(srcPath) != ".go" || isHiddenFile(srcPath) {
 		return nil, fmt.Errorf("no Go source files found at %v", srcPath)
 	}
 	return []models.Path{src}, nil

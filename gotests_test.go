@@ -66,10 +66,22 @@ func TestGenerateTests(t *testing.T) {
 		}, {
 			name: "Target test file",
 			args: args{
-				srcPath: `testdata/test100_test.go`,
+				srcPath:  `testdata/test103_test.go`,
+				only:     regexp.MustCompile("wrapToString"),
+				subtests: true,
 			},
-			wantNoTests: true,
-			wantErr:     true,
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
+		}, {
+			name: "Target test file without only flag",
+			args: args{
+				srcPath:  `testdata/test103_test.go`,
+				subtests: true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
 		}, {
 			name: "No funcs",
 			args: args{
