@@ -4,7 +4,7 @@
 
 ## Demo
 
-The following shows `gotests` in action using the [official Sublime Text 3 plugin](https://github.com/cweill/GoTests-Sublime). Plugins also exist for [Emacs](https://github.com/damienlevin/GoTests-Emacs) (also [Emacs](https://github.com/s-kostyaev/go-gen-test)), [Vim](https://github.com/buoto/gotests-vim) and [Atom Editor](https://atom.io/packages/gotests).
+The following shows `gotests` in action using the [official Sublime Text 3 plugin](https://github.com/cweill/GoTests-Sublime). Plugins also exist for [Emacs](https://github.com/damienlevin/GoTests-Emacs), also [Emacs](https://github.com/s-kostyaev/go-gen-test), [Vim](https://github.com/buoto/gotests-vim) and [Atom Editor](https://atom.io/packages/gotests).
 
 ![demo](https://github.com/cweill/GoTests-Sublime/blob/master/gotests.gif)
 
