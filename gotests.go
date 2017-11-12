@@ -13,17 +13,19 @@ import (
 	"github.com/cweill/gotests/internal/goparser"
 	"github.com/cweill/gotests/internal/input"
 	"github.com/cweill/gotests/internal/models"
+	"github.com/cweill/gotests/internal/options"
 	"github.com/cweill/gotests/internal/output"
 )
 
 // Options provides custom filters and parameters for generating tests.
 type Options struct {
-	Only        *regexp.Regexp        // Includes only functions that match.
-	Exclude     *regexp.Regexp        // Excludes functions that match.
-	Exported    bool                  // Include only exported methods
-	PrintInputs bool                  // Print function parameters in error messages
-	Subtests    bool                  // Print tests using Go 1.7 subtests
-	Importer    func() types.Importer // A custom importer.
+	Only           *regexp.Regexp // Includes only functions that match.
+	Exclude        *regexp.Regexp // Excludes functions that match.
+	Exported       bool           // Include only exported methods
+	PrintInputs    bool           // Print function parameters in error messages
+	Subtests       bool           // Print tests using Go 1.7 subtests
+	ArgsStructMode options.ArgsStruct
+	Importer       func() types.Importer // A custom importer.
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -113,9 +115,10 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	if len(funcs) == 0 {
 		return nil, nil
 	}
-	b, err := output.Process(h, funcs, &output.Options{
-		PrintInputs: opt.PrintInputs,
-		Subtests:    opt.Subtests,
+	b, err := output.Process(h, funcs, &options.Options{
+		PrintInputs:    opt.PrintInputs,
+		Subtests:       opt.Subtests,
+		ArgsStructMode: opt.ArgsStructMode,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)
