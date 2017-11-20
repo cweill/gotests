@@ -319,6 +319,12 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/functions_and_receivers_with_same_names_except_exporting.go"),
 		}, {
+			name: "Receiver is indirect imported struct",
+			args: args{
+				srcPath: `testdata/test037.go`,
+			},
+			want: mustReadFile(t, "testdata/goldens/receiver_is_indirect_imported_struct.go"),
+		}, {
 			name: "Multiple functions",
 			args: args{
 				srcPath: `testdata/test_filter.go`,

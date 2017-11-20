@@ -217,8 +217,11 @@ func parseReceiver(fl *ast.FieldList, ul map[string]types.Type, el map[*types.St
 	if !ok {
 		return r
 	}
-	st := el[s].(*ast.StructType)
-	r.Fields = append(r.Fields, parseFieldList(st.Fields, ul)...)
+	st, found := el[s]
+	if !found {
+		return r
+	}
+	r.Fields = append(r.Fields, parseFieldList(st.(*ast.StructType).Fields, ul)...)
 	for i, f := range r.Fields {
 		f.Name = s.Field(i).Name()
 	}
