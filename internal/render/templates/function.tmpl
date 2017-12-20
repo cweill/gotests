@@ -39,7 +39,14 @@ func {{.TestName}}(t *testing.T) {
 			wantErr bool
 		{{- end}}
 	}{
-		// TODO: Add test cases.
+		// TODO: Add test cases. 
+
+		// tips: 
+		// func example() string { return "result"}  
+		// test case eg:  {"example","result"},  --> test will be  ok
+		// test case eg:  {"example","error result "}, --> test will be failed
+		// more detail in the gif --> https://github.com/cweill/GoTests-Sublime/raw/master/gotests.gif
+
 	}
 	for {{if not .IsNaked}} _, tt := {{end}} range tests {
         {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
