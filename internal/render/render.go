@@ -4,6 +4,8 @@ package render
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"path"
 	"strings"
 	"text/template"
 
@@ -18,6 +20,33 @@ var (
 )
 
 func init() {
+	initEmptyTmpls()
+	for _, name := range bindata.AssetNames() {
+		tmpls = template.Must(tmpls.Parse(string(bindata.MustAsset(name))))
+	}
+}
+
+// LoadCustomTemplates allows to load in custom templates from a specified path.
+func LoadCustomTemplates(dir string) error {
+	initEmptyTmpls()
+
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return fmt.Errorf("ioutil.ReadDir: %v", err)
+	}
+
+	templateFiles := []string{}
+	for _, f := range files {
+		templateFiles = append(templateFiles, path.Join(dir, f.Name()))
+	}
+	tmpls, err = tmpls.ParseFiles(templateFiles...)
+	if err != nil {
+		return fmt.Errorf("tmpls.ParseFiles: %v", err)
+	}
+	return nil
+}
+
+func initEmptyTmpls() {
 	tmpls = template.New("render").Funcs(map[string]interface{}{
 		"Field":    fieldName,
 		"Receiver": receiverName,
@@ -25,9 +54,6 @@ func init() {
 		"Want":     wantName,
 		"Got":      gotName,
 	})
-	for _, name := range bindata.AssetNames() {
-		tmpls = template.Must(tmpls.Parse(string(bindata.MustAsset(name))))
-	}
 }
 
 func fieldName(f *models.Field) string {
