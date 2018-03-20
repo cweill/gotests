@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path"
 	"regexp"
+	"strings"
 	"testing"
 	"unicode"
 )
@@ -571,7 +572,7 @@ func TestGenerateTests(t *testing.T) {
 		if tt.wantNoTests || tt.wantMultipleTests {
 			continue
 		}
-		if got := string(gts[0].Output); got != tt.want {
+		if got := string(gts[0].Output); ignoreTabs(got) != ignoreTabs(tt.want) {
 			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
 			outputResult(t, tmp, tt.name, gts[0].Output)
 		}
@@ -607,6 +608,10 @@ func toSnakeCase(s string) string {
 		res = append(res, r)
 	}
 	return string(res)
+}
+
+func ignoreTabs(s string) string {
+	return strings.Replace(s, "\t", "", -1)
 }
 
 // 249032394 ns/op
