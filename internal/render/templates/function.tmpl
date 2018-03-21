@@ -14,11 +14,13 @@ func {{.TestName}}(t *testing.T) {
 		{{- end}}
 	{{- end}}
 	{{- if .TestParameters}}
-	type args struct {
-		{{- range .TestParameters}}
+		{{- if .ArgsStruct}}
+			type args struct {
+			{{- range .TestParameters}}
 				{{Param .}} {{.Type}}
+			{{- end}}
+			}
 		{{- end}}
-	}
 	{{- end}}
 	tests := []struct {
 		name string
@@ -30,7 +32,13 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}
-			args args
+			{{- if .ArgsStruct }}
+				args args
+			{{- else}}
+				{{- range .TestParameters}}
+					{{Param .}} {{.Type}}
+				{{- end}}
+			{{- end}}
 		{{- end}}
 		{{- range .TestResults}}
 			{{Want .}} {{.Type}}

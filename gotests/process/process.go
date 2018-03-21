@@ -11,19 +11,21 @@ import (
 	"regexp"
 
 	"github.com/cweill/gotests"
+	"github.com/cweill/gotests/internal/options"
 )
 
 const newFilePerm os.FileMode = 0644
 
 // Set of options to use when generating tests.
 type Options struct {
-	OnlyFuncs     string // Regexp string for filter matches.
-	ExclFuncs     string // Regexp string for excluding matches.
-	ExportedFuncs bool   // Only include exported functions.
-	AllFuncs      bool   // Include all non-tested functions.
-	PrintInputs   bool   // Print function parameters as part of error messages.
-	Subtests      bool   // Print tests using Go 1.7 subtests
-	WriteOutput   bool   // Write output to test file(s).
+	OnlyFuncs      string // Regexp string for filter matches.
+	ExclFuncs      string // Regexp string for excluding matches.
+	ExportedFuncs  bool   // Only include exported functions.
+	AllFuncs       bool   // Include all non-tested functions.
+	PrintInputs    bool   // Print function parameters as part of error messages.
+	Subtests       bool   // Print tests using Go 1.7 subtests
+	WriteOutput    bool   // Write output to test file(s).
+	ArgsStructMode string
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -61,12 +63,30 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		fmt.Fprintln(out, "Invalid -excl regex:", err)
 		return nil
 	}
+
+	var argsStructMode options.ArgsStruct
+
+	switch opt.ArgsStructMode {
+	case "":
+		argsStructMode = options.ArgsStructSmart
+	case "always":
+		argsStructMode = options.ArgsStructAlways
+	case "never":
+		argsStructMode = options.ArgsStructNever
+	case "smart":
+		argsStructMode = options.ArgsStructSmart
+	default:
+		fmt.Fprintln(out, "Invalid -args-struct value:", "must be one of always, never or smart")
+		return nil
+	}
+
 	return &gotests.Options{
-		Only:        onlyRE,
-		Exclude:     exclRE,
-		Exported:    opt.ExportedFuncs,
-		PrintInputs: opt.PrintInputs,
-		Subtests:    opt.Subtests,
+		Only:           onlyRE,
+		Exclude:        exclRE,
+		Exported:       opt.ExportedFuncs,
+		PrintInputs:    opt.PrintInputs,
+		Subtests:       opt.Subtests,
+		ArgsStructMode: argsStructMode,
 	}
 }
 

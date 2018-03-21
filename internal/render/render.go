@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/cweill/gotests/internal/models"
+	"github.com/cweill/gotests/internal/options"
 	"github.com/cweill/gotests/internal/render/bindata"
 )
 
@@ -96,14 +97,29 @@ func Header(w io.Writer, h *models.Header) error {
 	return err
 }
 
-func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
+func TestFunction(w io.Writer, f *models.Function, opt *options.Options) error {
 	return tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
 		PrintInputs bool
 		Subtests    bool
+		ArgsStruct  bool
 	}{
 		Function:    f,
-		PrintInputs: printInputs,
-		Subtests:    subtests,
+		PrintInputs: opt.PrintInputs,
+		Subtests:    opt.Subtests,
+		ArgsStruct:  shouldGenerateArgsStruct(opt.ArgsStructMode, f),
 	})
+}
+
+func shouldGenerateArgsStruct(mode options.ArgsStruct, f *models.Function) bool {
+	switch mode {
+	case options.ArgsStructAlways:
+		return true
+	case options.ArgsStructNever:
+		return false
+	case options.ArgsStructSmart:
+		return len(f.Parameters) > 1
+	default:
+		panic(fmt.Sprintf("Unhandled args struct mode %v", mode))
+	}
 }

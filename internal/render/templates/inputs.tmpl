@@ -1,1 +1,1 @@
-{{define "inputs"}}{{$f := .}}{{if not .Subtests}}tt.name, {{end}}{{if $f.PrintInputs}}{{range $f.Parameters}}tt.args.{{Param .}}, {{end}}{{end}}{{end}}
+{{define "inputs"}}{{$f := .}}{{if not .Subtests}}tt.name, {{end}}{{if $f.PrintInputs}}{{range $f.Parameters}}tt.{{if $f.ArgsStruct}}args.{{end}}{{Param .}}, {{end}}{{end}}{{end}}

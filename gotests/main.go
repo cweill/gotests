@@ -35,12 +35,13 @@ import (
 )
 
 var (
-	onlyFuncs     = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
-	exclFuncs     = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
-	exportedFuncs = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
-	allFuncs      = flag.Bool("all", false, "generate tests for all functions and methods")
-	printInputs   = flag.Bool("i", false, "print test inputs in error messages")
-	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
+	onlyFuncs         = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
+	exclFuncs         = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
+	exportedFuncs     = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
+	allFuncs          = flag.Bool("all", false, "generate tests for all functions and methods")
+	printInputs       = flag.Bool("i", false, "print test inputs in error messages")
+	writeOutput       = flag.Bool("w", false, "write output to (test) files instead of stdout")
+	noStructForParams = flag.String("args-struct", "smart", "configure how arguments to the tested function will be generated (default is smart):\n  always: always generate an args struct for the call args\n  never=always embed the args in the case struct\n  smart=generate args struct only when args count is more than 1")
 )
 
 // nosubtests is always set to default value of true when Go < 1.7.
@@ -53,12 +54,13 @@ func main() {
 	args := flag.Args()
 
 	process.Run(os.Stdout, args, &process.Options{
-		OnlyFuncs:     *onlyFuncs,
-		ExclFuncs:     *exclFuncs,
-		ExportedFuncs: *exportedFuncs,
-		AllFuncs:      *allFuncs,
-		PrintInputs:   *printInputs,
-		Subtests:      !nosubtests,
-		WriteOutput:   *writeOutput,
+		OnlyFuncs:      *onlyFuncs,
+		ExclFuncs:      *exclFuncs,
+		ExportedFuncs:  *exportedFuncs,
+		AllFuncs:       *allFuncs,
+		PrintInputs:    *printInputs,
+		Subtests:       !nosubtests,
+		WriteOutput:    *writeOutput,
+		ArgsStructMode: *noStructForParams,
 	})
 }

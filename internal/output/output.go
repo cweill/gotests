@@ -11,15 +11,11 @@ import (
 	"golang.org/x/tools/imports"
 
 	"github.com/cweill/gotests/internal/models"
+	"github.com/cweill/gotests/internal/options"
 	"github.com/cweill/gotests/internal/render"
 )
 
-type Options struct {
-	PrintInputs bool
-	Subtests    bool
-}
-
-func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byte, error) {
+func Process(head *models.Header, funcs []*models.Function, opt *options.Options) ([]byte, error) {
 	tf, err := ioutil.TempFile("", "gotests_")
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.TempFile: %v", err)
@@ -42,13 +38,13 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt *Options) error {
+func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt *options.Options) error {
 	b := bufio.NewWriter(w)
 	if err := render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 	for _, fun := range funcs {
-		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests); err != nil {
+		if err := render.TestFunction(b, fun, opt); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}

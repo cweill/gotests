@@ -9,17 +9,20 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/cweill/gotests/internal/options"
 )
 
 func TestGenerateTests(t *testing.T) {
 	type args struct {
-		srcPath     string
-		only        *regexp.Regexp
-		excl        *regexp.Regexp
-		exported    bool
-		printInputs bool
-		subtests    bool
-		importer    types.Importer
+		srcPath        string
+		only           *regexp.Regexp
+		excl           *regexp.Regexp
+		exported       bool
+		printInputs    bool
+		subtests       bool
+		argsStructMode options.ArgsStruct
+		importer       types.Importer
 	}
 	tests := []struct {
 		name              string
@@ -67,13 +70,36 @@ func TestGenerateTests(t *testing.T) {
 		}, {
 			name: "Target test file",
 			args: args{
-				srcPath:  `testdata/test103_test.go`,
-				only:     regexp.MustCompile("wrapToString"),
-				subtests: true,
+				srcPath:        `testdata/test103_test.go`,
+				only:           regexp.MustCompile("wrapToString"),
+				subtests:       true,
+				argsStructMode: options.ArgsStructAlways,
 			},
 			wantNoTests: false,
 			wantErr:     false,
 			want:        mustReadFile(t, `testdata/goldens/target_test_file.go`),
+		}, {
+			name: "Target test file (no args struct)",
+			args: args{
+				srcPath:        `testdata/test103_test.go`,
+				only:           regexp.MustCompile("wrapToString"),
+				subtests:       true,
+				argsStructMode: options.ArgsStructNever,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file_no_args_struct.go`),
+		}, {
+			name: "Target test file (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test103_test.go`,
+				only:           regexp.MustCompile("wrapToString"),
+				subtests:       true,
+				argsStructMode: options.ArgsStructNever,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file_no_args_struct.go`),
 		}, {
 			name: "Target test file without only flag",
 			args: args{
@@ -102,11 +128,39 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/function_with_anonymous_arguments.go"),
 		}, {
+			name: "Function with anonymous arguments (no args struct)",
+			args: args{
+				srcPath:        `testdata/test002.go`,
+				argsStructMode: options.ArgsStructNever,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_anonymous_arguments_no_args_struct.go"),
+		}, {
+			name: "Function with anonymous arguments (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test002.go`,
+				argsStructMode: options.ArgsStructSmart,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_anonymous_arguments.go"),
+		}, {
 			name: "Function with named argument",
 			args: args{
 				srcPath: `testdata/test003.go`,
 			},
 			want: mustReadFile(t, "testdata/goldens/function_with_named_argument.go"),
+		}, {
+			name: "Function with named argument (no args struct)",
+			args: args{
+				srcPath:        `testdata/test003.go`,
+				argsStructMode: options.ArgsStructNever,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_named_argument_no_args_struct.go"),
+		}, {
+			name: "Function with named argument (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test003.go`,
+				argsStructMode: options.ArgsStructSmart,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_named_argument_no_args_struct.go"),
 		}, {
 			name: "Function with return value",
 			args: args{
@@ -133,11 +187,41 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/print_inputs_with_multiple_arguments.go"),
 		}, {
+			name: "Print inputs with multiple arguments (no args struct)",
+			args: args{
+				srcPath:        `testdata/test006.go`,
+				printInputs:    true,
+				argsStructMode: options.ArgsStructNever,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_multiple_arguments_no_args_struct.go"),
+		}, {
+			name: "Print inputs with multiple arguments (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test006.go`,
+				printInputs:    true,
+				argsStructMode: options.ArgsStructSmart,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_multiple_arguments.go"),
+		}, {
 			name: "Method on a struct pointer",
 			args: args{
 				srcPath: `testdata/test007.go`,
 			},
 			want: mustReadFile(t, "testdata/goldens/method_on_a_struct_pointer.go"),
+		}, {
+			name: "Method on a struct pointer (no args struct)",
+			args: args{
+				srcPath:        `testdata/test007.go`,
+				argsStructMode: options.ArgsStructNever,
+			},
+			want: mustReadFile(t, "testdata/goldens/method_on_a_struct_pointer_no_args_struct.go"),
+		}, {
+			name: "Method on a struct pointer (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test007.go`,
+				argsStructMode: options.ArgsStructSmart,
+			},
+			want: mustReadFile(t, "testdata/goldens/method_on_a_struct_pointer_no_args_struct.go"),
 		}, {
 			name: "Print inputs with single argument",
 			args: args{
@@ -145,6 +229,22 @@ func TestGenerateTests(t *testing.T) {
 				printInputs: true,
 			},
 			want: mustReadFile(t, "testdata/goldens/print_inputs_with_single_argument.go"),
+		}, {
+			name: "Print inputs with single argument (no args struct)",
+			args: args{
+				srcPath:        `testdata/test007.go`,
+				printInputs:    true,
+				argsStructMode: options.ArgsStructNever,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_single_argument_no_args_struct.go"),
+		}, {
+			name: "Print inputs with single argument (smart args struct)",
+			args: args{
+				srcPath:        `testdata/test007.go`,
+				printInputs:    true,
+				argsStructMode: options.ArgsStructSmart,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_single_argument_no_args_struct.go"),
 		}, {
 			name: "Function with struct pointer argument and return type",
 			args: args{
@@ -549,13 +649,17 @@ func TestGenerateTests(t *testing.T) {
 		t.Fatalf("ioutil.TempDir: %v", err)
 	}
 	for _, tt := range tests {
+		if tt.args.argsStructMode == "" {
+			tt.args.argsStructMode = options.ArgsStructAlways
+		}
 		gts, err := GenerateTests(tt.args.srcPath, &Options{
-			Only:        tt.args.only,
-			Exclude:     tt.args.excl,
-			Exported:    tt.args.exported,
-			PrintInputs: tt.args.printInputs,
-			Subtests:    tt.args.subtests,
-			Importer:    func() types.Importer { return tt.args.importer },
+			Only:           tt.args.only,
+			Exclude:        tt.args.excl,
+			Exported:       tt.args.exported,
+			PrintInputs:    tt.args.printInputs,
+			Subtests:       tt.args.subtests,
+			ArgsStructMode: tt.args.argsStructMode,
+			Importer:       func() types.Importer { return tt.args.importer },
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
