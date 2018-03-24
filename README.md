@@ -29,22 +29,22 @@ $ gotests [options] PATH ...
 Available options:
 
 ```
-  -all         generate go tests for all functions and methods
+  -all           generate go tests for all functions and methods
   
-  -excl        regexp. generate go tests for functions and methods that don't 
-               match. Takes precedence over -only, -exported, and -all
+  -excl          regexp. generate go tests for functions and methods that don't 
+                 match. Takes precedence over -only, -exported, and -all
     	   
-  -exported    generate go tests for exported functions and methods. Takes 
-               precedence over -only and -all
+  -exported      generate go tests for exported functions and methods. Takes 
+                 precedence over -only and -all
 
-  -i	       print test inputs in error messages
+  -i             print test inputs in error messages
   
-  -only        regexp. generate go tests for functions and methods that match only.
-               Takes precedence over -all
+  -only          regexp. generate go tests for functions and methods that match only.
+                 Takes precedence over -all
   
-  -w           write output to (test) files instead of stdout
+  -w             write output to (test) files instead of stdout
   
-  -nosubtests  disable subtest generation. Only available for Go 1.7+
+  -nosubtests    disable subtest generation. Only available for Go 1.7+
 
   -template_dir  optional. Path to a directory containing custom test code templates
 ```
