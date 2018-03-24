@@ -45,6 +45,8 @@ Available options:
   -w           write output to (test) files instead of stdout
   
   -nosubtests  disable subtest generation. Only available for Go 1.7+
+
+  -template_dir  optional. Path to a directory containing custom test code templates
 ```
 
 ## Contributions

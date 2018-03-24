@@ -24,6 +24,7 @@ type Options struct {
 	PrintInputs bool                  // Print function parameters in error messages
 	Subtests    bool                  // Print tests using Go 1.7 subtests
 	Importer    func() types.Importer // A custom importer.
+	TemplateDir string                // Path to custom template set
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -116,6 +117,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	b, err := output.Process(h, funcs, &output.Options{
 		PrintInputs: opt.PrintInputs,
 		Subtests:    opt.Subtests,
+		TemplateDir: opt.TemplateDir,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)

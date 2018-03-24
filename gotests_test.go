@@ -20,6 +20,7 @@ func TestGenerateTests(t *testing.T) {
 		printInputs bool
 		subtests    bool
 		importer    types.Importer
+		templateDir string
 	}
 	tests := []struct {
 		name              string
@@ -543,6 +544,32 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/existing_test_file_with_package_level_comments.go"),
 		},
+		{
+			name: "Test non existing template path",
+			args: args{
+				srcPath:     `testdata/calculator.go`,
+				templateDir: `/tmp/not/exising/path`,
+			},
+			wantErr:     true,
+			wantNoTests: true,
+		},
+		{
+			name: "Test non bad template formatting",
+			args: args{
+				srcPath:     `testdata/calculator.go`,
+				templateDir: `testdata/bad_customtemplates`,
+			},
+			wantErr:     true,
+			wantNoTests: true,
+		},
+		{
+			name: "Test custom template path",
+			args: args{
+				srcPath:     `testdata/test004.go`,
+				templateDir: `testdata/customtemplates`,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -556,6 +583,7 @@ func TestGenerateTests(t *testing.T) {
 			PrintInputs: tt.args.printInputs,
 			Subtests:    tt.args.subtests,
 			Importer:    func() types.Importer { return tt.args.importer },
+			TemplateDir: tt.args.templateDir,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
