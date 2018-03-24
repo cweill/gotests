@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/cweill/gotests/internal/output"
 )
 
 func TestGenerateTests(t *testing.T) {
@@ -600,7 +602,7 @@ func TestGenerateTests(t *testing.T) {
 		if tt.wantNoTests || tt.wantMultipleTests {
 			continue
 		}
-		if got := string(gts[0].Output); ignoreTabs(got) != ignoreTabs(tt.want) {
+		if got := string(gts[0].Output); got != tt.want {
 			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
 			outputResult(t, tmp, tt.name, gts[0].Output)
 		}
@@ -612,7 +614,14 @@ func mustReadFile(t *testing.T, filename string) string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return string(b)
+
+	// The newly generated test are formatted using the imports pkg.
+	// We need do the same to the golden files, otherwise we might end up with formatting mismatch
+	res, err := output.ProcessImports(filename, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(res)
 }
 
 func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
@@ -638,7 +647,7 @@ func toSnakeCase(s string) string {
 	return string(res)
 }
 
-func ignoreTabs(s string) string {
+func gofmt(s string) string {
 	return strings.Replace(s, "\t", "", -1)
 }
 
