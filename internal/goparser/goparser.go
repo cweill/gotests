@@ -162,6 +162,11 @@ func goCode(b []byte, f *ast.File) []byte {
 	}
 	if furthestPos < token.Pos(len(b)) {
 		furthestPos++
+
+		// Avoid wrong output on windows-encoded files
+		if b[furthestPos-2] == '\r' && b[furthestPos-1] == '\n' && furthestPos < token.Pos(len(b)) {
+			furthestPos++
+		}
 	}
 	return b[furthestPos:]
 }
