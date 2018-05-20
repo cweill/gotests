@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path"
 	"regexp"
+	"strings"
 	"testing"
 	"unicode"
 )
@@ -19,6 +20,7 @@ func TestGenerateTests(t *testing.T) {
 		printInputs bool
 		subtests    bool
 		importer    types.Importer
+		templateDir string
 	}
 	tests := []struct {
 		name              string
@@ -319,6 +321,12 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/functions_and_receivers_with_same_names_except_exporting.go"),
 		}, {
+			name: "Receiver is indirect imported struct",
+			args: args{
+				srcPath: `testdata/test037.go`,
+			},
+			want: mustReadFile(t, "testdata/goldens/receiver_is_indirect_imported_struct.go"),
+		}, {
 			name: "Multiple functions",
 			args: args{
 				srcPath: `testdata/test_filter.go`,
@@ -536,6 +544,32 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadFile(t, "testdata/goldens/existing_test_file_with_package_level_comments.go"),
 		},
+		{
+			name: "Test non existing template path",
+			args: args{
+				srcPath:     `testdata/calculator.go`,
+				templateDir: `/tmp/not/exising/path`,
+			},
+			wantErr:     true,
+			wantNoTests: true,
+		},
+		{
+			name: "Test non bad template formatting",
+			args: args{
+				srcPath:     `testdata/calculator.go`,
+				templateDir: `testdata/bad_customtemplates`,
+			},
+			wantErr:     true,
+			wantNoTests: true,
+		},
+		{
+			name: "Test custom template path",
+			args: args{
+				srcPath:     `testdata/test004.go`,
+				templateDir: `testdata/customtemplates`,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -549,6 +583,7 @@ func TestGenerateTests(t *testing.T) {
 			PrintInputs: tt.args.printInputs,
 			Subtests:    tt.args.subtests,
 			Importer:    func() types.Importer { return tt.args.importer },
+			TemplateDir: tt.args.templateDir,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
@@ -565,7 +600,7 @@ func TestGenerateTests(t *testing.T) {
 		if tt.wantNoTests || tt.wantMultipleTests {
 			continue
 		}
-		if got := string(gts[0].Output); got != tt.want {
+		if got := string(gts[0].Output); ignoreTabs(got) != ignoreTabs(tt.want) {
 			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
 			outputResult(t, tmp, tt.name, gts[0].Output)
 		}
@@ -601,6 +636,10 @@ func toSnakeCase(s string) string {
 		res = append(res, r)
 	}
 	return string(res)
+}
+
+func ignoreTabs(s string) string {
+	return strings.Replace(s, "\t", "", -1)
 }
 
 // 249032394 ns/op

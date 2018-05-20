@@ -162,6 +162,11 @@ func goCode(b []byte, f *ast.File) []byte {
 	}
 	if furthestPos < token.Pos(len(b)) {
 		furthestPos++
+
+		// Avoid wrong output on windows-encoded files
+		if b[furthestPos-2] == '\r' && b[furthestPos-1] == '\n' && furthestPos < token.Pos(len(b)) {
+			furthestPos++
+		}
 	}
 	return b[furthestPos:]
 }
@@ -217,8 +222,11 @@ func parseReceiver(fl *ast.FieldList, ul map[string]types.Type, el map[*types.St
 	if !ok {
 		return r
 	}
-	st := el[s].(*ast.StructType)
-	r.Fields = append(r.Fields, parseFieldList(st.Fields, ul)...)
+	st, found := el[s]
+	if !found {
+		return r
+	}
+	r.Fields = append(r.Fields, parseFieldList(st.(*ast.StructType).Fields, ul)...)
 	for i, f := range r.Fields {
 		f.Name = s.Field(i).Name()
 	}

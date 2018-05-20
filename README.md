@@ -4,7 +4,7 @@
 
 ## Demo
 
-The following shows `gotests` in action using the [official Sublime Text 3 plugin](https://github.com/cweill/GoTests-Sublime). Plugins also exist for [Emacs](https://github.com/damienlevin/GoTests-Emacs), also [Emacs](https://github.com/s-kostyaev/go-gen-test), [Vim](https://github.com/buoto/gotests-vim) and [Atom Editor](https://atom.io/packages/gotests).
+The following shows `gotests` in action using the [official Sublime Text 3 plugin](https://github.com/cweill/GoTests-Sublime). Plugins also exist for [Emacs](https://github.com/damienlevin/GoTests-Emacs), also [Emacs](https://github.com/s-kostyaev/go-gen-test), [Vim](https://github.com/buoto/gotests-vim), [Atom Editor](https://atom.io/packages/gotests), and [Visual Studio Code](https://github.com/Microsoft/vscode-go).
 
 ![demo](https://github.com/cweill/GoTests-Sublime/blob/master/gotests.gif)
 
@@ -29,22 +29,24 @@ $ gotests [options] PATH ...
 Available options:
 
 ```
-  -all         generate go tests for all functions and methods
+  -all           generate go tests for all functions and methods
   
-  -excl        regexp. generate go tests for functions and methods that don't 
-               match. Takes precedence over -only, -exported, and -all
+  -excl          regexp. generate go tests for functions and methods that don't 
+                 match. Takes precedence over -only, -exported, and -all
     	   
-  -exported    generate go tests for exported functions and methods. Takes 
-               precedence over -only and -all
+  -exported      generate go tests for exported functions and methods. Takes 
+                 precedence over -only and -all
 
-  -i	       print test inputs in error messages
+  -i             print test inputs in error messages
   
-  -only        regexp. generate go tests for functions and methods that match only.
-               Takes precedence over -all
+  -only          regexp. generate go tests for functions and methods that match only.
+                 Takes precedence over -all
   
-  -w           write output to (test) files instead of stdout
+  -w             write output to (test) files instead of stdout
   
-  -nosubtests  disable subtest generation. Only available for Go 1.7+
+  -nosubtests    disable subtest generation. Only available for Go 1.7+
+
+  -template_dir  optional. Path to a directory containing custom test code templates
 ```
 
 ## Contributions
