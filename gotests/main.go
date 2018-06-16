@@ -35,13 +35,14 @@ import (
 )
 
 var (
-	onlyFuncs     = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
-	exclFuncs     = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
-	exportedFuncs = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
-	allFuncs      = flag.Bool("all", false, "generate tests for all functions and methods")
-	printInputs   = flag.Bool("i", false, "print test inputs in error messages")
-	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
-	templateDir  = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
+	onlyFuncs      = flag.String("only", "", `regexp. generate tests for functions and methods that match only. Takes precedence over -all`)
+	exclFuncs      = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
+	exportedFuncs  = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
+	allFuncs       = flag.Bool("all", false, "generate tests for all functions and methods")
+	printInputs    = flag.Bool("i", false, "print test inputs in error messages")
+	writeOutput    = flag.Bool("w", false, "write output to (test) files instead of stdout")
+	templateDir    = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
+	withBenchmarks = flag.Bool("b", false, "generate benchmarks for functions and methods")
 )
 
 // nosubtests is always set to default value of true when Go < 1.7.
@@ -62,5 +63,6 @@ func main() {
 		Subtests:      !nosubtests,
 		WriteOutput:   *writeOutput,
 		TemplateDir:   *templateDir,
+		WithBenchmark: *withBenchmarks,
 	})
 }
