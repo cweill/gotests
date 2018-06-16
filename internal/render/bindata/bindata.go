@@ -230,7 +230,7 @@ func templatesBenchmarkTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/benchmark.tmpl", size: 168, mode: os.FileMode(420), modTime: time.Unix(1479275664, 0)}
+	info := bindataFileInfo{name: "templates/benchmark.tmpl", size: 2396, mode: os.FileMode(420), modTime: time.Unix(1479275664, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
