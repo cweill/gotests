@@ -127,24 +127,18 @@ func (f *Function) FullName() string {
 }
 
 func (f *Function) TestName() string {
-	if strings.HasPrefix(f.Name, "Test") {
-		return f.Name
-	}
-	if f.Receiver != nil {
-		receiverType := f.Receiver.Type.Value
-		if unicode.IsLower([]rune(receiverType)[0]) {
-			receiverType = "_" + receiverType
-		}
-		return "Test" + receiverType + "_" + f.Name
-	}
-	if unicode.IsLower([]rune(f.Name)[0]) {
-		return "Test_" + f.Name
-	}
-	return "Test" + f.Name
+	return f.functionName("Test")
 }
 
 func (f *Function) BenchmarkName() string {
-	if strings.HasPrefix(f.Name, "Benchmark") {
+	return f.functionName("Benchmark")
+}
+
+// functionName will return this function's name depending on
+// args t. t is the type of function, t's value is one of "Benchmark"
+// "Test"
+func (f *Function) functionName(t string) string {
+	if strings.HasPrefix(f.Name, t) {
 		return f.Name
 	}
 	if f.Receiver != nil {
@@ -152,12 +146,12 @@ func (f *Function) BenchmarkName() string {
 		if unicode.IsLower([]rune(receiverType)[0]) {
 			receiverType = "_" + receiverType
 		}
-		return "Benchmark" + receiverType + "_" + f.Name
+		return t + receiverType + "_" + f.Name
 	}
 	if unicode.IsLower([]rune(f.Name)[0]) {
-		return "Benchmark_" + f.Name
+		return t + "_" + f.Name
 	}
-	return "Benchmark" + f.Name
+	return t + f.Name
 }
 
 func (f *Function) IsNaked() bool {

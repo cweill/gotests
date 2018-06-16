@@ -116,10 +116,10 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		return nil, nil
 	}
 	b, err := output.Process(h, funcs, &output.Options{
-		PrintInputs: opt.PrintInputs,
-		Subtests:    opt.Subtests,
-		TemplateDir: opt.TemplateDir,
-		Benchmark:   opt.WithBenchmark,
+		PrintInputs:   opt.PrintInputs,
+		Subtests:      opt.Subtests,
+		TemplateDir:   opt.TemplateDir,
+		WithBenchmark: opt.WithBenchmark,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)

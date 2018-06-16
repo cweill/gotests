@@ -1,7 +1,7 @@
 {{define "benchmark"}}
 {{- $f := .}}
 
-func {{.BenchmarkName}}(t *testing.B) {
+func {{.BenchmarkName}}(b *testing.B) {
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
@@ -20,7 +20,7 @@ func {{.BenchmarkName}}(t *testing.B) {
 		{{- end}}
 	}
 	{{- end}}
-	tests := []struct {
+	benchmarks := []struct {
 		name string
 		{{- with .Receiver}}
 			{{- if and .IsStruct .Fields}}
@@ -41,13 +41,13 @@ func {{.BenchmarkName}}(t *testing.B) {
 	}{
 		// TODO: Add benchmark cases.
 	}
-	for {{if not .IsNaked}} _, tt := {{end}} range tests {
-        {{- if .Subtests }}b.Run(tt.name, func(t *testing.B) { {{- end -}}
+	for {{if not .IsNaked}} _, bb := {{end}} range benchmarks {
+        {{- if .Subtests }}b.Run(bb.name, func(t *testing.B) { {{- end -}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
 					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
 					{{- range .Fields}}
-						{{.Name}}: tt.fields.{{Field .}},
+						{{.Name}}: bb.fields.{{Field .}},
 					{{- end}}
 					}
 				{{- end}}
@@ -61,8 +61,8 @@ func {{.BenchmarkName}}(t *testing.B) {
 				{{template "results" $f}} {{template "call" $f}}
 			{{- end}}
 			{{- if .ReturnsError}}
-				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
+				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != bb.wantErr {
+					b.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, bb.wantErr)
 					{{- if .TestResults}}
 						{{if .Subtests }}return{{else}}continue{{end}}
 					{{- end}}
@@ -70,13 +70,13 @@ func {{.BenchmarkName}}(t *testing.B) {
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
-					if {{Got .}} := {{Param .}}.String(); {{Got .}} != tt.{{Want .}} {
+					if {{Got .}} := {{Param .}}.String(); {{Got .}} != bb.{{Want .}} {
 				{{- else if .IsBasicType}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != tt.{{Want .}} {
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != bb.{{Want .}} {
 				{{- else}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) {
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, bb.{{Want .}}) {
 				{{- end}}
-				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
+				b.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, bb.{{Want .}})
 				}
 			{{- end}}
 		{{- if .Subtests }} }) {{- end -}}
