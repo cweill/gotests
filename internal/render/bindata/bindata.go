@@ -240,7 +240,6 @@ func templatesBenchmarkTmpl() (*asset, error) {
 // could not be loaded.
 func Asset(name string) ([]byte, error) {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
-	fmt.Println(cannonicalName)
 	if f, ok := _bindata[cannonicalName]; ok {
 		a, err := f()
 		if err != nil {

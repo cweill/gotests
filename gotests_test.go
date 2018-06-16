@@ -607,6 +607,387 @@ func TestGenerateTests(t *testing.T) {
 	}
 }
 
+func TestGenerateBenchmarks(t *testing.T) {
+	type args struct {
+		srcPath       string
+		only          *regexp.Regexp
+		excl          *regexp.Regexp
+		exported      bool
+		printInputs   bool
+		subtests      bool
+		withBenchmark bool
+		importer      types.Importer
+		templateDir   string
+	}
+	tests := []struct {
+		name              string
+		args              args
+		want              string
+		wantNoTests       bool
+		wantMultipleTests bool
+		wantErr           bool
+	}{
+		{
+			name: "Blank Go file",
+			args: args{
+				srcPath:       `testdata/blankfile/blank.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name: "Blank Go file in directory",
+			args: args{
+				srcPath:       `testdata/blankfile/notblank.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name: "Test file with garbage data",
+			args: args{
+				srcPath:       `testdata/invalidtest/invalid.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name: "Hidden file",
+			args: args{
+				srcPath:       `testdata/.hidden.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name: "Nonexistant file",
+			args: args{
+				srcPath:       `testdata/nonexistant.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		}, {
+			name: "Target test file",
+			args: args{
+				srcPath:       `testdata/test103_test.go`,
+				withBenchmark: true,
+				templateDir:   `internal/render/templates/`,
+				only:          regexp.MustCompile("wrapToString"),
+				subtests:      true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file_with_benchmark.go`),
+		}, {
+			name: "Target test file without only flag",
+			args: args{
+				srcPath:       `testdata/test103_test.go`,
+				withBenchmark: true,
+				subtests:      true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadFile(t, `testdata/goldens/target_test_file_with_benchmark.go`),
+		}, {
+			name: "No funcs",
+			args: args{
+				srcPath:       `testdata/test000.go`,
+				withBenchmark: true,
+			},
+			wantNoTests: true,
+		}, {
+			name: "Function with neither receiver, parameters, nor results",
+			args: args{
+				srcPath:       `testdata/test001.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_neither_receiver_parameters_nor_results_with_benchmark.go"),
+		}, {
+			name: "Function with anonymous arguments",
+			args: args{
+				srcPath:       `testdata/test002.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_anonymous_arguments_with_benchmark.go"),
+		}, {
+			name: "Function with named argument",
+			args: args{
+				srcPath:       `testdata/test003.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_named_argument_with_benchmark.go"),
+		}, {
+			name: "Function with return value",
+			args: args{
+				srcPath:       `testdata/test004.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_return_value_with_benchmark.go"),
+		}, {
+			name: "Function returning an error",
+			args: args{
+				srcPath:       `testdata/test005.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_returning_an_error_with_benchmark.go"),
+		}, {
+			name: "Function with multiple arguments",
+			args: args{
+				srcPath:       `testdata/test006.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_multiple_arguments_with_benchmark.go"),
+		}, {
+			name: "Print inputs with multiple arguments",
+			args: args{
+				srcPath:       `testdata/test006.go`,
+				withBenchmark: true,
+				printInputs:   true,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_multiple_arguments_with_benchmark.go"),
+		}, {
+			name: "Method on a struct pointer",
+			args: args{
+				srcPath:       `testdata/test007.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/method_on_a_struct_pointer_with_benchmark.go"),
+		}, {
+			name: "Print inputs with single argument",
+			args: args{
+				srcPath:       `testdata/test007.go`,
+				withBenchmark: true,
+				printInputs:   true,
+			},
+			want: mustReadFile(t, "testdata/goldens/print_inputs_with_single_argument_with_benchmark.go"),
+		}, {
+			name: "Function with struct pointer argument and return type",
+			args: args{
+				srcPath:       `testdata/test008.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_struct_pointer_argument_and_return_type_with_benchmark.go"),
+		}, {
+			name: "Struct value method with struct value return type",
+			args: args{
+				srcPath:       `testdata/test009.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/struct_value_method_with_struct_value_return_type_with_benchmark.go"),
+		}, {
+			name: "Function with map argument and return type",
+			args: args{
+				srcPath:       `testdata/test010.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_map_argument_and_return_type_with_benchmark.go"),
+		}, {
+			name: "Function with slice argument and return type",
+			args: args{
+				srcPath:       `testdata/test011.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_slice_argument_and_return_type_with_benchmark.go"),
+		}, {
+			name: "Function returning only an error",
+			args: args{
+				srcPath:       `testdata/test012.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_returning_only_an_error_with_benchmark.go"),
+		}, {
+			name: "Function with a function parameter",
+			args: args{
+				srcPath:       `testdata/test013.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_a_function_parameter_with_benchmark.go"),
+		}, {
+			name: "Function with a function parameter with its own parameters and result",
+			args: args{
+				srcPath:       `testdata/test014.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_a_function_parameter_with_its_own_parameters_and_result_with_benchmark.go"),
+		}, {
+			name: "Function with a function parameter that returns two results",
+			args: args{
+				srcPath:       `testdata/test015.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_a_function_parameter_that_returns_two_results_with_benchmark.go"),
+		}, {
+			name: "Function with defined interface type parameter and result",
+			args: args{
+				srcPath:       `testdata/test016.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_defined_interface_type_parameter_and_result_with_benchmark.go"),
+		}, {
+			name: "Function with imported interface receiver, parameter, and result",
+			args: args{
+				srcPath:       `testdata/test017.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_imported_interface_receiver_parameter_and_result_with_benchmark.go"),
+		}, {
+			name: "Function with imported struct receiver, parameter, and result",
+			args: args{
+				srcPath:       `testdata/test018.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_imported_struct_receiver_parameter_and_result_with_benchmark.go"),
+		}, {
+			name: "Function with multiple parameters of the same type",
+			args: args{
+				srcPath:       `testdata/test019.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_multiple_parameters_of_the_same_type_with_benchmark.go"),
+		}, {
+			name: "Function with a variadic parameter",
+			args: args{
+				srcPath:       `testdata/test020.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_a_variadic_parameter_with_benchmark.go"),
+		}, {
+			name: "Function with interface{} parameter and result",
+			args: args{
+				srcPath:       `testdata/test021.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_interface_parameter_and_result_with_benchmark.go"),
+		}, {
+			name: "Function with named imports",
+			args: args{
+				srcPath:       `testdata/test022.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_named_imports_with_benchmark.go"),
+		}, {
+			name: "Function with channel parameter and result",
+			args: args{
+				srcPath:       `testdata/test023.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_with_channel_parameter_and_result_with_benchmark.go"),
+		}, {
+			name: "File with multiple imports",
+			args: args{
+				srcPath:       `testdata/test024.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/file_with_multiple_imports_with_benchmark.go"),
+		}, {
+			name: "Function returning two results and an error",
+			args: args{
+				srcPath:       `testdata/test025.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/function_returning_two_results_and_an_error_with_benchmark.go"),
+		}, {
+			name: "Multiple named results",
+			args: args{
+				srcPath:       `testdata/test026.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/multiple_named_results_with_benchmark.go"),
+		}, {
+			name: "Two different structs with same method name",
+			args: args{
+				srcPath:       `testdata/test027.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/two_different_structs_with_same_method_name_with_benchmark.go"),
+		}, {
+			name: "Underlying types",
+			args: args{
+				srcPath:       `testdata/test028.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/underlying_types_with_benchmark.go"),
+		}, {
+			name: "Struct receiver with multiple fields",
+			args: args{
+				srcPath:       `testdata/test029.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/struct_receiver_with_multiple_fields_with_benchmark.go"),
+		}, {
+			name: "Struct receiver with anonymous fields",
+			args: args{
+				srcPath:       `testdata/test030.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/struct_receiver_with_anonymous_fields_with_benchmark.go"),
+		}, {
+			name: "io.Writer parameters",
+			args: args{
+				srcPath:       `testdata/test031.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/io_writer_parameters_with_benchmark.go"),
+		}, {
+			name: "Two structs with same method name",
+			args: args{
+				srcPath:       `testdata/test032.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/two_structs_with_same_method_name_with_benchmark.go"),
+		}, {
+			name: "Functions and methods with 'name' receivers, parameters, and results",
+			args: args{
+				srcPath:       `testdata/test033.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/functions_and_methods_with_name_receivers_parameters_and_results_with_benchmark.go"),
+		}, {
+			name: "Receiver struct with reserved field names",
+			args: args{
+				srcPath:       `testdata/test034.go`,
+				withBenchmark: true,
+			},
+			want: mustReadFile(t, "testdata/goldens/receiver_struct_with_reserved_field_names_with_benchmark.go"),
+		},
+	}
+	tmp, err := ioutil.TempDir("", "gotests_test")
+	if err != nil {
+		t.Fatalf("ioutil.TempDir: %v", err)
+	}
+	for _, tt := range tests {
+		gts, err := GenerateTests(tt.args.srcPath, &Options{
+			Only:          tt.args.only,
+			Exclude:       tt.args.excl,
+			Exported:      tt.args.exported,
+			PrintInputs:   tt.args.printInputs,
+			Subtests:      tt.args.subtests,
+			Importer:      func() types.Importer { return tt.args.importer },
+			TemplateDir:   tt.args.templateDir,
+			WithBenchmark: tt.args.withBenchmark,
+		})
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
+			continue
+		}
+		if (len(gts) == 0) != tt.wantNoTests {
+			t.Errorf("%q. GenerateTests(%v) returned no tests", tt.name, tt.args.srcPath)
+			continue
+		}
+		if (len(gts) > 1) != tt.wantMultipleTests {
+			t.Errorf("%q. GenerateTests(%v) returned too many tests", tt.name, tt.args.srcPath)
+			continue
+		}
+		if tt.wantNoTests || tt.wantMultipleTests {
+			continue
+		}
+		if got := string(gts[0].Output); ignoreTabs(got) != ignoreTabs(tt.want) {
+			t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
+			outputResult(t, tmp, tt.name, gts[0].Output)
+		}
+	}
+}
 func mustReadFile(t *testing.T, filename string) string {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
