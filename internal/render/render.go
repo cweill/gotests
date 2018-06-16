@@ -22,7 +22,8 @@ var (
 func init() {
 	initEmptyTmpls()
 	for _, name := range bindata.AssetNames() {
-		tmpls = template.Must(tmpls.Parse(string(bindata.MustAsset(name))))
+		t := string(bindata.MustAsset(name))
+		tmpls = template.Must(tmpls.Parse(t))
 	}
 }
 
@@ -124,6 +125,18 @@ func Header(w io.Writer, h *models.Header) error {
 
 func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
 	return tmpls.ExecuteTemplate(w, "function", struct {
+		*models.Function
+		PrintInputs bool
+		Subtests    bool
+	}{
+		Function:    f,
+		PrintInputs: printInputs,
+		Subtests:    subtests,
+	})
+}
+
+func BenchmarkFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
+	return tmpls.ExecuteTemplate(w, "benchmark", struct {
 		*models.Function
 		PrintInputs bool
 		Subtests    bool
