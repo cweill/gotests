@@ -1,0 +1,86 @@
+{{define "benchmark"}}
+{{- $f := .}}
+
+func {{.BenchmarkName}}(b *testing.B) {
+	{{- with .Receiver}}
+		{{- if .IsStruct}}
+			{{- if .Fields}}
+				type fields struct {
+				{{- range .Fields}}
+					{{Field .}} {{.Type}}
+				{{- end}}
+				}
+			{{- end}}
+		{{- end}}
+	{{- end}}
+	{{- if .TestParameters}}
+	type args struct {
+		{{- range .TestParameters}}
+				{{Param .}} {{.Type}}
+		{{- end}}
+	}
+	{{- end}}
+	benchmarks := []struct {
+		name string
+		{{- with .Receiver}}
+			{{- if and .IsStruct .Fields}}
+				fields fields
+			{{- else}}
+				{{Receiver .}} {{.Type}}
+			{{- end}}
+		{{- end}}
+		{{- if .TestParameters}}
+			args args
+		{{- end}}
+		{{- range .TestResults}}
+			{{Want .}} {{.Type}}
+		{{- end}}
+		{{- if .ReturnsError}}
+			wantErr bool
+		{{- end}}
+	}{
+		// TODO: Add benchmark cases.
+	}
+	for {{if not .IsNaked}} _, bb := {{end}} range benchmarks {
+        {{- if .Subtests }}b.Run(bb.name, func(t *testing.B) { {{- end -}}
+			{{- with .Receiver}}
+				{{- if .IsStruct}}
+					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+					{{- range .Fields}}
+						{{.Name}}: bb.fields.{{Field .}},
+					{{- end}}
+					}
+				{{- end}}
+			{{- end}}
+			{{- range .Parameters}}
+				{{- if .IsWriter}}
+					{{Param .}} := &bytes.Buffer{}
+				{{- end}}
+			{{- end}}
+			{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
+				{{template "results" $f}} {{template "call" $f}}
+			{{- end}}
+			{{- if .ReturnsError}}
+				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != bb.wantErr {
+					b.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, bb.wantErr)
+					{{- if .TestResults}}
+						{{if .Subtests }}return{{else}}continue{{end}}
+					{{- end}}
+				}
+			{{- end}}
+			{{- range .TestResults}}
+				{{- if .IsWriter}}
+					if {{Got .}} := {{Param .}}.String(); {{Got .}} != bb.{{Want .}} {
+				{{- else if .IsBasicType}}
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != bb.{{Want .}} {
+				{{- else}}
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, bb.{{Want .}}) {
+				{{- end}}
+				b.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, bb.{{Want .}})
+				}
+			{{- end}}
+		{{- if .Subtests }} }) {{- end -}}
+	}
+}
+
+{{end}}
