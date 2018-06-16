@@ -15,9 +15,10 @@ import (
 )
 
 type Options struct {
-	PrintInputs bool
-	Subtests    bool
-	TemplateDir string
+	PrintInputs   bool
+	Subtests      bool
+	TemplateDir   string
+	WithBenchmark bool
 }
 
 func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byte, error) {
@@ -35,7 +36,7 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 	defer tf.Close()
 	defer os.Remove(tf.Name())
 	b := &bytes.Buffer{}
-	if err := writeTests(b, head, funcs, opt); err != nil {
+	if err := writeAll(b, head, funcs, opt); err != nil {
 		return nil, err
 	}
 	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
@@ -50,7 +51,9 @@ func IsFileExist(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt *Options) error {
+// writeAll write tests, benchmarks, examples to output
+// but now support tests and benchmarks
+func writeAll(w io.Writer, head *models.Header, funcs []*models.Function, opt *Options) error {
 	b := bufio.NewWriter(w)
 	if err := render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
@@ -58,6 +61,11 @@ func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt 
 	for _, fun := range funcs {
 		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
+		}
+		if opt.WithBenchmark {
+			if err := render.BenchmarkFunction(b, fun, opt.PrintInputs, opt.Subtests); err != nil {
+				return fmt.Errorf("render.BenchmarkFunction: %v", err)
+			}
 		}
 	}
 	return b.Flush()

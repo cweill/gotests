@@ -123,7 +123,15 @@ func Header(w io.Writer, h *models.Header) error {
 }
 
 func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
-	return tmpls.ExecuteTemplate(w, "function", struct {
+	return renderFunction(w, f, "function", printInputs, subtests)
+}
+
+func BenchmarkFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
+	return renderFunction(w, f, "benchmark", printInputs, subtests)
+}
+
+func renderFunction(w io.Writer, f *models.Function, tmpl string, printInputs bool, subtests bool) error {
+	return tmpls.ExecuteTemplate(w, tmpl, struct {
 		*models.Function
 		PrintInputs bool
 		Subtests    bool

@@ -25,6 +25,7 @@ type Options struct {
 	Subtests      bool   // Print tests using Go 1.7 subtests
 	WriteOutput   bool   // Write output to test file(s).
 	TemplateDir   string // Path to custom template set
+	WithBenchmark bool   // Print benchmarks.
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -63,12 +64,13 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		return nil
 	}
 	return &gotests.Options{
-		Only:        onlyRE,
-		Exclude:     exclRE,
-		Exported:    opt.ExportedFuncs,
-		PrintInputs: opt.PrintInputs,
-		Subtests:    opt.Subtests,
-		TemplateDir: opt.TemplateDir,
+		Only:          onlyRE,
+		Exclude:       exclRE,
+		Exported:      opt.ExportedFuncs,
+		PrintInputs:   opt.PrintInputs,
+		Subtests:      opt.Subtests,
+		TemplateDir:   opt.TemplateDir,
+		WithBenchmark: opt.WithBenchmark,
 	}
 }
 
