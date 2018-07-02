@@ -39,11 +39,7 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 		return nil, err
 	}
 
-	return ProcessImports(tf.Name(), b.Bytes())
-}
-
-func ProcessImports(filename string, src []byte) ([]byte, error) {
-	out, err := imports.Process(filename, src, nil)
+	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
