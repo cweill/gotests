@@ -1,3 +1,10 @@
 {{define "message" -}}
-{{if not .Subtests}}%q. {{end}}{{with .Receiver}}{{.Type.Value}}.{{end}}{{.Name}}({{if .PrintInputs}}{{range $i, $el := .Parameters}}{{if $i}}, {{end}}%v{{end}}{{end}})
+    {{- if not .Subtests}}%q. {{end}}
+    {{- with .Receiver -}}
+        {{- .Type.Value -}}.
+    {{- end -}}
+    {{- .Name -}}(
+    {{- if .PrintInputs -}}
+        {{- range $i, $el := .Parameters}}{{if $i}}, {{end}}%v{{end -}}
+    {{- end -}})
 {{- end}}

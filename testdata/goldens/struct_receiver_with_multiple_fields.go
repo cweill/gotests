@@ -10,13 +10,10 @@ func TestPerson_SayHello(t *testing.T) {
 		Gender    string
 		Siblings  []*Person
 	}
-	type args struct {
-		r *Person
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
+		arg    *Person
 		want   string
 	}{
 	// TODO: Add test cases.
@@ -29,7 +26,7 @@ func TestPerson_SayHello(t *testing.T) {
 			Gender:    tt.fields.Gender,
 			Siblings:  tt.fields.Siblings,
 		}
-		if got := p.SayHello(tt.args.r); got != tt.want {
+		if got := p.SayHello(tt.arg); got != tt.want {
 			t.Errorf("%q. Person.SayHello() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

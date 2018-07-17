@@ -12,18 +12,15 @@ func Foo(s strings) errors {
 }
 
 func TestNot(t *testing.T) {
-	type args struct {
-		this *os.File
-	}
 	tests := []struct {
 		name string
-		args args
+		arg  *os.File
 		want string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Not(tt.args.this); got != tt.want {
+		if got := Not(tt.arg); got != tt.want {
 			t.Errorf("%q. Not() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

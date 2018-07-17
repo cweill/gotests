@@ -6,13 +6,10 @@ func TestFoo_Foo(t *testing.T) {
 	type fields struct {
 		Bar string
 	}
-	type args struct {
-		s string
-	}
 	tests := []struct {
 		name    string
 		fields  fields
-		args    args
+		arg     string
 		wantErr bool
 	}{
 	// TODO: Add test cases.
@@ -21,7 +18,7 @@ func TestFoo_Foo(t *testing.T) {
 		f := &Foo{
 			Bar: tt.fields.Bar,
 		}
-		if err := f.Foo(tt.args.s); (err != nil) != tt.wantErr {
+		if err := f.Foo(tt.arg); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo.Foo() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}
 	}
