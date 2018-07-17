@@ -38,6 +38,7 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 	if err := writeTests(b, head, funcs, opt); err != nil {
 		return nil, err
 	}
+
 	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
