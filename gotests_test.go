@@ -546,6 +546,20 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_comments.go"),
 		},
 		{
+			name: "Existing test file with package level comments without newline",
+			args: args{
+				srcPath: `testdata/test_existing_test_file_wih_comments_without_newline.go`,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_comments_without_newline.go"),
+		},
+		{
+			name: "Existing test file with mixed types package level comments",
+			args: args{
+				srcPath: `testdata/test_existing_test_file_wih_mixed_comments.go`,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_mixed_types_comments.go"),
+		},
+		{
 			name: "Test non existing template path",
 			args: args{
 				srcPath:     `testdata/calculator.go`,
