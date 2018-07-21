@@ -15,6 +15,11 @@ import (
 
 const newFilePerm os.FileMode = 0644
 
+const (
+	specifyFlagMessage = "Please specify either the -only, -excl, -exported, or -all flag"
+	specifyFileMessage = "Please specify a file or directory containing the source"
+)
+
 // Set of options to use when generating tests.
 type Options struct {
 	OnlyFuncs     string // Regexp string for filter matches.
@@ -39,7 +44,7 @@ func Run(out io.Writer, args []string, opts *Options) {
 		return
 	}
 	if len(args) == 0 {
-		fmt.Fprintln(out, "Please specify a file or directory containing the source")
+		fmt.Fprintln(out, specifyFileMessage)
 		return
 	}
 	for _, path := range args {
@@ -49,7 +54,7 @@ func Run(out io.Writer, args []string, opts *Options) {
 
 func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 	if opt.OnlyFuncs == "" && opt.ExclFuncs == "" && !opt.ExportedFuncs && !opt.AllFuncs {
-		fmt.Fprintln(out, "Please specify either the -only, -excl, -export, or -all flag")
+		fmt.Fprintln(out, specifyFlagMessage)
 		return nil
 	}
 	onlyRE, err := parseRegexp(opt.OnlyFuncs)

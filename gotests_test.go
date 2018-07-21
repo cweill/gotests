@@ -571,6 +571,14 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
 		},
+		{
+			name: "Test interface embedding",
+			args: args{
+				srcPath: `testdata/undefinedtypes/interface_embedding.go`,
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
