@@ -17,22 +17,22 @@ func TestRun(t *testing.T) {
 			name: "Nil options and nil args",
 			args: nil,
 			opts: nil,
-			want: "Please specify either the -only, -excl, -export, or -all flag\n",
+			want: specifyFlagMessage + "\n",
 		}, {
 			name: "Nil options",
 			args: []string{"testdata/foobar.go"},
 			opts: nil,
-			want: "Please specify either the -only, -excl, -export, or -all flag\n",
+			want: specifyFlagMessage + "\n",
 		}, {
 			name: "Empty options",
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{},
-			want: "Please specify either the -only, -excl, -export, or -all flag\n",
+			want: specifyFlagMessage + "\n",
 		}, {
 			name: "Non-empty options with no args",
 			args: []string{},
 			opts: &Options{AllFuncs: true},
-			want: "Please specify a file or directory containing the source\n",
+			want: specifyFileMessage + "\n",
 		}, {
 			name: "OnlyFuncs option w/ no matches",
 			args: []string{"testdata/foobar.go"},
