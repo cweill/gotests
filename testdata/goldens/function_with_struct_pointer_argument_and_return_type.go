@@ -6,19 +6,16 @@ import (
 )
 
 func TestFoo8(t *testing.T) {
-	type args struct {
-		b *Bar
-	}
 	tests := []struct {
 		name    string
-		args    args
+		arg     *Bar
 		want    *Bar
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := Foo8(tt.args.b)
+		got, err := Foo8(tt.arg)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo8() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

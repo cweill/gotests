@@ -11,13 +11,10 @@ func TestImporter_Foo35(t *testing.T) {
 		Importer types.Importer
 		Field    *types.Var
 	}
-	type args struct {
-		t types.Type
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
+		arg    types.Type
 		want   *types.Var
 	}{
 	// TODO: Add test cases.
@@ -27,7 +24,7 @@ func TestImporter_Foo35(t *testing.T) {
 			Importer: tt.fields.Importer,
 			Field:    tt.fields.Field,
 		}
-		if got := i.Foo35(tt.args.t); !reflect.DeepEqual(got, tt.want) {
+		if got := i.Foo35(tt.arg); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Importer.Foo35() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

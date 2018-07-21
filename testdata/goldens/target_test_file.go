@@ -55,19 +55,16 @@ func wrapToString(in []int) []string {
 }
 
 func Test_wrapToString(t *testing.T) {
-	type args struct {
-		in []int
-	}
 	tests := []struct {
 		name string
-		args args
+		arg  []int
 		want []string
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := wrapToString(tt.args.in); !reflect.DeepEqual(got, tt.want) {
+			if got := wrapToString(tt.arg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("wrapToString() = %v, want %v", got, tt.want)
 			}
 		})

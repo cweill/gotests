@@ -21,18 +21,15 @@ func TestCelsius_ToFahrenheit(t *testing.T) {
 }
 
 func TestHourToSecond(t *testing.T) {
-	type args struct {
-		h time.Duration
-	}
 	tests := []struct {
 		name string
-		args args
+		arg  time.Duration
 		want time.Duration
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := HourToSecond(tt.args.h); got != tt.want {
+		if got := HourToSecond(tt.arg); got != tt.want {
 			t.Errorf("%q. HourToSecond() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

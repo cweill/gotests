@@ -13,7 +13,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 		{{- end}}
 	{{- end}}
-	{{- if .TestParameters}}
+	{{- if gt (len .TestParameters) 1}}
 	type args struct {
 		{{- range .TestParameters}}
 				{{Param .}} {{.Type}}
@@ -29,9 +29,13 @@ func {{.TestName}}(t *testing.T) {
 				{{Receiver .}} {{.Type}}
 			{{- end}}
 		{{- end}}
-		{{- if .TestParameters}}
+        {{- if gt (len .TestParameters) 1}}
 			args args
-		{{- end}}
+		{{- else }}
+		  {{- range .TestParameters}}
+            arg {{.Type}}
+          {{- end}}
+		{{- end }}
 		{{- range .TestResults}}
 			{{Want .}} {{.Type}}
 		{{- end}}
@@ -39,7 +43,7 @@ func {{.TestName}}(t *testing.T) {
 			wantErr bool
 		{{- end}}
 	}{
-		// TODO: Add test cases.
+        // TODO: Add test cases.
 	}
 	for {{if not .IsNaked}} _, tt := {{end}} range tests {
         {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}

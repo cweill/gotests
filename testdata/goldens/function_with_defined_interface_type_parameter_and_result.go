@@ -6,18 +6,15 @@ import (
 )
 
 func TestFoo16(t *testing.T) {
-	type args struct {
-		in Bazzar
-	}
 	tests := []struct {
 		name string
-		args args
+		arg  Bazzar
 		want Bazzar
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Foo16(tt.args.in); !reflect.DeepEqual(got, tt.want) {
+		if got := Foo16(tt.arg); !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Foo16() = %v, want %v", tt.name, got, tt.want)
 		}
 	}

@@ -1,1 +1,14 @@
-{{define "call"}}{{with .Receiver}}{{if not .IsStruct}}tt.{{end}}{{Receiver .}}.{{end}}{{.Name}}({{range $i, $el := .Parameters}}{{if $i}}, {{end}}{{if not .IsWriter}}tt.args.{{end}}{{Param .}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{end}}
+{{define "call"}}
+    {{- with .Receiver -}}
+        {{- if not .IsStruct }}tt.{{ end -}}
+        {{- Receiver . }}.
+    {{- end -}}
+    {{- .Name -}}(
+    {{- $ln := len .TestParameters -}}
+    {{- range $i, $el := .Parameters -}}
+        {{- if $i}}, {{end -}}
+        {{- if not .IsWriter}}tt.arg{{if ne $ln 1}}s.{{end}}{{end -}}
+        {{- if  or .IsWriter (ne $ln 1) -}}{{Param .}}{{end -}}
+        {{- if .Type.IsVariadic}}...{{end -}}
+    {{- end -}})
+{{- end -}}

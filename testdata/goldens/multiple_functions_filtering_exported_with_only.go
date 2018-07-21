@@ -6,19 +6,16 @@ import (
 )
 
 func TestFooFilter(t *testing.T) {
-	type args struct {
-		strs []string
-	}
 	tests := []struct {
 		name    string
-		args    args
+		arg     []string
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := FooFilter(tt.args.strs)
+		got, err := FooFilter(tt.arg)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

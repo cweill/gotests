@@ -3,21 +3,18 @@ package testdata
 import "testing"
 
 func TestBar_Foo7(t *testing.T) {
-	type args struct {
-		i int
-	}
 	tests := []struct {
 		name    string
 		b       *Bar
-		args    args
+		arg     int
 		want    string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}
-		got, err := b.Foo7(tt.args.i)
+		got, err := b.Foo7(tt.arg)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. Bar.Foo7() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

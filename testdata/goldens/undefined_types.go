@@ -6,20 +6,17 @@ import (
 )
 
 func TestUndefined_Do(t *testing.T) {
-	type args struct {
-		es Something
-	}
 	tests := []struct {
 		name    string
 		u       *Undefined
-		args    args
+		arg     Something
 		want    *Unknown
 		wantErr bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := tt.u.Do(tt.args.es)
+		got, err := tt.u.Do(tt.arg)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. Undefined.Do() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

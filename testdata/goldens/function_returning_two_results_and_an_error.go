@@ -6,20 +6,17 @@ import (
 )
 
 func TestFoo25(t *testing.T) {
-	type args struct {
-		in0 interface{}
-	}
 	tests := []struct {
 		name    string
-		args    args
+		arg     interface{}
 		want    string
 		want1   []byte
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, got1, err := Foo25(tt.args.in0)
+		got, got1, err := Foo25(tt.arg)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. Foo25() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
