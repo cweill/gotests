@@ -10,6 +10,7 @@ import (
 	"go/token"
 	"go/types"
 	"io/ioutil"
+
 	"strings"
 
 	"github.com/cweill/gotests/internal/models"
@@ -50,7 +51,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	}
 	return &Result{
 		Header: &models.Header{
-			Comments: parseComment(f, f.Package),
+			Comments: parsePkgComment(f, f.Package),
 			Package:  f.Name.String(),
 			Imports:  parseImports(f.Imports),
 			Code:     goCode(b, f),
@@ -132,22 +133,28 @@ func (p *Parser) parseTypes(fset *token.FileSet, fs []*ast.File) (map[string]typ
 	return ul, el
 }
 
-func parseComment(f *ast.File, pkgPos token.Pos) []string {
+func parsePkgComment(f *ast.File, pkgPos token.Pos) []string {
 	var comments []string
 	var count int
 
 	for _, comment := range f.Comments {
-		if comment.End() < pkgPos && comment != f.Doc {
-			for _, c := range comment.List {
-				count += len(c.Text) + 1 // +1 for '\n'
-				if count < int(c.End()) {
-					n := int(c.End()) - count
-					comments = append(comments, strings.Repeat("\n", n))
-					count++ // for last of '\n'
-				}
-				comments = append(comments, c.Text)
-			}
+
+		if comment.End() >= pkgPos {
+			break
 		}
+		for _, c := range comment.List {
+			count += len(c.Text) + 1 // +1 for '\n'
+			if count < int(c.End()) {
+				n := int(c.End()) - count - 1
+				comments = append(comments, strings.Repeat("\n", n))
+				count++ // for last of '\n'
+			}
+			comments = append(comments, c.Text)
+		}
+	}
+
+	if int(pkgPos)-count > 1 {
+		comments = append(comments, strings.Repeat("\n", int(pkgPos)-count-2))
 	}
 	return comments
 }
