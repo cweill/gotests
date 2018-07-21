@@ -1,6 +1,6 @@
 package render
 
-//go:generate go-bindata -pkg=bindata -o "./bindata/bindata.go" templates
+//go:generate esc -o bindata/esc.go -pkg=bindata templates
 import (
 	"fmt"
 	"io"
@@ -22,7 +22,7 @@ var (
 func init() {
 	initEmptyTmpls()
 	for _, name := range bindata.AssetNames() {
-		tmpls = template.Must(tmpls.Parse(string(bindata.MustAsset(name))))
+		tmpls = template.Must(tmpls.Parse(bindata.FSMustString(false, name)))
 	}
 }
 
