@@ -1,3 +1,4 @@
+// testdata package holds example functions.
 package testdata
 
 import (
@@ -13,7 +14,7 @@ func TestFoo200(t *testing.T) {
 		t    types.Type
 		want bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo200(tt.x, tt.t); got != tt.want {
@@ -31,7 +32,7 @@ func TestBar200(t *testing.T) {
 		args args
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Bar200(tt.args.t); got != tt.want {
