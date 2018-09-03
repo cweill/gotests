@@ -2,7 +2,7 @@ package foo
 
 import "testing"
 
-func TestFoo_Foo(t *testing.T) {
+func TestFooFoo(t *testing.T) {
 	type fields struct {
 		Bar string
 	}
@@ -15,7 +15,7 @@ func TestFoo_Foo(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		f := &Foo{

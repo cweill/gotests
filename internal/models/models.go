@@ -126,7 +126,7 @@ func (f *Function) FullName() string {
 	return strings.Title(r) + strings.Title(f.Name)
 }
 
-func (f *Function) Tes_tName() string {
+func (f *Function) TestName() string {
 	if strings.HasPrefix(f.Name, "Test") {
 		return f.Name
 	}

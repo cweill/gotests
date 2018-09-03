@@ -8,7 +8,7 @@ func TestSameName(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := SameName()
@@ -22,13 +22,13 @@ func TestSameName(t *testing.T) {
 	}
 }
 
-func Test_sameName(t *testing.T) {
+func TestSameName(t *testing.T) {
 	tests := []struct {
 		name    string
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := sameName()
@@ -42,14 +42,14 @@ func Test_sameName(t *testing.T) {
 	}
 }
 
-func TestSameTypeName_SameName(t *testing.T) {
+func TestSameTypeNameSameName(t *testing.T) {
 	tests := []struct {
 		name    string
 		t       *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t := &SameTypeName{}
@@ -64,14 +64,14 @@ func TestSameTypeName_SameName(t *testing.T) {
 	}
 }
 
-func TestSameTypeName_sameName(t *testing.T) {
+func TestSameTypeNameSameName(t *testing.T) {
 	tests := []struct {
 		name    string
 		t       *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t := &SameTypeName{}
@@ -86,14 +86,14 @@ func TestSameTypeName_sameName(t *testing.T) {
 	}
 }
 
-func Test_sameTypeName_SameName(t *testing.T) {
+func TestSameTypeNameSameName(t *testing.T) {
 	tests := []struct {
 		name    string
 		t       *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t := &sameTypeName{}
@@ -108,14 +108,14 @@ func Test_sameTypeName_SameName(t *testing.T) {
 	}
 }
 
-func Test_sameTypeName_sameName(t *testing.T) {
+func TestSameTypeNameSameName(t *testing.T) {
 	tests := []struct {
 		name    string
 		t       *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t := &sameTypeName{}

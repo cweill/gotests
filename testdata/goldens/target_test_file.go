@@ -54,7 +54,7 @@ func wrapToString(in []int) []string {
 	return result
 }
 
-func Test_wrapToString(t *testing.T) {
+func TestWrapToString(t *testing.T) {
 	type args struct {
 		in []int
 	}
@@ -63,7 +63,7 @@ func Test_wrapToString(t *testing.T) {
 		args args
 		want []string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

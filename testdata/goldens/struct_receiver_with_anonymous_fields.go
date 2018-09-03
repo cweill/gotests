@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestDoctor_SayHello(t *testing.T) {
+func TestDoctorSayHello(t *testing.T) {
 	type fields struct {
 		Person      *Person
 		ID          string
@@ -18,7 +18,7 @@ func TestDoctor_SayHello(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		d := &Doctor{

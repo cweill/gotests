@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func Test_name_Name(t *testing.T) {
+func TestNameName(t *testing.T) {
 	type args struct {
 		n string
 	}
@@ -12,7 +12,7 @@ func Test_name_Name(t *testing.T) {
 		args args
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := tt.n.Name(tt.args.n); got != tt.want {
@@ -21,7 +21,7 @@ func Test_name_Name(t *testing.T) {
 	}
 }
 
-func TestName_Name1(t *testing.T) {
+func TestNameName1(t *testing.T) {
 	type fields struct {
 		Name string
 	}
@@ -34,7 +34,7 @@ func TestName_Name1(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		n := &Name{
@@ -46,7 +46,7 @@ func TestName_Name1(t *testing.T) {
 	}
 }
 
-func TestName_Name2(t *testing.T) {
+func TestNameName2(t *testing.T) {
 	type fields struct {
 		Name string
 	}
@@ -59,7 +59,7 @@ func TestName_Name2(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		n := &Name{
@@ -71,7 +71,7 @@ func TestName_Name2(t *testing.T) {
 	}
 }
 
-func TestName_Name3(t *testing.T) {
+func TestNameName3(t *testing.T) {
 	type fields struct {
 		Name string
 	}
@@ -84,7 +84,7 @@ func TestName_Name3(t *testing.T) {
 		args     args
 		wantName string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		n := &Name{

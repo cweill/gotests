@@ -2,7 +2,7 @@ package bar
 
 import "testing"
 
-func TestBar_Bar(t *testing.T) {
+func TestBarBar(t *testing.T) {
 	type fields struct {
 		Foo string
 	}
@@ -15,7 +15,7 @@ func TestBar_Bar(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{

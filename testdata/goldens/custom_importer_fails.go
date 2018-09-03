@@ -15,7 +15,7 @@ func TestFooFilter(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := FooFilter(tt.args.strs)
@@ -29,7 +29,7 @@ func TestFooFilter(t *testing.T) {
 	}
 }
 
-func TestBar_BarFilter(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	type args struct {
 		i interface{}
 	}
@@ -39,7 +39,7 @@ func TestBar_BarFilter(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}
@@ -49,7 +49,7 @@ func TestBar_BarFilter(t *testing.T) {
 	}
 }
 
-func Test_bazFilter(t *testing.T) {
+func TestBazFilter(t *testing.T) {
 	type args struct {
 		f *float64
 	}
@@ -58,7 +58,7 @@ func Test_bazFilter(t *testing.T) {
 		args args
 		want float64
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := bazFilter(tt.args.f); got != tt.want {
