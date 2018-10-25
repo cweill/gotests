@@ -1,0 +1,24 @@
+{{define "suiteheader"}}
+{{- range .Suites}}
+
+type {{.Name}} struct {
+    suite.Suite
+    {{- with .Fields}}
+        {{- range .}}
+            {{Field .}} {{.Type}}
+        {{- end}}
+    {{- end}}
+}
+
+func Test{{.Name}}(t *testing.T) {
+    suite.Run(t, new({{.Name}}))
+}
+
+func (s *{{.Name}}) SetupTest()    {}
+func (s *{{.Name}}) TearDownTest() {}
+
+func (s *{{.Name}}) SetupSuite()    {}
+func (s *{{.Name}}) TearDownSuite() {}
+
+{{- end}}
+{{end}}

@@ -1,4 +1,5 @@
 {{define "header"}}
+{{- $h := .}}
 {{range .Comments}}{{.}}
 {{end -}}
 package {{.Package}}
@@ -7,4 +8,5 @@ import (
 {{range .Imports}}{{.Name}} {{.Path}}
 {{end}}
 )
+{{template "suiteheader" $h}}
 {{end}}

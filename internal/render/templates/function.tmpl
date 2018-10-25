@@ -1,7 +1,14 @@
 {{define "function"}}
 {{- $f := .}}
 
-func {{.TestName}}(t *testing.T) {
+{{- if .HasSuiteName}}
+func (s *{{.SuiteName}}) {{.TestName}}(){
+{{- end}}
+
+{{- if not .HasSuiteName}}
+func {{.TestName}}(t *testing.T){
+{{- end}}
+
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
@@ -41,6 +48,9 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
+	{{- if .HasSuiteName}}
+	t := s.T()
+	{{- end}}
 	for {{if not .IsNaked}} _, tt := {{end}} range tests {
         {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
 			{{- with .Receiver}}
