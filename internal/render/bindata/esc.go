@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -100,7 +102,24 @@ func (f *_escFile) Close() error {
 }
 
 func (f *_escFile) Readdir(count int) ([]os.FileInfo, error) {
-	return nil, nil
+	if !f.isDir {
+		return nil, fmt.Errorf(" escFile.Readdir: '%s' is not directory", f.name)
+	}
+
+	fis, ok := _escDirs[f.local]
+	if !ok {
+		return nil, fmt.Errorf(" escFile.Readdir: '%s' is directory, but we have no info about content of this dir, local=%s", f.name, f.local)
+	}
+	limit := count
+	if count <= 0 || limit > len(fis) {
+		limit = len(fis)
+	}
+
+	if len(fis) == 0 && count > 0 {
+		return nil, io.EOF
+	}
+
+	return []os.FileInfo(fis[0:limit]), nil
 }
 
 func (f *_escFile) Stat() (os.FileInfo, error) {
@@ -191,9 +210,10 @@ func FSMustString(useLocal bool, name string) string {
 var _escData = map[string]*_escFile{
 
 	"/templates/call.tmpl": {
+		name:    "call.tmpl",
 		local:   "templates/call.tmpl",
 		size:    241,
-		modtime: 1532208007,
+		modtime: 1540446832,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -202,41 +222,45 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 	},
 
 	"/templates/function.tmpl": {
+		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
-		size:    2375,
-		modtime: 1532208007,
+		size:    2535,
+		modtime: 1540448705,
 		compressed: `
-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
+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
+Jde1W4SvrTbk3wAAAP//W8CGKOcJAAA=
 `,
 	},
 
 	"/templates/header.tmpl": {
+		name:    "header.tmpl",
 		local:   "templates/header.tmpl",
-		size:    142,
-		modtime: 1532208053,
+		size:    186,
+		modtime: 1540447944,
 		compressed: `
-H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
-iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
-jgAAAA==
+H4sIAAAAAAAC/0yOPQ6CUBCE+z3FhlBoAQcwsbKyMV5hIyMQfQ8Ca7WZu5vwNNrtzs+XiehwHzO0GmAd
+loqUiEbrQQ9HbbdvsdxD29OUErKvZEQxkDttSJnt9rAeGtFey0mKjGmeFtfdj3DelAK4WAJZKj58caTs
+JcKR5qc5tFpfo+MzTev/3DsAAP//hVh5ZroAAAA=
 `,
 	},
 
 	"/templates/inline.tmpl": {
+		name:    "inline.tmpl",
 		local:   "templates/inline.tmpl",
 		size:    49,
-		modtime: 1532202343,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -244,9 +268,10 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 	},
 
 	"/templates/inputs.tmpl": {
+		name:    "inputs.tmpl",
 		local:   "templates/inputs.tmpl",
 		size:    152,
-		modtime: 1532208007,
+		modtime: 1540446821,
 		compressed: `
 H4sIAAAAAAAC/0yNMQoCQQxFrxKWLSUHEDyAneAJIptZptgomWz1yd1lRoupEh7/vw9sWqopLdU+Z7Ql
 E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
@@ -255,9 +280,10 @@ E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
 	},
 
 	"/templates/message.tmpl": {
+		name:    "message.tmpl",
 		local:   "templates/message.tmpl",
 		size:    201,
-		modtime: 1532208007,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -266,9 +292,10 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 	},
 
 	"/templates/results.tmpl": {
+		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
 		size:    168,
-		modtime: 1532208007,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
@@ -276,13 +303,36 @@ AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
 `,
 	},
 
-	"/": {
-		isDir: true,
-		local: "",
+	"/templates/suiteheader.tmpl": {
+		name:    "suiteheader.tmpl",
+		local:   "templates/suiteheader.tmpl",
+		size:    444,
+		modtime: 1540450256,
+		compressed: `
+H4sIAAAAAAAC/4yQwU7DMBBE7/6KUU9OBfkKxJEDzQ9EzbS1BCaK14qq1f47shuSghDCF2tnZ96urTrw
+FCKxSzkIL+wHTjszp/qIqY9noj2UTjJzTq4jodq+9O80Q5IpHwXqAKDmb95aF8Ac5IL2OfBtKHks5459
+p9461Vz0Mqe7jvyRYxwWZavMuVOOR3RMsm7nBXthkhDPbdd8W/I1Ry8PiJz9am+aFeMT9puOAyWPBe2b
+OtZ+dXXsp6ePOS5G/QtWP+lftC9nwW3vVa33ZwAAAP//KsDPHrwBAAA=
+`,
 	},
 
 	"/templates": {
+		name:  "templates",
+		local: `templates`,
 		isDir: true,
-		local: "templates",
+	},
+}
+
+var _escDirs = map[string][]os.FileInfo{
+
+	"templates": {
+		_escData["/templates/call.tmpl"],
+		_escData["/templates/function.tmpl"],
+		_escData["/templates/header.tmpl"],
+		_escData["/templates/inline.tmpl"],
+		_escData["/templates/inputs.tmpl"],
+		_escData["/templates/message.tmpl"],
+		_escData["/templates/results.tmpl"],
+		_escData["/templates/suiteheader.tmpl"],
 	},
 }
