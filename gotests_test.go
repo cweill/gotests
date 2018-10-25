@@ -286,7 +286,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/struct_receiver_with_anonymous_fields.go"),
 		}, {
-			name: "io.Writer parameters",
+			name: "io Writer parameters",
 			args: args{
 				srcPath: `testdata/test031.go`,
 			},
@@ -525,7 +525,7 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/subtest_edition_-_functions_and_receivers_with_same_names_except_exporting.go"),
 		},
 		{
-			name: "Init function",
+			name: "No init funcs",
 			args: args{
 				srcPath: `testdata/init_func.go`,
 			},
