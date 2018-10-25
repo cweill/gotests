@@ -3,17 +3,34 @@ package testdata
 import (
 	"bytes"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
-func TestBar_Write(t *testing.T) {
+type BarSuite struct {
+	suite.Suite
+}
+
+func TestBarSuite(t *testing.T) {
+	suite.Run(t, new(BarSuite))
+}
+
+func (s *BarSuite) SetupTest()    {}
+func (s *BarSuite) TearDownTest() {}
+
+func (s *BarSuite) SetupSuite()    {}
+func (s *BarSuite) TearDownSuite() {}
+
+func (s *BarSuite) TestWrite() {
 	tests := []struct {
 		name    string
 		b       *Bar
 		wantW   string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		b := &Bar{}
 		w := &bytes.Buffer{}
@@ -37,7 +54,7 @@ func TestWrite(t *testing.T) {
 		wantW   string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		w := &bytes.Buffer{}
@@ -64,7 +81,7 @@ func TestMultiWrite(t *testing.T) {
 		wantW2  string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		w1 := &bytes.Buffer{}

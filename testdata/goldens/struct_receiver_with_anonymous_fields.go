@@ -1,8 +1,30 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
 
-func TestDoctor_SayHello(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type DoctorSuite struct {
+	suite.Suite
+	Person      *Person
+	ID          string
+	numPatients int
+	string      string
+}
+
+func TestDoctorSuite(t *testing.T) {
+	suite.Run(t, new(DoctorSuite))
+}
+
+func (s *DoctorSuite) SetupTest()    {}
+func (s *DoctorSuite) TearDownTest() {}
+
+func (s *DoctorSuite) SetupSuite()    {}
+func (s *DoctorSuite) TearDownSuite() {}
+
+func (s *DoctorSuite) TestSayHello() {
 	type fields struct {
 		Person      *Person
 		ID          string
@@ -18,8 +40,9 @@ func TestDoctor_SayHello(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		d := &Doctor{
 			Person:      tt.fields.Person,

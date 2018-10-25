@@ -1,8 +1,52 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
 
-func TestReserved_DontFail(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type ReservedSuite struct {
+	suite.Suite
+	Name        string
+	Break       string
+	Default     string
+	Func        string
+	Interface   string
+	Select      string
+	Case        string
+	Defer       string
+	Go          string
+	Map         string
+	Struct      string
+	Chan        string
+	Else        string
+	Goto        string
+	Package     string
+	Switch      string
+	Const       string
+	Fallthrough string
+	If          string
+	Range       string
+	Type        string
+	Continue    string
+	For         string
+	Import      string
+	Return      string
+	Var         string
+}
+
+func TestReservedSuite(t *testing.T) {
+	suite.Run(t, new(ReservedSuite))
+}
+
+func (s *ReservedSuite) SetupTest()    {}
+func (s *ReservedSuite) TearDownTest() {}
+
+func (s *ReservedSuite) SetupSuite()    {}
+func (s *ReservedSuite) TearDownSuite() {}
+
+func (s *ReservedSuite) TestDontFail() {
 	type fields struct {
 		Name        string
 		Break       string
@@ -36,8 +80,9 @@ func TestReserved_DontFail(t *testing.T) {
 		fields fields
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		r := &Reserved{
 			Name:        tt.fields.Name,

@@ -1,8 +1,26 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
 
-func Test_name_Name(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type NameSuite struct {
+	suite.Suite
+}
+
+func TestNameSuite(t *testing.T) {
+	suite.Run(t, new(NameSuite))
+}
+
+func (s *NameSuite) SetupTest()    {}
+func (s *NameSuite) TearDownTest() {}
+
+func (s *NameSuite) SetupSuite()    {}
+func (s *NameSuite) TearDownSuite() {}
+
+func (s *NameSuite) TestName() {
 	type args struct {
 		n string
 	}
@@ -12,8 +30,9 @@ func Test_name_Name(t *testing.T) {
 		args args
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		if got := tt.n.Name(tt.args.n); got != tt.want {
 			t.Errorf("%q. name.Name() = %v, want %v", tt.name, got, tt.want)
@@ -21,7 +40,7 @@ func Test_name_Name(t *testing.T) {
 	}
 }
 
-func TestName_Name1(t *testing.T) {
+func (s *NameSuite) TestName1() {
 	type fields struct {
 		Name string
 	}
@@ -34,8 +53,9 @@ func TestName_Name1(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		n := &Name{
 			Name: tt.fields.Name,
@@ -46,7 +66,7 @@ func TestName_Name1(t *testing.T) {
 	}
 }
 
-func TestName_Name2(t *testing.T) {
+func (s *NameSuite) TestName2() {
 	type fields struct {
 		Name string
 	}
@@ -59,8 +79,9 @@ func TestName_Name2(t *testing.T) {
 		args   args
 		want   string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		n := &Name{
 			Name: tt.fields.Name,
@@ -71,7 +92,7 @@ func TestName_Name2(t *testing.T) {
 	}
 }
 
-func TestName_Name3(t *testing.T) {
+func (s *NameSuite) TestName3() {
 	type fields struct {
 		Name string
 	}
@@ -84,8 +105,9 @@ func TestName_Name3(t *testing.T) {
 		args     args
 		wantName string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		n := &Name{
 			Name: tt.fields.Name,

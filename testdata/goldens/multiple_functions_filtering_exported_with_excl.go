@@ -1,8 +1,26 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
 
-func TestBar_BarFilter(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type BarSuite struct {
+	suite.Suite
+}
+
+func TestBarSuite(t *testing.T) {
+	suite.Run(t, new(BarSuite))
+}
+
+func (s *BarSuite) SetupTest()    {}
+func (s *BarSuite) TearDownTest() {}
+
+func (s *BarSuite) SetupSuite()    {}
+func (s *BarSuite) TearDownSuite() {}
+
+func (s *BarSuite) TestBarFilter() {
 	type args struct {
 		i interface{}
 	}
@@ -12,8 +30,9 @@ func TestBar_BarFilter(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		b := &Bar{}
 		if err := b.BarFilter(tt.args.i); (err != nil) != tt.wantErr {

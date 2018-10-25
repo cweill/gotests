@@ -1,8 +1,27 @@
 package bar
 
-import "testing"
+import (
+	"testing"
 
-func TestBar_Bar(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type BarSuite struct {
+	suite.Suite
+	Foo string
+}
+
+func TestBarSuite(t *testing.T) {
+	suite.Run(t, new(BarSuite))
+}
+
+func (s *BarSuite) SetupTest()    {}
+func (s *BarSuite) TearDownTest() {}
+
+func (s *BarSuite) SetupSuite()    {}
+func (s *BarSuite) TearDownSuite() {}
+
+func (s *BarSuite) TestBar() {
 	type fields struct {
 		Foo string
 	}
@@ -15,8 +34,9 @@ func TestBar_Bar(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		b := &Bar{
 			Foo: tt.fields.Foo,

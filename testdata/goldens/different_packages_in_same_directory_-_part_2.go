@@ -1,8 +1,27 @@
 package foo
 
-import "testing"
+import (
+	"testing"
 
-func TestFoo_Foo(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type FooSuite struct {
+	suite.Suite
+	Bar string
+}
+
+func TestFooSuite(t *testing.T) {
+	suite.Run(t, new(FooSuite))
+}
+
+func (s *FooSuite) SetupTest()    {}
+func (s *FooSuite) TearDownTest() {}
+
+func (s *FooSuite) SetupSuite()    {}
+func (s *FooSuite) TearDownSuite() {}
+
+func (s *FooSuite) TestFoo() {
 	type fields struct {
 		Bar string
 	}
@@ -15,8 +34,9 @@ func TestFoo_Foo(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		f := &Foo{
 			Bar: tt.fields.Bar,

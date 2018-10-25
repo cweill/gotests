@@ -3,7 +3,23 @@ package testdata
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
+
+type BarSuite struct {
+	suite.Suite
+}
+
+func TestBarSuite(t *testing.T) {
+	suite.Run(t, new(BarSuite))
+}
+
+func (s *BarSuite) SetupTest()    {}
+func (s *BarSuite) TearDownTest() {}
+
+func (s *BarSuite) SetupSuite()    {}
+func (s *BarSuite) TearDownSuite() {}
 
 func TestBarBar100(t *testing.T) {
 	tests := []struct {
@@ -55,7 +71,7 @@ func TestFoo100(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo100(tt.args.strs)
@@ -69,7 +85,7 @@ func TestFoo100(t *testing.T) {
 	}
 }
 
-func TestBar_Bar100(t *testing.T) {
+func (s *BarSuite) TestBar100() {
 	type args struct {
 		i interface{}
 	}
@@ -79,8 +95,9 @@ func TestBar_Bar100(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		b := &Bar{}
 		if err := b.Bar100(tt.args.i); (err != nil) != tt.wantErr {
@@ -98,7 +115,7 @@ func Test_baz100(t *testing.T) {
 		args args
 		want float64
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := baz100(tt.args.f); got != tt.want {

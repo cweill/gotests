@@ -1,6 +1,24 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+)
+
+type SameTypeNameSuite struct {
+	suite.Suite
+}
+
+func TestSameTypeNameSuite(t *testing.T) {
+	suite.Run(t, new(SameTypeNameSuite))
+}
+
+func (s *SameTypeNameSuite) SetupTest()    {}
+func (s *SameTypeNameSuite) TearDownTest() {}
+
+func (s *SameTypeNameSuite) SetupSuite()    {}
+func (s *SameTypeNameSuite) TearDownSuite() {}
 
 func TestSameName(t *testing.T) {
 	tests := []struct {
@@ -8,7 +26,7 @@ func TestSameName(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := SameName()
@@ -28,7 +46,7 @@ func Test_sameName(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := sameName()
@@ -42,15 +60,16 @@ func Test_sameName(t *testing.T) {
 	}
 }
 
-func TestSameTypeName_SameName(t *testing.T) {
+func (s *SameTypeNameSuite) TestSameName() {
 	tests := []struct {
 		name    string
 		t       *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		t := &SameTypeName{}
 		got, err := t.SameName()
@@ -64,15 +83,16 @@ func TestSameTypeName_SameName(t *testing.T) {
 	}
 }
 
-func TestSameTypeName_sameName(t *testing.T) {
+func (s *SameTypeNameSuite) Test_sameName() {
 	tests := []struct {
 		name    string
 		t       *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		t := &SameTypeName{}
 		got, err := t.sameName()
@@ -86,15 +106,16 @@ func TestSameTypeName_sameName(t *testing.T) {
 	}
 }
 
-func Test_sameTypeName_SameName(t *testing.T) {
+func (s *SameTypeNameSuite) TestSameName() {
 	tests := []struct {
 		name    string
 		t       *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		t := &sameTypeName{}
 		got, err := t.SameName()
@@ -108,15 +129,16 @@ func Test_sameTypeName_SameName(t *testing.T) {
 	}
 }
 
-func Test_sameTypeName_sameName(t *testing.T) {
+func (s *SameTypeNameSuite) Test_sameName() {
 	tests := []struct {
 		name    string
 		t       *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		t := &sameTypeName{}
 		got, err := t.sameName()

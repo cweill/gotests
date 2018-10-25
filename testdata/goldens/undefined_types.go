@@ -3,9 +3,25 @@ package undefinedtypes
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
-func TestUndefined_Do(t *testing.T) {
+type UndefinedSuite struct {
+	suite.Suite
+}
+
+func TestUndefinedSuite(t *testing.T) {
+	suite.Run(t, new(UndefinedSuite))
+}
+
+func (s *UndefinedSuite) SetupTest()    {}
+func (s *UndefinedSuite) TearDownTest() {}
+
+func (s *UndefinedSuite) SetupSuite()    {}
+func (s *UndefinedSuite) TearDownSuite() {}
+
+func (s *UndefinedSuite) TestDo() {
 	type args struct {
 		es Something
 	}
@@ -16,8 +32,9 @@ func TestUndefined_Do(t *testing.T) {
 		want    *Unknown
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		got, err := tt.u.Do(tt.args.es)
 		if (err != nil) != tt.wantErr {

@@ -1,8 +1,26 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
 
-func TestBar_Foo7(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+type BarSuite struct {
+	suite.Suite
+}
+
+func TestBarSuite(t *testing.T) {
+	suite.Run(t, new(BarSuite))
+}
+
+func (s *BarSuite) SetupTest()    {}
+func (s *BarSuite) TearDownTest() {}
+
+func (s *BarSuite) SetupSuite()    {}
+func (s *BarSuite) TearDownSuite() {}
+
+func (s *BarSuite) TestFoo7() {
 	type args struct {
 		i int
 	}
@@ -13,8 +31,9 @@ func TestBar_Foo7(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
+	t := s.T()
 	for _, tt := range tests {
 		b := &Bar{}
 		got, err := b.Foo7(tt.args.i)
