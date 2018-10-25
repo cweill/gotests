@@ -560,6 +560,22 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_mixed_types_comments.go"),
 		},
 		{
+			name: "Naked function with subtests",
+			args: args{
+				srcPath:  "testdata/naked_function_with_subtests.go",
+				subtests: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_subtests.go"),
+		},
+		{
+			name: "Naked function without subtests",
+			args: args{
+				srcPath:  "testdata/naked_function_without_subtests.go",
+				subtests: false,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests.go"),
+		},
+		{
 			name: "Test non existing template path",
 			args: args{
 				srcPath:     `testdata/calculator.go`,
