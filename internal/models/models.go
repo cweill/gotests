@@ -30,6 +30,10 @@ type Field struct {
 	Index int
 }
 
+const (
+	suiteSuffix = "Suite"
+)
+
 func (f *Field) IsWriter() bool {
 	return f.Type.IsWriter
 }
@@ -130,17 +134,22 @@ func (f *Function) TestName() string {
 	if strings.HasPrefix(f.Name, "Test") {
 		return f.Name
 	}
-	if f.Receiver != nil {
-		receiverType := f.Receiver.Type.Value
-		if unicode.IsLower([]rune(receiverType)[0]) {
-			receiverType = "_" + receiverType
-		}
-		return "Test" + receiverType + "_" + f.Name
-	}
 	if unicode.IsLower([]rune(f.Name)[0]) {
 		return "Test_" + f.Name
 	}
 	return "Test" + f.Name
+}
+
+func (f *Function) SuiteName() string {
+	if f.Receiver == nil {
+		return ""
+	}
+
+	return strings.Title(f.Receiver.Type.Value) + suiteSuffix
+}
+
+func (f *Function) HasSuiteName() bool {
+	return f.SuiteName() != ""
 }
 
 func (f *Function) IsNaked() bool {
@@ -156,6 +165,12 @@ type Header struct {
 	Package  string
 	Imports  []*Import
 	Code     []byte
+	Suites   []Suite
+}
+
+type Suite struct {
+	Name   string
+	Fields []*Field
 }
 
 type Path string
