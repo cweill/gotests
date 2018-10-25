@@ -114,6 +114,9 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	if len(funcs) == 0 {
 		return nil, nil
 	}
+
+	h.Suites = generateSuites(funcs)
+
 	b, err := output.Process(h, funcs, &output.Options{
 		PrintInputs: opt.PrintInputs,
 		Subtests:    opt.Subtests,
@@ -127,6 +130,23 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Functions: funcs,
 		Output:    b,
 	}, nil
+}
+
+func generateSuites(funcs []*models.Function) []models.Suite {
+	suiteMap := map[string]bool{}
+	suites := []models.Suite{}
+	for _, f := range funcs {
+		suiteName := f.SuiteName()
+		if _, found := suiteMap[suiteName]; suiteName != "" && !found {
+			suites = append(suites, models.Suite{
+				Name:   suiteName,
+				Fields: f.Receiver.Fields,
+			})
+			suiteMap[suiteName] = true
+
+		}
+	}
+	return suites
 }
 
 func parseTestFile(p *goparser.Parser, testPath string, h *models.Header) (*models.Header, []string, error) {
