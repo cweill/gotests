@@ -51,8 +51,8 @@ func {{.TestName}}(t *testing.T){
 	{{- if .HasSuiteName}}
 	t := s.T()
 	{{- end}}
-	for {{if not .IsNaked}} _, tt := {{end}} range tests {
-        {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
+	for {{if (or .Subtests (not .IsNaked))}} _, tt := {{end}} range tests {
+	{{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
 					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{

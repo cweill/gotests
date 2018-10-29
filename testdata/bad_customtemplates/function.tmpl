@@ -41,8 +41,11 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-	for {{if not .IsNaked}} _, tt := {{end}} range testCases {
-        {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
+	{{- if .HasSuiteName}}
+	t := s.T()
+	{{- end}}
+	for {{if (or .Subtests (not .IsNaked))}} _, tt := {{end}} range testCases {
+	{{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
 					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
