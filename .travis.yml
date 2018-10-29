@@ -7,6 +7,7 @@ go:
 before_install:
   - go get github.com/mattn/goveralls
   - go get github.com/mjibson/esc
+  - go get github.com/stretchr/testify/suite
   - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
 script:
   - go test ./...
