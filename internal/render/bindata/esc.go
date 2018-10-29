@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -100,7 +102,24 @@ func (f *_escFile) Close() error {
 }
 
 func (f *_escFile) Readdir(count int) ([]os.FileInfo, error) {
-	return nil, nil
+	if !f.isDir {
+		return nil, fmt.Errorf(" escFile.Readdir: '%s' is not directory", f.name)
+	}
+
+	fis, ok := _escDirs[f.local]
+	if !ok {
+		return nil, fmt.Errorf(" escFile.Readdir: '%s' is directory, but we have no info about content of this dir, local=%s", f.name, f.local)
+	}
+	limit := count
+	if count <= 0 || limit > len(fis) {
+		limit = len(fis)
+	}
+
+	if len(fis) == 0 && count > 0 {
+		return nil, io.EOF
+	}
+
+	return []os.FileInfo(fis[0:limit]), nil
 }
 
 func (f *_escFile) Stat() (os.FileInfo, error) {
@@ -191,9 +210,10 @@ func FSMustString(useLocal bool, name string) string {
 var _escData = map[string]*_escFile{
 
 	"/templates/call.tmpl": {
+		name:    "call.tmpl",
 		local:   "templates/call.tmpl",
 		size:    241,
-		modtime: 1532208007,
+		modtime: 1540446832,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -202,30 +222,32 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 	},
 
 	"/templates/function.tmpl": {
+		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
-		size:    2375,
-		modtime: 1532208007,
+		size:    2392,
+		modtime: 1540483824,
 		compressed: `
-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
+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
 `,
 	},
 
 	"/templates/header.tmpl": {
+		name:    "header.tmpl",
 		local:   "templates/header.tmpl",
 		size:    142,
-		modtime: 1532208053,
+		modtime: 1540481163,
 		compressed: `
 H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
 iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
@@ -234,9 +256,10 @@ jgAAAA==
 	},
 
 	"/templates/inline.tmpl": {
+		name:    "inline.tmpl",
 		local:   "templates/inline.tmpl",
 		size:    49,
-		modtime: 1532202343,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -244,9 +267,10 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 	},
 
 	"/templates/inputs.tmpl": {
+		name:    "inputs.tmpl",
 		local:   "templates/inputs.tmpl",
 		size:    152,
-		modtime: 1532208007,
+		modtime: 1540446821,
 		compressed: `
 H4sIAAAAAAAC/0yNMQoCQQxFrxKWLSUHEDyAneAJIptZptgomWz1yd1lRoupEh7/vw9sWqopLdU+Z7Ql
 E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
@@ -255,9 +279,10 @@ E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
 	},
 
 	"/templates/message.tmpl": {
+		name:    "message.tmpl",
 		local:   "templates/message.tmpl",
 		size:    201,
-		modtime: 1532208007,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -266,9 +291,10 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 	},
 
 	"/templates/results.tmpl": {
+		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
 		size:    168,
-		modtime: 1532208007,
+		modtime: 1540446006,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
@@ -276,13 +302,22 @@ AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
 `,
 	},
 
-	"/": {
-		isDir: true,
-		local: "",
-	},
-
 	"/templates": {
+		name:  "templates",
+		local: `templates`,
 		isDir: true,
-		local: "templates",
+	},
+}
+
+var _escDirs = map[string][]os.FileInfo{
+
+	"templates": {
+		_escData["/templates/call.tmpl"],
+		_escData["/templates/function.tmpl"],
+		_escData["/templates/header.tmpl"],
+		_escData["/templates/inline.tmpl"],
+		_escData["/templates/inputs.tmpl"],
+		_escData["/templates/message.tmpl"],
+		_escData["/templates/results.tmpl"],
 	},
 }
