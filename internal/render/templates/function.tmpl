@@ -43,31 +43,29 @@ func {{.TestName}}(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for {{if (or .Subtests (not .IsNaked))}} _, tt := {{end}} range tests {
-        {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
-			{{- with .Receiver}}
-				{{- if .IsStruct}}
-					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
-					{{- range .Fields}}
-						{{.Name}}: tt.fields.{{Field .}},
-					{{- end}}
-					}
+		{{- with .Receiver}}
+			{{- if .IsStruct}}
+				{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+				{{- range .Fields}}
+					{{.Name}}: tt.fields.{{Field .}},
 				{{- end}}
+				}
 			{{- end}}
-			{{- range .Parameters}}
-				{{- if .IsWriter}}
-					{{Param .}} := &bytes.Buffer{}
-				{{- end}}
+		{{- end}}
+		{{- range .Parameters}}
+			{{- if .IsWriter}}
+				{{Param .}} := &bytes.Buffer{}
 			{{- end}}
-			{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
-				{{template "results" $f}} {{template "call" $f}}
-			{{- end}}
-			{{- if .ReturnsError}}
-				assert.Equal(tt.err, err)
-			{{- end}}
-			{{- range .TestResults}}
-				assert.Equal(tt.{{Want .}}, {{Got .}})
-			{{- end}}
-		{{- if .Subtests }} }) {{- end -}}
+		{{- end}}
+		{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
+			{{template "results" $f}} {{template "call" $f}}
+		{{- end}}
+		{{- if .ReturnsError}}
+			assert.Equal(tt.err, err)
+		{{- end}}
+		{{- range .TestResults}}
+			assert.Equal(tt.{{Want .}}, {{Got .}})
+		{{- end}}
 	}
 }
 
