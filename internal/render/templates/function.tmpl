@@ -2,6 +2,7 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
+	assert := assert.New(t)
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
@@ -36,7 +37,7 @@ func {{.TestName}}(t *testing.T) {
 			{{Want .}} {{.Type}}
 		{{- end}}
 		{{- if .ReturnsError}}
-			wantErr bool
+			err error
 		{{- end}}
 	}{
 		// TODO: Add test cases.
@@ -61,23 +62,10 @@ func {{.TestName}}(t *testing.T) {
 				{{template "results" $f}} {{template "call" $f}}
 			{{- end}}
 			{{- if .ReturnsError}}
-				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
-					{{- if .TestResults}}
-						{{if .Subtests }}return{{else}}continue{{end}}
-					{{- end}}
-				}
+				assert.Equal(tt.err, err)
 			{{- end}}
 			{{- range .TestResults}}
-				{{- if .IsWriter}}
-					if {{Got .}} := {{Param .}}.String(); {{Got .}} != tt.{{Want .}} {
-				{{- else if .IsBasicType}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != tt.{{Want .}} {
-				{{- else}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) {
-				{{- end}}
-				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
-				}
+				assert.Equal(tt.{{Want .}}, {{Got .}})
 			{{- end}}
 		{{- if .Subtests }} }) {{- end -}}
 	}
