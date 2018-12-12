@@ -60,11 +60,11 @@ func {{.TestName}}(t *testing.T) {
 		{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
 			{{template "results" $f}} {{template "call" $f}}
 		{{- end}}
-		{{- if .ReturnsError}}
-			assert.Equal(tt.err, err)
-		{{- end}}
 		{{- range .TestResults}}
 			assert.Equal(tt.{{Want .}}, {{Got .}})
+		{{- end}}
+		{{- if .ReturnsError}}
+			assert.Equal(tt.err, err)
 		{{- end}}
 	}
 }

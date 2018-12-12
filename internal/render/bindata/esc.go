@@ -225,7 +225,7 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
 		size:    1489,
-		modtime: 1544633422,
+		modtime: 1544633563,
 		compressed: `
 H4sIAAAAAAAC/5SUzW7bMAzHz/ZTEEFRxEOm3gP0sGHdsEsypMF6GIZBjenMmCNnFL0iEPTug2g5dpx+
 XhKJEvmnfiTtXI5FaRAmRWM2XNZm4n3q3Hu4KGB+Dcr7NA1H4Jxao+WF3qH3U4Z3jJZLs1XrDFyaaGuR
@@ -235,19 +235,19 @@ nwMZo3cYZEuzjc6PYO5y1ybvWY9wRbTt35FIZXtmXchzoE/AewZZkgiv8POIz4DbCm1Tse107rTh55Ad
 JVfIDRl7Q1RHBkgEGLYjyIHi1RWsl5+Wc/iQ5xBAw0ZbtEpqUNQEzpUFTGsCddvct5WYmpoDzYX+g3mW
 eQ+/ZsDS/M5J8PiO9rp7uTyjMRgjl8CC87BHuavJ+8soFoGo77pq0PsXZ0O1MzwHZtUWXQ0GZvbGORkq
 jSvdv+6OSu7efDIA82u4vD8wWvWxKQok95q2Ct3cFmFpqsOw4Nm5fWlQyGTQJcW421eaESbU9tgELgrp
-rP5ko6uqNb+6zeKH7+Zvo6sps0KiWei77A19Po7R9/0MnPtSyzIbfyx8msZeSP8HAAD//7BG7CjRBQAA
+rP5ko6uqNb+hS+On7+Zvo6sps+q7dgbOfallmb26b8fhkGgWGjkbfyx8msZeSP8HAAD//9lwWMHRBQAA
 `,
 	},
 
 	"/templates/header.tmpl": {
 		name:    "header.tmpl",
 		local:   "templates/header.tmpl",
-		size:    142,
-		modtime: 1544632968,
+		size:    179,
+		modtime: 1544633530,
 		compressed: `
-H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
-iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
-jgAAAA==
+H4sIAAAAAAAC/0TMMa7CMBAE0N6nsFz9X+AcgooGcQWTTGIL2YnWS4FWc3ekREC32pl5ZhPm0uBDRpog
+gXRmktoCH89rrWjaSbO4B2iTP5FuS+MjLfBm8XacpHOlbquo//sJl/1zANdUQR4TzR+OdGEpmp/3OK51
+6CrQMcug6Frm15B6h2hw/9/6OwAA//9VW2HFswAAAA==
 `,
 	},
 
