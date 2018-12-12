@@ -10,7 +10,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/cweill/gotests"
+	"github.com/MrHuxu/gotests"
 )
 
 const newFilePerm os.FileMode = 0644

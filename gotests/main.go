@@ -31,7 +31,7 @@ import (
 	"flag"
 	"os"
 
-	"github.com/cweill/gotests/gotests/process"
+	"github.com/MrHuxu/gotests/gotests/process"
 )
 
 var (
@@ -41,7 +41,7 @@ var (
 	allFuncs      = flag.Bool("all", false, "generate tests for all functions and methods")
 	printInputs   = flag.Bool("i", false, "print test inputs in error messages")
 	writeOutput   = flag.Bool("w", false, "write output to (test) files instead of stdout")
-	templateDir  = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
+	templateDir   = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
 )
 
 // nosubtests is always set to default value of true when Go < 1.7.

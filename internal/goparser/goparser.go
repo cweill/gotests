@@ -13,7 +13,7 @@ import (
 
 	"strings"
 
-	"github.com/cweill/gotests/internal/models"
+	"github.com/MrHuxu/gotests/internal/models"
 )
 
 // ErrEmptyFile represents an empty file error.
@@ -235,7 +235,7 @@ func parseReceiver(fl *ast.FieldList, ul map[string]types.Type, el map[*types.St
 	}
 	r.Fields = append(r.Fields, parseFieldList(st.(*ast.StructType).Fields, ul)...)
 	for i, f := range r.Fields {
-		// https://github.com/cweill/gotests/issues/69
+		// https://github.com/MrHuxu/gotests/issues/69
 		if i >= s.NumFields() {
 			break
 		}
