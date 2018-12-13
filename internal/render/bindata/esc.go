@@ -224,18 +224,18 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 	"/templates/function.tmpl": {
 		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
-		size:    1475,
-		modtime: 1544671643,
+		size:    1407,
+		modtime: 1544681729,
 		compressed: `
-H4sIAAAAAAAC/5SUUW/TMBDHn5NPcaqmqUHFe6+0BxAD8dKirmIPCCGvuZSI1CnnC1Nl+bsjX5Imdcfo
-Xlr7bN///Lu/41yORWkQJkVjNlzWZuJ96txbuCpgfgvK+zQNS+CcWqPlhd6h91OGN4yWS7NV6wxcmmhr
-kTgcaUdqgU9TztIk5Hoq+SeoFW6w/IPkfZpIuCxAfbb3TM2GJXiMfiyxym0bS/iwRygkAlY2B8FuN2mz
-xehA4pzMQ/VS92GP3VI4gibvZkfNPjQaR8NQVbj/F016h4wkYlKapu1JYaOyzk+IoITOqhspnuoH0jag
-/fY9knkGbF+tNvlANwLUwWz/jgwqO1DqU54j/AeuFyAliRAKP8+cGZFaoW0qtr3Ogzb8EqSj5Aq5IWPv
-iOqOARIBhmmENXC7uYH18sNyDu/yHAJa2GiLVgn1oiZwrixgWhOo++axZT81NQeaC/0L8yzzHn7MgMXu
-zkny7h7t9gvaExk/Ri6JBedhj7JXk/fXnVgHRH3VVYPe//c1qPbVzoFZtU1Xoycye+XLGCvFnR5u90Al
-93c+sfz8Fq4fD4xWvW+KAsldYqvg5rYJS1Mdxg3PzuNLg0Img74oxt2+0owwodZjE7gqxFnDykZXVRt+
-hUu7j93d70ZXU2Y1uHYGzn2qZZhd7Ns4HRLNgpGz+PPg07TzQvo3AAD//6P6dXrDBQAA
+H4sIAAAAAAAC/5SUwW7bMAyGz/ZTEEFR2EOmYtcAPWxYN+ySDmmwHoZhUGM6E+bIGUWvCAS9+yBZiR2l
+a9pLIlEif+ojaWsrrJVGmNSdXrFq9cS53Nq3cFHD7BqEc3nuj8BasUTDc7lB5wqGN4yGlV6LZQk2z6Qx
+SOxd+pWY42PBZZ75WI+Kf4FY4ArVXyTn8iyYVQ3ii7lj6lYcjAfrJ4VNZXpbxrstQh0sYMJlLxhvk9Rr
+TBwya8PeZx/y3m0xHnkX1FXcHTT3ptE6Wfqs/Pu/SpIbZKQgFlKTtD5KbJTWqUcQDKaT7EaKx/pbUpob
+Xbwr88xTNx7z9x+J5BOQ95lLXQ2kE1gRbP934NGYgdg+5CnO/6B7BliWBVr+5wmfEbUFmq5hs9e5l5qf
+A3aQXCB3pM0NURsZIBGg3yaIPberK1jefrydwfuqAo8WVtKgEaECdUtgraqhaAnEXffQsy90y57mXP7G
+qiydg59T4ND61obg8R399ReUJxmCFHkIHHDuthjuSnLuMopFIOKbbDp07uxkiH6CZ8As+qKL0bhMXzkl
+Y6W00sPr7knx/s1H7T+7hsuHHaMRH7q6RrJntBg320YywoT6/pjARR26YjhZyabpzWe6Kn6obv50simY
+xdBlU7D2cxuW5Yv7LA2HRFPfeGU62i7PY+3yfwEAAP//TqmpOn8FAAA=
 `,
 	},
 
@@ -290,7 +290,7 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
 		size:    168,
-		modtime: 1544627942,
+		modtime: 1544681482,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/

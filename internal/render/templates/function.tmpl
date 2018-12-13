@@ -56,9 +56,7 @@ func {{.TestName}}(t *testing.T) {
 				{{Param .}} := &bytes.Buffer{}
 			{{- end}}
 		{{- end}}
-		{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
-			{{template "results" $f}} {{template "call" $f}}
-		{{- end}}
+		{{template "results" $f}} {{template "call" $f}}
 		{{- range .TestResults}}
 			assert.Equal(tt.{{Want .}}, {{Got .}})
 		{{- end}}
