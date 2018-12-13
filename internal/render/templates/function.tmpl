@@ -22,7 +22,6 @@ func {{.TestName}}(t *testing.T) {
 	}
 	{{- end}}
 	tests := []struct {
-		name string
 		{{- with .Receiver}}
 			{{- if and .IsStruct .Fields}}
 				fields fields
