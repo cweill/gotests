@@ -22,6 +22,7 @@ func {{.TestName}}(t *testing.T) {
 	}
 	{{- end}}
 	tests := []struct {
+		name string
 		{{- with .Receiver}}
 			{{- if and .IsStruct .Fields}}
 				fields fields
@@ -58,10 +59,10 @@ func {{.TestName}}(t *testing.T) {
 		{{- end}}
 		{{template "results" $f}} {{template "call" $f}}
 		{{- range .TestResults}}
-			assert.Equal(tt.{{Want .}}, {{Got .}})
+			assert.Equal(tt.{{Want .}}, {{Got .}}, tt.name)
 		{{- end}}
 		{{- if .ReturnsError}}
-			assert.Equal(tt.err, err)
+			assert.Equal(tt.err, err, tt.name)
 		{{- end}}
 	}
 }
