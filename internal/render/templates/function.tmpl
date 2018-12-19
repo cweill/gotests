@@ -3,17 +3,7 @@
 
 func {{.TestName}}(t *testing.T) {
 	assert := assert.New(t)
-	{{- with .Receiver}}
-		{{- if .IsStruct}}
-			{{- if .Fields}}
-				type fields struct {
-				{{- range .Fields}}
-					{{Field .}} {{.Type}}
-				{{- end}}
-				}
-			{{- end}}
-		{{- end}}
-	{{- end}}
+
 	{{- if .TestParameters}}
 	type args struct {
 		{{- range .TestParameters}}
@@ -25,7 +15,7 @@ func {{.TestName}}(t *testing.T) {
 		name string
 		{{- with .Receiver}}
 			{{- if and .IsStruct .Fields}}
-				fields fields
+				fields {{.Type.Value}}
 			{{- else}}
 				{{Receiver .}} {{.Type}}
 			{{- end}}
@@ -45,11 +35,7 @@ func {{.TestName}}(t *testing.T) {
 	for {{if (or .Subtests (not .IsNaked))}} _, tt := {{end}} range tests {
 		{{- with .Receiver}}
 			{{- if .IsStruct}}
-				{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
-				{{- range .Fields}}
-					{{.Name}}: tt.fields.{{Field .}},
-				{{- end}}
-				}
+				{{Receiver .}} := &tt.fields
 			{{- end}}
 		{{- end}}
 		{{- range .Parameters}}
