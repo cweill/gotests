@@ -1,6 +1,7 @@
 package gotests
 
 import (
+	"encoding/json"
 	"errors"
 	"go/types"
 	"io/ioutil"
@@ -14,14 +15,15 @@ import (
 
 func TestGenerateTests(t *testing.T) {
 	type args struct {
-		srcPath     string
-		only        *regexp.Regexp
-		excl        *regexp.Regexp
-		exported    bool
-		printInputs bool
-		subtests    bool
-		importer    types.Importer
-		templateDir string
+		srcPath           string
+		only              *regexp.Regexp
+		excl              *regexp.Regexp
+		exported          bool
+		printInputs       bool
+		subtests          bool
+		importer          types.Importer
+		templateDir       string
+		externalParasPath string
 	}
 	tests := []struct {
 		name              string
@@ -606,8 +608,20 @@ func TestGenerateTests(t *testing.T) {
 			args: args{
 				srcPath: `testdata/undefinedtypes/interface_embedding.go`,
 			},
-			wantNoTests: true,
-			wantErr:     true,
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadAndFormatGoFile(t, "testdata/goldens/interface_embedding.go"),
+		},
+		{
+			name: "Test use external params and custom tempalte",
+			args: args{
+				srcPath:           `testdata/use_external_paras_template/use_external_paras_template.go`,
+				templateDir:       `testdata/use_external_paras_template/`,
+				externalParasPath: `testdata/use_external_paras_template/use_external_paras_template.json`,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_external_paras_template_test.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
@@ -615,14 +629,25 @@ func TestGenerateTests(t *testing.T) {
 		t.Fatalf("ioutil.TempDir: %v", err)
 	}
 	for _, tt := range tests {
+		var params map[string]interface{}
+		var err error
+		if tt.args.externalParasPath != "" {
+			params, err = loadExternalJsonFile(tt.args.externalParasPath)
+			if err != nil {
+				t.Error(tt.name, err)
+				continue
+			}
+		}
+
 		gts, err := GenerateTests(tt.args.srcPath, &Options{
-			Only:        tt.args.only,
-			Exclude:     tt.args.excl,
-			Exported:    tt.args.exported,
-			PrintInputs: tt.args.printInputs,
-			Subtests:    tt.args.subtests,
-			Importer:    func() types.Importer { return tt.args.importer },
-			TemplateDir: tt.args.templateDir,
+			Only:          tt.args.only,
+			Exclude:       tt.args.excl,
+			Exported:      tt.args.exported,
+			PrintInputs:   tt.args.printInputs,
+			Subtests:      tt.args.subtests,
+			Importer:      func() types.Importer { return tt.args.importer },
+			TemplateDir:   tt.args.templateDir,
+			ExternalParas: params,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
@@ -660,6 +685,17 @@ func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
 		t.Errorf("ioutil.WriteFile: %v", err)
 	}
 	t.Logf(tmpResult)
+}
+
+func loadExternalJsonFile(file string) (map[string]interface{}, error) {
+	buf, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	params := map[string]interface{}{}
+	err = json.Unmarshal(buf, &params)
+	return params, err
 }
 
 func toSnakeCase(s string) string {
