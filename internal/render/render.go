@@ -125,13 +125,13 @@ func Header(w io.Writer, h *models.Header) error {
 func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool, externalParas map[string]interface{}) error {
 	return tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
-		PrintInputs   bool
-		Subtests      bool
-		ExternalParas map[string]interface{}
+		PrintInputs bool
+		Subtests    bool
+		ExtParas    map[string]interface{}
 	}{
-		Function:      f,
-		PrintInputs:   printInputs,
-		Subtests:      subtests,
-		ExternalParas: externalParas,
+		Function:    f,
+		PrintInputs: printInputs,
+		Subtests:    subtests,
+		ExtParas:    externalParas,
 	})
 }
