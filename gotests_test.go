@@ -608,9 +608,8 @@ func TestGenerateTests(t *testing.T) {
 			args: args{
 				srcPath: `testdata/undefinedtypes/interface_embedding.go`,
 			},
-			wantNoTests: false,
-			wantErr:     false,
-			want:        mustReadAndFormatGoFile(t, "testdata/goldens/interface_embedding.go"),
+			wantNoTests: true,
+			wantErr:     true,
 		},
 		{
 			name: "Test use external params and custom tempalte",
