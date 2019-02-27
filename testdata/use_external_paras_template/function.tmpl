@@ -2,7 +2,7 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
-    {{ .ExternalParas.Test}}
+    {{ .ExtParas.Test}}
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
