@@ -47,6 +47,10 @@ Available options:
   -nosubtests    disable subtest generation. Only available for Go 1.7+
 
   -template_dir  optional. Path to a directory containing custom test code templates
+
+  -ef            read external parameters to template by json with file
+
+  -ei            read external parameters to tempalte by json with stdin
 ```
 
 ## Contributions
