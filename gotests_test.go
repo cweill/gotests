@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"path"
 	"regexp"
+	"runtime"
+	"strings"
 	"testing"
 	"unicode"
 
@@ -601,14 +603,15 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
 		},
-		// {
-		// 	name: "Test interface embedding",
-		// 	args: args{
-		// 		srcPath: `testdata/undefinedtypes/interface_embedding.go`,
-		// 	},
-		// 	wantNoTests: true,
-		// 	wantErr:     true,
-		// },
+		{
+			name: "Test interface embedding",
+			args: args{
+				srcPath: `testdata/undefinedtypes/interface_embedding.go`,
+			},
+			want:        mustReadAndFormatGoFile(t, "testdata/goldens/interface_embedding.go"),
+			wantNoTests: !versionGreaterOrEqualThan("go1.11"),
+			wantErr:     !versionGreaterOrEqualThan("go1.11"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -644,6 +647,20 @@ func TestGenerateTests(t *testing.T) {
 			outputResult(t, tmp, tt.name, gts[0].Output)
 		}
 	}
+}
+
+func versionGreaterOrEqualThan(version string) bool {
+	prefixes := []string{"go1.9", "go1.10", "go1.11", "go1.12", "go1.13"}
+	v := runtime.Version()
+	for _, prefix := range prefixes {
+		if strings.Contains(version, prefix) {
+			return true
+		}
+		if strings.Contains(v, prefix) {
+			return false
+		}
+	}
+	return true
 }
 
 func mustReadAndFormatGoFile(t *testing.T, filename string) string {
