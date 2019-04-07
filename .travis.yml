@@ -1,12 +1,12 @@
+sudo: required
 language: go
-sudo: false
 go:
-  - 1.8.x
   - 1.9.x
   - 1.10.x
+  - 1.11.x
+  - 1.12.x
 before_install:
   - go get github.com/mattn/goveralls
-  - go get github.com/mjibson/esc
   - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
 script:
   - go test ./...
