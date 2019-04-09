@@ -18,14 +18,14 @@ import (
 
 // Options provides custom filters and parameters for generating tests.
 type Options struct {
-	Only          *regexp.Regexp         // Includes only functions that match.
-	Exclude       *regexp.Regexp         // Excludes functions that match.
-	Exported      bool                   // Include only exported methods
-	PrintInputs   bool                   // Print function parameters in error messages
-	Subtests      bool                   // Print tests using Go 1.7 subtests
-	Importer      func() types.Importer  // A custom importer.
-	TemplateDir   string                 // Path to custom template set
-	ExternalParas map[string]interface{} // Custom external parameters
+	Only           *regexp.Regexp         // Includes only functions that match.
+	Exclude        *regexp.Regexp         // Excludes functions that match.
+	Exported       bool                   // Include only exported methods
+	PrintInputs    bool                   // Print function parameters in error messages
+	Subtests       bool                   // Print tests using Go 1.7 subtests
+	Importer       func() types.Importer  // A custom importer.
+	TemplateDir    string                 // Path to custom template set
+	TemplateParams map[string]interface{} // Custom external parameters
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -116,10 +116,10 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		return nil, nil
 	}
 	b, err := output.Process(h, funcs, &output.Options{
-		PrintInputs:   opt.PrintInputs,
-		Subtests:      opt.Subtests,
-		TemplateDir:   opt.TemplateDir,
-		ExternalParas: opt.ExternalParas,
+		PrintInputs:    opt.PrintInputs,
+		Subtests:       opt.Subtests,
+		TemplateDir:    opt.TemplateDir,
+		TemplateParams: opt.TemplateParams,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)

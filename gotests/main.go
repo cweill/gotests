@@ -9,26 +9,27 @@
 //
 // Available options:
 //
-//   -all         generate tests for all functions and methods
+//   -all                  generate tests for all functions and methods
 //
-//   -excl        regexp. generate tests for functions and methods that don't
-//                match. Takes precedence over -only, -exported, and -all
+//   -excl                 regexp. generate tests for functions and methods that don't
+//   -excl                 regexp. generate tests for functions and methods that don't
+//                         match. Takes precedence over -only, -exported, and -all
 //
-//   -exported    generate tests for exported functions and methods. Takes
-//                precedence over -only and -all
+//   -exported             generate tests for exported functions and methods. Takes
+//                         precedence over -only and -all
 //
-//   -i           print test inputs in error messages
+//   -i                    print test inputs in error messages
 //
-//   -only        regexp. generate tests for functions and methods that match only.
-//                Takes precedence over -all
+//   -only                 regexp. generate tests for functions and methods that match only.
+//                         Takes precedence over -all
 //
-//   -nosubtests  disable subtest generation when >= Go 1.7
+//   -nosubtests           disable subtest generation when >= Go 1.7
 //
-//   -w           write output to (test) files instead of stdout
+//   -w                    write output to (test) files instead of stdout
 //
-//   -ef          read external parameters to template by json with file
+//   -template_params_file read external parameters to template by json with file
 //
-//   -ei		  read external parameters to tempalte by json with stdin
+//   -template_params	   read external parameters to tempalte by json with stdin
 package main
 
 import (
@@ -46,8 +47,8 @@ var (
 	printInputs        = flag.Bool("i", false, "print test inputs in error messages")
 	writeOutput        = flag.Bool("w", false, "write output to (test) files instead of stdout")
 	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
-	externalParasPath  = flag.String("ef", "", "read external parameters to template by json with file")
-	externalParasInput = flag.String("ei", "", "read external parameters to tempalte by json with stdin")
+	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
+	templateParams     = flag.String("template_params", "", "read external parameters to tempalte by json with stdin")
 )
 
 // nosubtests is always set to default value of true when Go < 1.7.
@@ -60,14 +61,14 @@ func main() {
 	args := flag.Args()
 
 	process.Run(os.Stdout, args, &process.Options{
-		OnlyFuncs:         *onlyFuncs,
-		ExclFuncs:         *exclFuncs,
-		ExportedFuncs:     *exportedFuncs,
-		AllFuncs:          *allFuncs,
-		PrintInputs:       *printInputs,
-		Subtests:          !nosubtests,
-		WriteOutput:       *writeOutput,
-		TemplateDir:       *templateDir,
-		ExternalParasPath: *externalParasPath,
+		OnlyFuncs:          *onlyFuncs,
+		ExclFuncs:          *exclFuncs,
+		ExportedFuncs:      *exportedFuncs,
+		AllFuncs:           *allFuncs,
+		PrintInputs:        *printInputs,
+		Subtests:           !nosubtests,
+		WriteOutput:        *writeOutput,
+		TemplateDir:        *templateDir,
+		TemplateParamsPath: *templateParamsPath,
 	})
 }

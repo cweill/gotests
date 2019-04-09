@@ -23,15 +23,15 @@ const (
 
 // Set of options to use when generating tests.
 type Options struct {
-	OnlyFuncs         string // Regexp string for filter matches.
-	ExclFuncs         string // Regexp string for excluding matches.
-	ExportedFuncs     bool   // Only include exported functions.
-	AllFuncs          bool   // Include all non-tested functions.
-	PrintInputs       bool   // Print function parameters as part of error messages.
-	Subtests          bool   // Print tests using Go 1.7 subtests
-	WriteOutput       bool   // Write output to test file(s).
-	TemplateDir       string // Path to custom template set
-	ExternalParasPath string // Path to custom paramters json file(s).
+	OnlyFuncs          string // Regexp string for filter matches.
+	ExclFuncs          string // Regexp string for excluding matches.
+	ExportedFuncs      bool   // Only include exported functions.
+	AllFuncs           bool   // Include all non-tested functions.
+	PrintInputs        bool   // Print function parameters as part of error messages.
+	Subtests           bool   // Print tests using Go 1.7 subtests
+	WriteOutput        bool   // Write output to test file(s).
+	TemplateDir        string // Path to custom template set
+	TemplateParamsPath string // Path to custom paramters json file(s).
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -70,8 +70,8 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		return nil
 	}
 
-	externalParas := map[string]interface{}{}
-	jfile := opt.ExternalParasPath
+	templateParams := map[string]interface{}{}
+	jfile := opt.TemplateParamsPath
 	if jfile != "" {
 		buf, err := ioutil.ReadFile(jfile)
 		if err != nil {
@@ -79,7 +79,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 			return nil
 		}
 
-		err = json.Unmarshal(buf, externalParas)
+		err = json.Unmarshal(buf, templateParams)
 		if err != nil {
 			fmt.Fprintf(out, "Failed to umarshal %s er %s", jfile, err)
 			return nil
@@ -87,13 +87,13 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 	}
 
 	return &gotests.Options{
-		Only:          onlyRE,
-		Exclude:       exclRE,
-		Exported:      opt.ExportedFuncs,
-		PrintInputs:   opt.PrintInputs,
-		Subtests:      opt.Subtests,
-		TemplateDir:   opt.TemplateDir,
-		ExternalParas: externalParas,
+		Only:           onlyRE,
+		Exclude:        exclRE,
+		Exported:       opt.ExportedFuncs,
+		PrintInputs:    opt.PrintInputs,
+		Subtests:       opt.Subtests,
+		TemplateDir:    opt.TemplateDir,
+		TemplateParams: templateParams,
 	}
 }
 

@@ -17,15 +17,15 @@ import (
 
 func TestGenerateTests(t *testing.T) {
 	type args struct {
-		srcPath           string
-		only              *regexp.Regexp
-		excl              *regexp.Regexp
-		exported          bool
-		printInputs       bool
-		subtests          bool
-		importer          types.Importer
-		templateDir       string
-		externalParasPath string
+		srcPath            string
+		only               *regexp.Regexp
+		excl               *regexp.Regexp
+		exported           bool
+		printInputs        bool
+		subtests           bool
+		importer           types.Importer
+		templateDir        string
+		templateParamsPath string
 	}
 	tests := []struct {
 		name              string
@@ -617,13 +617,13 @@ func TestGenerateTests(t *testing.T) {
 		{
 			name: "Test use external params and custom tempalte",
 			args: args{
-				srcPath:           `testdata/use_external_paras_template/use_external_paras_template.go`,
-				templateDir:       `testdata/use_external_paras_template/`,
-				externalParasPath: `testdata/use_external_paras_template/use_external_paras_template.json`,
+				srcPath:        `testdata/use_template_params/use_template_params.go`,
+				templateDir:    `testdata/use_template_params/`,
+				templateParams: `testdata/use_template_params/use_template_params.json`,
 			},
 			wantNoTests: false,
 			wantErr:     false,
-			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_external_paras_template_test.go"),
+			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_template_params_test.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
@@ -633,8 +633,8 @@ func TestGenerateTests(t *testing.T) {
 	for _, tt := range tests {
 		var params map[string]interface{}
 		var err error
-		if tt.args.externalParasPath != "" {
-			params, err = loadExternalJsonFile(tt.args.externalParasPath)
+		if tt.args.templateParamsPath != "" {
+			params, err = loadExternalJsonFile(tt.args.templateParamsPath)
 			if err != nil {
 				t.Error(tt.name, err)
 				continue
@@ -642,14 +642,14 @@ func TestGenerateTests(t *testing.T) {
 		}
 
 		gts, err := GenerateTests(tt.args.srcPath, &Options{
-			Only:          tt.args.only,
-			Exclude:       tt.args.excl,
-			Exported:      tt.args.exported,
-			PrintInputs:   tt.args.printInputs,
-			Subtests:      tt.args.subtests,
-			Importer:      func() types.Importer { return tt.args.importer },
-			TemplateDir:   tt.args.templateDir,
-			ExternalParas: params,
+			Only:           tt.args.only,
+			Exclude:        tt.args.excl,
+			Exported:       tt.args.exported,
+			PrintInputs:    tt.args.printInputs,
+			Subtests:       tt.args.subtests,
+			Importer:       func() types.Importer { return tt.args.importer },
+			TemplateDir:    tt.args.templateDir,
+			TemplateParams: params,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
