@@ -617,9 +617,9 @@ func TestGenerateTests(t *testing.T) {
 		{
 			name: "Test use external params and custom template",
 			args: args{
-				srcPath:        `testdata/use_template_params/use_template_params.go`,
-				templateDir:    `testdata/use_template_params/`,
-				templateParams: `testdata/use_template_params/use_template_params.json`,
+				srcPath:            `testdata/use_template_params/use_template_params.go`,
+				templateDir:        `testdata/use_template_params/`,
+				templateParamsPath: `testdata/use_template_params/use_template_params.json`,
 			},
 			wantNoTests: false,
 			wantErr:     false,

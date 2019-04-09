@@ -1,4 +1,4 @@
-package use_external_params
+package use_template_params
 
 import "testing"
 
