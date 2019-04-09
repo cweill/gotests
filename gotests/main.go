@@ -29,7 +29,7 @@
 //
 //   -template_params_file read external parameters to template by json with file
 //
-//   -template_params	   read external parameters to tempalte by json with stdin
+//   -template_params	   read external parameters to template by json with stdin
 package main
 
 import (
@@ -48,7 +48,7 @@ var (
 	writeOutput        = flag.Bool("w", false, "write output to (test) files instead of stdout")
 	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
-	templateParams     = flag.String("template_params", "", "read external parameters to tempalte by json with stdin")
+	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 )
 
 // nosubtests is always set to default value of true when Go < 1.7.

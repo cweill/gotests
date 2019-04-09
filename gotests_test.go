@@ -615,7 +615,7 @@ func TestGenerateTests(t *testing.T) {
 			wantErr:     !versionGreaterOrEqualThan("go1.11"),
 		},
 		{
-			name: "Test use external params and custom tempalte",
+			name: "Test use external params and custom template",
 			args: args{
 				srcPath:        `testdata/use_template_params/use_template_params.go`,
 				templateDir:    `testdata/use_template_params/`,
