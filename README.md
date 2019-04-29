@@ -32,7 +32,6 @@ Available options:
   -all                  generate tests for all functions and methods
 
   -excl                 regexp. generate tests for functions and methods that don't
-  -excl                 regexp. generate tests for functions and methods that don't
                          match. Takes precedence over -only, -exported, and -all
 
   -exported             generate tests for exported functions and methods. Takes
@@ -46,6 +45,8 @@ Available options:
   -nosubtests           disable subtest generation when >= Go 1.7
 
   -w                    write output to (test) files instead of stdout
+
+  -template_dir         Path to a directory containing custom test code templates
 
   -template_params_file read external parameters to template by json with file
 

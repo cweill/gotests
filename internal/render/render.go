@@ -127,11 +127,11 @@ func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bo
 		*models.Function
 		PrintInputs     bool
 		Subtests        bool
-		TempalateParams map[string]interface{}
+		TemplateParams map[string]interface{}
 	}{
 		Function:        f,
 		PrintInputs:     printInputs,
 		Subtests:        subtests,
-		TempalateParams: templateParams,
+		TemplateParams: templateParams,
 	})
 }
