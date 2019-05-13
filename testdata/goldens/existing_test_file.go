@@ -1,8 +1,9 @@
 package testdata
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestBarBar100(t *testing.T) {
@@ -55,7 +56,7 @@ func TestFoo100(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo100(tt.args.strs)
@@ -63,8 +64,8 @@ func TestFoo100(t *testing.T) {
 			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+		if !cmp.Equal(got, tt.want) {
+			t.Errorf("%q. Foo100() = %v, want %v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }
@@ -79,7 +80,7 @@ func TestBar_Bar100(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}
@@ -98,7 +99,7 @@ func Test_baz100(t *testing.T) {
 		args args
 		want float64
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := baz100(tt.args.f); got != tt.want {

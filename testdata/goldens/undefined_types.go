@@ -1,8 +1,9 @@
 package undefinedtypes
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestUndefined_Do(t *testing.T) {
@@ -16,7 +17,7 @@ func TestUndefined_Do(t *testing.T) {
 		want    *Unknown
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := tt.u.Do(tt.args.es)
@@ -24,8 +25,8 @@ func TestUndefined_Do(t *testing.T) {
 			t.Errorf("%q. Undefined.Do() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Undefined.Do() = %v, want %v", tt.name, got, tt.want)
+		if !cmp.Equal(got, tt.want) {
+			t.Errorf("%q. Undefined.Do() = %v, want %v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }

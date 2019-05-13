@@ -2,8 +2,9 @@ package testdata
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestBarBar100(t *testing.T) {
@@ -67,8 +68,8 @@ func Test_wrapToString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := wrapToString(tt.args.in); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("wrapToString() = %v, want %v", got, tt.want)
+			if got := wrapToString(tt.args.in); !cmp.Equal(got, tt.want) {
+				t.Errorf("wrapToString() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}

@@ -16,6 +16,13 @@ import (
 	"github.com/cweill/gotests/internal/output"
 )
 
+var (
+	cmpImport = &models.Import{
+		Name: "",
+		Path: `"github.com/google/go-cmp/cmp"`,
+	}
+)
+
 // Options provides custom filters and parameters for generating tests.
 type Options struct {
 	Only        *regexp.Regexp        // Includes only functions that match.
@@ -142,8 +149,20 @@ func parseTestFile(p *goparser.Parser, testPath string, h *models.Header) (*mode
 		return nil, nil, fmt.Errorf("Parser.Parse test file: %v", err)
 	}
 	var testFuncs []string
+	cmpImportNeeded := false
 	for _, fun := range tr.Funcs {
 		testFuncs = append(testFuncs, fun.Name)
+		if cmpImportNeeded {
+			continue
+		}
+		for _, field := range fun.Parameters {
+			if !(field.IsWriter() || field.IsBasicType()) {
+				cmpImportNeeded = true
+			}
+		}
+	}
+	if cmpImportNeeded {
+		tr.Header.Imports = append(tr.Header.Imports, cmpImport)
 	}
 	tr.Header.Imports = append(tr.Header.Imports, h.Imports...)
 	h = tr.Header
