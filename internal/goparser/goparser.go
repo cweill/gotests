@@ -10,7 +10,6 @@ import (
 	"go/token"
 	"go/types"
 	"io/ioutil"
-
 	"strings"
 
 	"github.com/cweill/gotests/internal/models"

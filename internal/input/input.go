@@ -2,14 +2,14 @@ package input
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"path/filepath"
-	"os"
 
 	"github.com/cweill/gotests/internal/models"
 )
 
-// Returns all the Golang files for the given path. Ignores hidden files.
+// Files returns all the Golang files for the given path. Ignores hidden files.
 func Files(srcPath string) ([]models.Path, error) {
 	srcPath, err := filepath.Abs(srcPath)
 	if err != nil {
