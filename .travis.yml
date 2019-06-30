@@ -1,4 +1,7 @@
 sudo: required
+env:
+  global:
+    - CC_TEST_REPORTER_ID=d69778dd652745be4c5e4857ac992682804eaea8c53470e2f405d089286c107c
 language: go
 go:
   - 1.9.x
@@ -6,10 +9,17 @@ go:
   - 1.11.x
   - 1.12.x
 before_install:
-  - go get github.com/mattn/goveralls
   - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+  - go get -v github.com/codeclimate/test-reporter
+  - cd $GOPATH/src/github.com/golang/dep/cmd/dep && git checkout tags/v0.4.1 && go install
+  - cd $GOPATH/src/github.com/codeclimate/test-reporter && git checkout tags/v0.4.3 && go install
+  - cd - && dep ensure -v -vendor-only
+before_script:
+  - test-reporter before-build
 script:
-  - go test ./...
-  - go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
-  - ./gotests.test -test.coverprofile coverage.cov
-  - $HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.cov
+  - go test ./... -coverprofile c.out
+  # - go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
+  # - ./gotests.test -test.coverprofile coverage.cov
+  # - $HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.cov
+after_script:
+  - test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
