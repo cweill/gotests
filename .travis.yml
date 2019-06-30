@@ -4,7 +4,6 @@ env:
     - CC_TEST_REPORTER_ID=d69778dd652745be4c5e4857ac992682804eaea8c53470e2f405d089286c107c
 language: go
 go:
-  - 1.9.x
   - 1.10.x
   - 1.11.x
   - 1.12.x
