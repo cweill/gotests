@@ -13,9 +13,6 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - go test ./... -coverprofile c.out
-  # - go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
-  # - ./gotests.test -test.coverprofile coverage.cov
-  # - $HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.cov
+  - go test ./... -coverprofile c.out -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
