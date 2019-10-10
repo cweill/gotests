@@ -529,6 +529,15 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/subtest_edition_-_functions_and_receivers_with_same_names_except_exporting.go"),
 		},
 		{
+			name: "Test t method receiver",
+			args: args{
+				srcPath: `testdata/test_t_receiver.go`,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadAndFormatGoFile(t, `testdata/goldens/test_t_receiver.go`),
+		},
+		{
 			name: "Init function",
 			args: args{
 				srcPath: `testdata/init_func.go`,
