@@ -76,6 +76,10 @@ func receiverName(f *models.Receiver) string {
 	if n == "name" {
 		// Avoid conflict with test struct's "name" field.
 		n = "n"
+	} else if n == "t" {
+		// Avoid conflict with test argument.
+		// "tr" is short for t receiver.
+		n = "tr"
 	}
 	return n
 }
