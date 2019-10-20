@@ -73,8 +73,15 @@ func main() {
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
 		WriteOutput:        *writeOutput,
-		Template:           *template,
-		TemplateDir:        *templateDir,
+		Template:           valOrGetenv(*template, "GOTESTS_TEMPLATE"),
+		TemplateDir:        valOrGetenv(*templateDir, "GOTESTS_TEMPLATE_DIR"),
 		TemplateParamsPath: *templateParamsPath,
 	})
+}
+
+func valOrGetenv(val, key string) string {
+	if val == "" {
+		return val
+	}
+	return os.Getenv(key)
 }
