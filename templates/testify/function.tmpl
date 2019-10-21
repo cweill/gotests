@@ -1,0 +1,81 @@
+{{define "function"}}
+{{- $f := .}}
+
+func {{.TestName}}(t *testing.T) {
+	{{- with .Receiver}}
+		{{- if .IsStruct}}
+			{{- if .Fields}}
+				type fields struct {
+				{{- range .Fields}}
+					{{Field .}} {{.Type}}
+				{{- end}}
+				}
+			{{- end}}
+		{{- end}}
+	{{- end}}
+	{{- if .TestParameters}}
+	type args struct {
+		{{- range .TestParameters}}
+				{{Param .}} {{.Type}}
+		{{- end}}
+	}
+	{{- end}}
+	tests := []struct {
+		name string
+		{{- with .Receiver}}
+			{{- if and .IsStruct .Fields}}
+				fields fields
+			{{- else}}
+				{{Receiver .}} {{.Type}}
+			{{- end}}
+		{{- end}}
+		{{- if .TestParameters}}
+			args args
+		{{- end}}
+		{{- range .TestResults}}
+			{{Want .}} {{.Type}}
+		{{- end}}
+		{{- if .ReturnsError}}
+			assertion assert.ErrorAssertionFunc
+		{{- end}}
+	}{
+		// TODO: Add test cases.
+	}
+	for {{if (or .Subtests (not .IsNaked))}} _, tt := {{end}} range tests {
+        {{- if .Subtests }}t.Run(tt.name, func(t *testing.T) { {{- end -}}
+			{{- with .Receiver}}
+				{{- if .IsStruct}}
+					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+					{{- range .Fields}}
+						{{.Name}}: tt.fields.{{Field .}},
+					{{- end}}
+					}
+				{{- end}}
+			{{- end}}
+			{{- range .Parameters}}
+				{{- if .IsWriter}}
+					{{Param .}} := &bytes.Buffer{}
+				{{- end}}
+			{{- end}}
+			{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
+				{{template "results" $f}} {{template "call" $f}}
+			{{- end}}
+			{{- if .ReturnsError}}
+				tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}})
+			{{- end}}
+			{{- range .TestResults}}
+				{{- if .IsWriter}}
+                    assert.Equal(t, tt.{{Want .}}, {{Param .}}.String())
+				{{- else}}
+                    {{- if $f.OnlyReturnsOneValue}}
+                        assert.Equal(t, tt.{{Want .}}, {{template "inline" $f}})
+                    {{- else}}
+                        assert.Equal(t, tt.{{Want .}}, {{Got .}})
+                    {{- end}}
+				{{- end}}
+			{{- end}}
+		{{- if .Subtests }} }) {{- end -}}
+	}
+}
+
+{{end}}
