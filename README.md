@@ -46,7 +46,10 @@ Available options:
 
   -w                    write output to (test) files instead of stdout
 
-  -template_dir         Path to a directory containing custom test code templates
+  -template_dir         Path to a directory containing custom test code templates. Takes
+                         precedence over -template
+
+  -template             Specify custom test code templates, e.g. testify
 
   -template_params_file read external parameters to template by json with file
 
