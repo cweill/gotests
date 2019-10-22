@@ -25,6 +25,7 @@ func TestGenerateTests(t *testing.T) {
 		subtests           bool
 		importer           types.Importer
 		templateDir        string
+		template           string
 		templateParamsPath string
 	}
 	tests := []struct {
@@ -634,6 +635,32 @@ func TestGenerateTests(t *testing.T) {
 			wantErr:     false,
 			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_template_params_test.go"),
 		},
+		{
+			name: "With both template=testify",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify.go"),
+		},
+		{
+			name: "With both template=unknown",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "unknown",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
+		{
+			name: "With both template and templateDir",
+			args: args{
+				srcPath:     `testdata/test004.go`,
+				template:    "testify",
+				templateDir: `testdata/customtemplates`,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -658,6 +685,7 @@ func TestGenerateTests(t *testing.T) {
 			Subtests:       tt.args.subtests,
 			Importer:       func() types.Importer { return tt.args.importer },
 			TemplateDir:    tt.args.templateDir,
+			Template:       tt.args.template,
 			TemplateParams: params,
 		})
 		if (err != nil) != tt.wantErr {
