@@ -10,6 +10,6 @@ func TestFoo4(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		assert.Equal(t, tt.want, Foo4())
+		assert.Equalf(t, tt.want, Foo4(), "%q. Foo4()", tt.name)
 	}
 }

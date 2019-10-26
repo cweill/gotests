@@ -61,16 +61,32 @@ func {{.TestName}}(t *testing.T) {
 				{{template "results" $f}} {{template "call" $f}}
 			{{- end}}
 			{{- if .ReturnsError}}
-				tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}})
+                {{- if $f.Subtests}}
+                    tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}})
+                {{- else}}
+                    tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}}, fmt.Sprintf("{{template "message" $f}}", {{template "inputs" $f}}))
+                {{- end}}
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
-                    assert.Equal(t, tt.{{Want .}}, {{Param .}}.String())
+                    {{- if $f.Subtests}}
+                        assert.Equal(t, tt.{{Want .}}, {{Param .}}.String())
+                    {{- else}}
+                        assert.Equalf(t, tt.{{Want .}}, {{Param .}}.String(), "{{template "message" $f}}", {{template "inputs" $f}})
+                    {{- end}}
 				{{- else}}
                     {{- if $f.OnlyReturnsOneValue}}
-                        assert.Equal(t, tt.{{Want .}}, {{template "inline" $f}})
+                        {{- if $f.Subtests}}
+                            assert.Equal(t, tt.{{Want .}}, {{template "inline" $f}})
+                        {{- else}}
+                            assert.Equalf(t, tt.{{Want .}}, {{template "inline" $f}}, "{{template "message" $f}}", {{template "inputs" $f}})
+                        {{- end}}
                     {{- else}}
-                        assert.Equal(t, tt.{{Want .}}, {{Got .}})
+                        {{- if $f.Subtests}}
+                            assert.Equal(t, tt.{{Want .}}, {{Got .}})
+                        {{- else}}
+                            assert.Equalf(t, tt.{{Want .}}, {{Got .}}, "{{template "message" $f}}", {{template "inputs" $f}})
+                        {{- end}}
                     {{- end}}
 				{{- end}}
 			{{- end}}

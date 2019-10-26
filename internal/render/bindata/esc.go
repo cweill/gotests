@@ -119,7 +119,7 @@ func (f *_escFile) Readdir(count int) ([]os.FileInfo, error) {
 		return nil, io.EOF
 	}
 
-	return []os.FileInfo(fis[0:limit]), nil
+	return fis[0:limit], nil
 }
 
 func (f *_escFile) Stat() (os.FileInfo, error) {
@@ -213,7 +213,7 @@ var _escData = map[string]*_escFile{
 		name:    "call.tmpl",
 		local:   "templates/call.tmpl",
 		size:    241,
-		modtime: 1540446832,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -225,7 +225,7 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
 		size:    2392,
-		modtime: 1540483824,
+		modtime: 1571531619,
 		compressed: `
 H4sIAAAAAAAC/7RWTW/jNhA9S79i1sgupMJh7g58aJC06KFx4QTNoSgKRh65RGnKJUcJDIL/vSBFfVpO
 c9kcImlIznvz5g0Ta3dYCoWwKGtVkKjUwrnU2mu4KmG1BuZcmvolsJY9o6FHfkDnMoIfCA0JtWfPOdg0
@@ -247,7 +247,7 @@ f60liaMckY18eq/+j1Evkrz8D8PEp+ALGl7XLnVp2vr0vwAAAP//X+Qs81gJAAA=
 		name:    "header.tmpl",
 		local:   "templates/header.tmpl",
 		size:    142,
-		modtime: 1540481163,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
 iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
@@ -259,7 +259,7 @@ jgAAAA==
 		name:    "inline.tmpl",
 		local:   "templates/inline.tmpl",
 		size:    49,
-		modtime: 1540446006,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -270,7 +270,7 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 		name:    "inputs.tmpl",
 		local:   "templates/inputs.tmpl",
 		size:    152,
-		modtime: 1540446821,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/0yNMQoCQQxFrxKWLSUHEDyAneAJIptZptgomWz1yd1lRoupEh7/vw9sWqopLdU+Z7Ql
 E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
@@ -282,7 +282,7 @@ E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
 		name:    "message.tmpl",
 		local:   "templates/message.tmpl",
 		size:    201,
-		modtime: 1540446006,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -294,7 +294,7 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
 		size:    168,
-		modtime: 1540446006,
+		modtime: 1571318606,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
