@@ -662,6 +662,16 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify_printinputs.go"),
 		},
 		{
+			name: "With template=testify and subtests and printInputs",
+			args: args{
+				srcPath:     `testdata/test201.go`,
+				template:    "testify",
+				printInputs: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify_subtests_printinputs.go"),
+		},
+		{
 			name: "With template=unknown",
 			args: args{
 				srcPath:  `testdata/test004.go`,

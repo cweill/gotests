@@ -61,31 +61,31 @@ func {{.TestName}}(t *testing.T) {
 				{{template "results" $f}} {{template "call" $f}}
 			{{- end}}
 			{{- if .ReturnsError}}
-                {{- if $f.Subtests}}
-                    tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}})
-                {{- else}}
+                {{- if or (not $f.Subtests) $f.PrintInputs}}
                     tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}}, fmt.Sprintf("{{template "message" $f}}", {{template "inputs" $f}}))
+                {{- else}}
+                    tt.assertion(t, {{if .OnlyReturnsError}}{{template "call" $f}}{{else}}err{{end}})
                 {{- end}}
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
-                    {{- if $f.Subtests}}
-                        assert.Equal(t, tt.{{Want .}}, {{Param .}}.String())
-                    {{- else}}
+                    {{- if or (not $f.Subtests) $f.PrintInputs}}
                         assert.Equalf(t, tt.{{Want .}}, {{Param .}}.String(), "{{template "message" $f}}", {{template "inputs" $f}})
+                    {{- else}}
+                        assert.Equal(t, tt.{{Want .}}, {{Param .}}.String())
                     {{- end}}
 				{{- else}}
                     {{- if $f.OnlyReturnsOneValue}}
-                        {{- if $f.Subtests}}
-                            assert.Equal(t, tt.{{Want .}}, {{template "inline" $f}})
-                        {{- else}}
+                        {{- if or (not $f.Subtests) $f.PrintInputs}}
                             assert.Equalf(t, tt.{{Want .}}, {{template "inline" $f}}, "{{template "message" $f}}", {{template "inputs" $f}})
+                        {{- else}}
+                            assert.Equal(t, tt.{{Want .}}, {{template "inline" $f}})
                         {{- end}}
                     {{- else}}
-                        {{- if $f.Subtests}}
-                            assert.Equal(t, tt.{{Want .}}, {{Got .}})
-                        {{- else}}
+                        {{- if or (not $f.Subtests) $f.PrintInputs}}
                             assert.Equalf(t, tt.{{Want .}}, {{Got .}}, "{{template "message" $f}}", {{template "inputs" $f}})
+                        {{- else}}
+                            assert.Equal(t, tt.{{Want .}}, {{Got .}})
                         {{- end}}
                     {{- end}}
 				{{- end}}
