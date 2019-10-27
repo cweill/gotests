@@ -636,7 +636,7 @@ func TestGenerateTests(t *testing.T) {
 			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_template_params_test.go"),
 		},
 		{
-			name: "With both template=testify",
+			name: "With template=testify",
 			args: args{
 				srcPath:  `testdata/test004.go`,
 				template: "testify",
@@ -644,7 +644,7 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify.go"),
 		},
 		{
-			name: "With both template=unknown",
+			name: "With template=unknown",
 			args: args{
 				srcPath:  `testdata/test004.go`,
 				template: "unknown",
@@ -653,7 +653,7 @@ func TestGenerateTests(t *testing.T) {
 			wantErr:     true,
 		},
 		{
-			name: "With both template and templateDir",
+			name: "With template=testify templateDir=testdata/customtemplates",
 			args: args{
 				srcPath:     `testdata/test004.go`,
 				template:    "testify",
