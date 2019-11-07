@@ -63,7 +63,7 @@ func LoadCustomTemplatesName(name string) error {
 	}
 
 	for _, f := range files {
-		text, err := templates.FSString(false, path.Join("/", "testify", f.Name()))
+		text, err := templates.FSString(false, path.Join("/", name, f.Name()))
 		if err != nil {
 			return fmt.Errorf("templates.FSString: %v", err)
 		}
