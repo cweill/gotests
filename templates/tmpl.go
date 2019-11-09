@@ -209,6 +209,100 @@ func FSMustString(useLocal bool, name string) string {
 
 var _escData = map[string]*_escFile{
 
+	"/test/call.tmpl": {
+		name:    "call.tmpl",
+		local:   "test/call.tmpl",
+		size:    241,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
+LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
+Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
+`,
+	},
+
+	"/test/function.tmpl": {
+		name:    "function.tmpl",
+		local:   "test/function.tmpl",
+		size:    2533,
+		modtime: 1573266251,
+		compressed: `
+H4sIAAAAAAAC/5xWTW/jNhA9S79iIASBVTjM3UAOKZoUucSBHTSHoigYa+QKlWmXHHVhEPzvCw71bSmb
+rA675pCc92aGbybWZpgXCiGRxqCm4qgSuHExkWgNC1qCtUUOYq3K8wap0so8aH3UzllLeDiVkhCSnSzL
+BIQ3YmnQOdTaWlSZc7G1N1DkcNSwUEcCsa3eCQ2ZFMSLLhQ9qVNFBm6ciwEAlpAfSGxPfitfJH2UAxoj
+98hAiSfWbRXshHdSRkSVsct25Vwcx13M+F8ly8S5EKp48EuO9Ac8ncvrwJr4+l4PZp/4nc/4gSX8RHRD
+cBig55XacRnrrF/lsLrzl+LYb4G14hUNPcsDOrcg+MXzKtRevKZg48hf+VbQPyA2uMPif9TOxVFU1088
+mS3pakdsbK2PBZaZCbaIzieEnC1g+LD3W5/WUu1xdCGylteeJNM7n7De6srmVy1mY+r9Hv30rHyYL1LL
+AxJqBmNqUu8HxHq0Lm8wIJsu2PUQh/hcaJ/0P//qwSh5QA9bqH19eSLNDXepsi7Xo3TVqQ3/tRlhwdV8
+G5eXCZ1J3gcpiyLOl/9n4k4vbxs0VUmmwXmTij5KWQs57CcM2DQeaHTp9+4b62OldqP0+/ze3sLr+rf1
+Cu6zDHwJYCcNGsHVyY86tLDFUXdirLX5ZJ7lv5ilqXPw9xKIfO0abYUIw3HLvcl/DfnWk3MkNpVaEAlf
+6CV4rY3VBf2eFM0/ghm1XZSWaXLZzifkw1I7d912h2D/Q5YVOmcbFzMijKwVoSmsgEiE5yV60lx2DjpJ
+RhM6vVjUeBPKasJ80wW10Q8Ut7qD6/czoRG/VnmO2n4GsFZQKO94aKWX9rVCzlIKLbOu7+rwsBO4yvk5
+jweeN8+xGL9uGH19b70BPOtyTm9TqYSJr48Xhh9j+QlPJDrV+snT1kBsuWst0sGgMvtwN+3qEXrQNC7T
+u8qnsj5z56t8+5OyLBSGozOc50h+EMNX+fx+pDCrv0agldbsE59oPuDSYXNxsfN/FIQr3wMAAP//lAIK
+3uUJAAA=
+`,
+	},
+
+	"/test/header.tmpl": {
+		name:    "header.tmpl",
+		local:   "test/header.tmpl",
+		size:    142,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
+iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
+jgAAAA==
+`,
+	},
+
+	"/test/inline.tmpl": {
+		name:    "inline.tmpl",
+		local:   "test/inline.tmpl",
+		size:    49,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
+//+q60H/MQAAAA==
+`,
+	},
+
+	"/test/inputs.tmpl": {
+		name:    "inputs.tmpl",
+		local:   "test/inputs.tmpl",
+		size:    152,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/0yNMQoCQQxFrxKWLSUHEDyAneAJIptZptgomWz1yd1lRoupEh7/vw9sWqopLdU+Z7Ql
+E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
+/468z9qYAAAA
+`,
+	},
+
+	"/test/message.tmpl": {
+		name:    "message.tmpl",
+		local:   "test/message.tmpl",
+		size:    201,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
+ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
+5Zd1B6oG50dQJQ1VmOjjk7hzwc1ICLmXgSoxa16/9XZws7wXqi1l+wwAAP//kC65UskAAAA=
+`,
+	},
+
+	"/test/results.tmpl": {
+		name:    "results.tmpl",
+		local:   "test/results.tmpl",
+		size:    168,
+		modtime: 1571318606,
+		compressed: `
+H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
+AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
+/7BPz2GoAAAA
+`,
+	},
+
 	"/testify/call.tmpl": {
 		name:    "call.tmpl",
 		local:   "testify/call.tmpl",
@@ -309,6 +403,18 @@ AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
 		isDir: true,
 	},
 
+	"/test": {
+		name:  "test",
+		local: `test`,
+		isDir: true,
+	},
+
+	"/test_empty": {
+		name:  "test_empty",
+		local: `test_empty`,
+		isDir: true,
+	},
+
 	"/testify": {
 		name:  "testify",
 		local: `testify`,
@@ -319,6 +425,18 @@ AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
 var _escDirs = map[string][]os.FileInfo{
 
 	"./": {},
+
+	"test": {
+		_escData["/test/call.tmpl"],
+		_escData["/test/function.tmpl"],
+		_escData["/test/header.tmpl"],
+		_escData["/test/inline.tmpl"],
+		_escData["/test/inputs.tmpl"],
+		_escData["/test/message.tmpl"],
+		_escData["/test/results.tmpl"],
+	},
+
+	"test_empty": {},
 
 	"testify": {
 		_escData["/testify/call.tmpl"],

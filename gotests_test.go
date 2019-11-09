@@ -689,6 +689,24 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
 		},
+		{
+			name: "With template=test_empty (empty directory)",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "test_empty",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
+		{
+			name: "With template=test (invalid template)",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "test",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
