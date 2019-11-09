@@ -30,6 +30,7 @@ type Options struct {
 	PrintInputs        bool   // Print function parameters as part of error messages.
 	Subtests           bool   // Print tests using Go 1.7 subtests
 	WriteOutput        bool   // Write output to test file(s).
+	Template           string // Name of custom template set
 	TemplateDir        string // Path to custom template set
 	TemplateParamsPath string // Path to custom paramters json file(s).
 }
@@ -92,6 +93,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		Exported:       opt.ExportedFuncs,
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
+		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: templateParams,
 	}

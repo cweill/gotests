@@ -17,6 +17,7 @@ import (
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
+	Template       string
 	TemplateDir    string
 	TemplateParams map[string]interface{}
 }
@@ -26,6 +27,11 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 		err := render.LoadCustomTemplates(opt.TemplateDir)
 		if err != nil {
 			return nil, fmt.Errorf("loading custom templates: %v", err)
+		}
+	} else if opt != nil && opt.Template != "" {
+		err := render.LoadCustomTemplatesName(opt.Template)
+		if err != nil {
+			return nil, fmt.Errorf("loading custom templates of name: %v", err)
 		}
 	}
 
