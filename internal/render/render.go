@@ -11,9 +11,13 @@ import (
 
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/render/bindata"
+	"github.com/cweill/gotests/templates"
 )
 
-const name = "name"
+const (
+	name  = "name"
+	nFile = 7
+)
 
 var (
 	tmpls *template.Template
@@ -43,6 +47,33 @@ func LoadCustomTemplates(dir string) error {
 	if err != nil {
 		return fmt.Errorf("tmpls.ParseFiles: %v", err)
 	}
+	return nil
+}
+
+// LoadCustomTemplatesName allows to load in custom templates of a specified name from the templates directory.
+func LoadCustomTemplatesName(name string) error {
+	f, err := templates.Dir(false, "/").Open(name)
+	if err != nil {
+		return fmt.Errorf("templates.Open: %v", err)
+	}
+
+	files, err := f.Readdir(nFile)
+	if err != nil {
+		return fmt.Errorf("f.Readdir: %v", err)
+	}
+
+	for _, f := range files {
+		text, err := templates.FSString(false, path.Join("/", name, f.Name()))
+		if err != nil {
+			return fmt.Errorf("templates.FSString: %v", err)
+		}
+
+		tmpls, err = tmpls.Parse(text)
+		if err != nil {
+			return fmt.Errorf("tmpls.Parse: %v", err)
+		}
+	}
+
 	return nil
 }
 

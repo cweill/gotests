@@ -25,6 +25,7 @@ func TestGenerateTests(t *testing.T) {
 		subtests           bool
 		importer           types.Importer
 		templateDir        string
+		template           string
 		templateParamsPath string
 	}
 	tests := []struct {
@@ -634,6 +635,78 @@ func TestGenerateTests(t *testing.T) {
 			wantErr:     false,
 			want:        mustReadAndFormatGoFile(t, "testdata/goldens/use_template_params_test.go"),
 		},
+		{
+			name: "With template=testify",
+			args: args{
+				srcPath:  `testdata/test201.go`,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify.go"),
+		},
+		{
+			name: "With template=testify and subtests",
+			args: args{
+				srcPath:  `testdata/test201.go`,
+				template: "testify",
+				subtests: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify_subtests.go"),
+		},
+		{
+			name: "With template=testify and printInputs",
+			args: args{
+				srcPath:     `testdata/test201.go`,
+				template:    "testify",
+				printInputs: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify_printinputs.go"),
+		},
+		{
+			name: "With template=testify and subtests and printInputs",
+			args: args{
+				srcPath:     `testdata/test201.go`,
+				template:    "testify",
+				printInputs: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/template_testify_subtests_printinputs.go"),
+		},
+		{
+			name: "With template=unknown",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "unknown",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
+		{
+			name: "With template=testify templateDir=testdata/customtemplates",
+			args: args{
+				srcPath:     `testdata/test004.go`,
+				template:    "testify",
+				templateDir: `testdata/customtemplates`,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
+		},
+		{
+			name: "With template=test_empty (empty directory)",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "test_empty",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
+		{
+			name: "With template=test (invalid template)",
+			args: args{
+				srcPath:  `testdata/test004.go`,
+				template: "test",
+			},
+			wantNoTests: true,
+			wantErr:     true,
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -658,6 +731,7 @@ func TestGenerateTests(t *testing.T) {
 			Subtests:       tt.args.subtests,
 			Importer:       func() types.Importer { return tt.args.importer },
 			TemplateDir:    tt.args.templateDir,
+			Template:       tt.args.template,
 			TemplateParams: params,
 		})
 		if (err != nil) != tt.wantErr {

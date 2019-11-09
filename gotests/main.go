@@ -26,7 +26,10 @@
 //
 //   -w                    write output to (test) files instead of stdout
 //
-//   -template_dir         Path to a directory containing custom test code templates
+//   -template_dir         Path to a directory containing custom test code templates. Takes
+//                         precedence over -template
+//
+//   -template             Specify custom test code templates, e.g. testify
 //
 //   -template_params_file read external parameters to template by json with file
 //
@@ -47,7 +50,8 @@ var (
 	allFuncs           = flag.Bool("all", false, "generate tests for all functions and methods")
 	printInputs        = flag.Bool("i", false, "print test inputs in error messages")
 	writeOutput        = flag.Bool("w", false, "write output to (test) files instead of stdout")
-	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates`)
+	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates. Takes precedence over -template`)
+	template           = flag.String("template", "", `optional. Specify custom test code templates, e.g. testify`)
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 )
@@ -69,6 +73,7 @@ func main() {
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
 		WriteOutput:        *writeOutput,
+		Template:           *template,
 		TemplateDir:        *templateDir,
 		TemplateParamsPath: *templateParamsPath,
 	})
