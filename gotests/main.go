@@ -82,7 +82,7 @@ func main() {
 }
 
 func valOrGetenv(val, key string) string {
-	if val == "" {
+	if val != "" {
 		return val
 	}
 	return os.Getenv(key)
