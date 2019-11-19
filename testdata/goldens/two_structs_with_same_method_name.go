@@ -2,13 +2,13 @@ package testdata
 
 import "testing"
 
-func TestCelsius_String(t *testing.T) {
+func TestCelsiusString(t *testing.T) {
 	tests := []struct {
 		name string
 		c    Celsius
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := tt.c.String(); got != tt.want {
@@ -17,13 +17,13 @@ func TestCelsius_String(t *testing.T) {
 	}
 }
 
-func TestFahrenheit_String(t *testing.T) {
+func TestFahrenheitString(t *testing.T) {
 	tests := []struct {
 		name string
 		f    Fahrenheit
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := tt.f.String(); got != tt.want {

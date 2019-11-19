@@ -55,7 +55,7 @@ func TestFoo100(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo100(tt.args.strs)
@@ -65,44 +65,6 @@ func TestFoo100(t *testing.T) {
 		}
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
-		}
-	}
-}
-
-func TestBar_Bar100(t *testing.T) {
-	type args struct {
-		i interface{}
-	}
-	tests := []struct {
-		name    string
-		b       *Bar
-		args    args
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.Bar100(tt.args.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
-	}
-}
-
-func Test_baz100(t *testing.T) {
-	type args struct {
-		f *float64
-	}
-	tests := []struct {
-		name string
-		args args
-		want float64
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		if got := baz100(tt.args.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

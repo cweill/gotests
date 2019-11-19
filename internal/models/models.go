@@ -133,14 +133,11 @@ func (f *Function) TestName() string {
 	if f.Receiver != nil {
 		receiverType := f.Receiver.Type.Value
 		if unicode.IsLower([]rune(receiverType)[0]) {
-			receiverType = "_" + receiverType
+			receiverType = strings.Title(receiverType)
 		}
-		return "Test" + receiverType + "_" + f.Name
+		return "Test" + receiverType + strings.Title(f.Name)
 	}
-	if unicode.IsLower([]rune(f.Name)[0]) {
-		return "Test_" + f.Name
-	}
-	return "Test" + f.Name
+	return "Test" + strings.Title(f.Name)
 }
 
 func (f *Function) IsNaked() bool {

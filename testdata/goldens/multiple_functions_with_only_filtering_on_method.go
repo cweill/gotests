@@ -2,7 +2,7 @@ package testdata
 
 import "testing"
 
-func TestBar_BarFilter(t *testing.T) {
+func TestBarBarFilter(t *testing.T) {
 	type args struct {
 		i interface{}
 	}
@@ -12,7 +12,7 @@ func TestBar_BarFilter(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}

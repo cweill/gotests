@@ -54,7 +54,7 @@ func wrapToString(in []int) []string {
 	return result
 }
 
-func Test_wrapToString(t *testing.T) {
+func TestWrapToString(t *testing.T) {
 	type args struct {
 		in []int
 	}
