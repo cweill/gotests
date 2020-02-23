@@ -80,7 +80,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 			return nil
 		}
 
-		err = json.Unmarshal(buf, templateParams)
+		err = json.Unmarshal(buf, &templateParams)
 		if err != nil {
 			fmt.Fprintf(out, "Failed to umarshal %s er %s", jfile, err)
 			return nil
