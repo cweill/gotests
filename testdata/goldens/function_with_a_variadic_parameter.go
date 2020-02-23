@@ -11,7 +11,7 @@ func TestFoo20(t *testing.T) {
 		args args
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo20(tt.args.strs...); got != tt.want {

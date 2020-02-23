@@ -15,7 +15,7 @@ func TestFoo8(t *testing.T) {
 		want    *Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo8(tt.args.b)

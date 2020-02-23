@@ -14,7 +14,7 @@ func TestFoo10(t *testing.T) {
 		args args
 		want map[string]*Bar
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo10(tt.args.m); !reflect.DeepEqual(got, tt.want) {

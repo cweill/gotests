@@ -7,7 +7,7 @@ func Test_someIndirectImportedStruct_Foo037(t *testing.T) {
 		name string
 		smtg *someIndirectImportedStruct
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		smtg := &someIndirectImportedStruct{}
