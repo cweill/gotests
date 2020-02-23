@@ -32,7 +32,7 @@ type Options struct {
 	WriteOutput        bool   // Write output to test file(s).
 	Template           string // Name of custom template set
 	TemplateDir        string // Path to custom template set
-	TemplateParamsPath string // Path to custom paramters json file(s).
+	TemplateParamsPath string // Path to custom parameters json file(s).
 }
 
 // Generates tests for the Go files defined in args with the given options.
