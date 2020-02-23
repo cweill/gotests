@@ -8,7 +8,7 @@ func TestBook_Open(t *testing.T) {
 		b       *Book
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Book{}
@@ -24,7 +24,7 @@ func Test_door_Open(t *testing.T) {
 		d       *door
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		d := &door{}
@@ -40,7 +40,7 @@ func Test_xml_Open(t *testing.T) {
 		x       *xml
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		x := &xml{}

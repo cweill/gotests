@@ -11,7 +11,7 @@ func TestBar_Foo9(t *testing.T) {
 		b    Bar
 		want Bar
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := Bar{}

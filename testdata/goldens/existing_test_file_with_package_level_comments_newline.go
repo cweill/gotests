@@ -20,7 +20,7 @@ func TestBeforeCommentNewLine(t *testing.T) {
 		name string
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := BeforeCommentNewLine(); got != tt.want {
