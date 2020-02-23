@@ -10,7 +10,7 @@ func TestFoo3(t *testing.T) {
 		name string
 		args args
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		Foo3(tt.args.s)

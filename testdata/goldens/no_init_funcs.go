@@ -11,7 +11,7 @@ func Test_initFuncStruct_init(t *testing.T) {
 		fields fields
 		want   int
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		i := initFuncStruct{
@@ -32,7 +32,7 @@ func Test_initFieldStruct_getInit(t *testing.T) {
 		fields fields
 		want   int
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		i := initFieldStruct{

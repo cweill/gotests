@@ -15,7 +15,7 @@ func TestFoo22(t *testing.T) {
 		args args
 		want *ht.Template
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo22(tt.args.t); !reflect.DeepEqual(got, tt.want) {
