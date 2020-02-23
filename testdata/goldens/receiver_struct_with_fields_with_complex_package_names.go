@@ -20,7 +20,7 @@ func TestImporter_Foo35(t *testing.T) {
 		args   args
 		want   *types.Var
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		i := &Importer{
