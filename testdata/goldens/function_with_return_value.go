@@ -7,7 +7,7 @@ func TestFoo4(t *testing.T) {
 		name string
 		want bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo4(); got != tt.want {

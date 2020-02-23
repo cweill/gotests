@@ -14,7 +14,7 @@ func TestFoo16(t *testing.T) {
 		args args
 		want Bazzar
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo16(tt.args.in); !reflect.DeepEqual(got, tt.want) {

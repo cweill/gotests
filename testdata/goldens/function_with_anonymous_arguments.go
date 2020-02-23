@@ -11,7 +11,7 @@ func TestFoo2(t *testing.T) {
 		name string
 		args args
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		Foo2(tt.args.in0, tt.args.in1)
