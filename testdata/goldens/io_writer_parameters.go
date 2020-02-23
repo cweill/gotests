@@ -12,7 +12,7 @@ func TestBar_Write(t *testing.T) {
 		wantW   string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}
@@ -37,7 +37,7 @@ func TestWrite(t *testing.T) {
 		wantW   string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		w := &bytes.Buffer{}
@@ -64,7 +64,7 @@ func TestMultiWrite(t *testing.T) {
 		wantW2  string
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		w1 := &bytes.Buffer{}

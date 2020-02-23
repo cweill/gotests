@@ -55,7 +55,7 @@ func TestFoo100(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := Foo100(tt.args.strs)
@@ -79,7 +79,7 @@ func TestBar_Bar100(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}
@@ -98,7 +98,7 @@ func Test_baz100(t *testing.T) {
 		args args
 		want float64
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := baz100(tt.args.f); got != tt.want {

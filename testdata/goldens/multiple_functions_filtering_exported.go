@@ -15,7 +15,7 @@ func TestFooFilter(t *testing.T) {
 		want    []*Bar
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := FooFilter(tt.args.strs)
@@ -39,7 +39,7 @@ func TestBar_BarFilter(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		b := &Bar{}

@@ -16,7 +16,7 @@ func TestFoo200(t *testing.T) {
 		t    types.Type
 		want bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo200(tt.x, tt.t); got != tt.want {
