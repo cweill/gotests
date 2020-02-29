@@ -583,12 +583,29 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_subtests.go"),
 		},
 		{
+			name: "Naked function with parallel subtests",
+			args: args{
+				srcPath:  "testdata/naked_function_with_parallel_subtests.go",
+				subtests: true,
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_parallel_subtests.go"),
+		},
+		{
 			name: "Naked function without subtests",
 			args: args{
 				srcPath:  "testdata/naked_function_without_subtests.go",
 				subtests: false,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests.go"),
+		},
+		{
+			name: "Naked function without subtests with parallel",
+			args: args{
+				srcPath:  "testdata/naked_function_without_subtests_with_parallel.go",
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests_with_parallel.go"),
 		},
 		{
 			name: "Test non existing template path",
