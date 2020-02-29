@@ -24,6 +24,8 @@
 //
 //   -nosubtests           disable subtest generation when >= Go 1.7
 //
+//   -parallel             enable parallel subtest generation when >= Go 1.7.
+//
 //   -w                    write output to (test) files instead of stdout
 //
 //   -template_dir         Path to a directory containing custom test code templates. Takes
@@ -58,10 +60,15 @@ var (
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 )
 
-// nosubtests is always set to default value of true when Go < 1.7.
-// When >= Go 1.7 the default value is changed to false by the
-// flag.BoolVar but can be overridden by setting nosubtests to true
-var nosubtests = true
+var (
+	// nosubtests is always set to default value of true when Go < 1.7.
+	// When >= Go 1.7 the default value is changed to false by the
+	// flag.BoolVar but can be overridden by setting nosubtests to true
+	nosubtests = true
+
+	// parallel is default false.
+	parallel bool
+)
 
 func main() {
 	flag.Parse()
@@ -74,6 +81,7 @@ func main() {
 		AllFuncs:           *allFuncs,
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
+		Parallel:           parallel,
 		WriteOutput:        *writeOutput,
 		Template:           valOrGetenv(*template, "GOTESTS_TEMPLATE"),
 		TemplateDir:        valOrGetenv(*templateDir, "GOTESTS_TEMPLATE_DIR"),

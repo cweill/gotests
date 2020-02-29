@@ -29,6 +29,7 @@ type Options struct {
 	AllFuncs           bool   // Include all non-tested functions.
 	PrintInputs        bool   // Print function parameters as part of error messages.
 	Subtests           bool   // Print tests using Go 1.7 subtests
+	Parallel           bool   // Print tests that runs the subtests in parallel.
 	WriteOutput        bool   // Write output to test file(s).
 	Template           string // Name of custom template set
 	TemplateDir        string // Path to custom template set
@@ -93,6 +94,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		Exported:       opt.ExportedFuncs,
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
+		Parallel:       opt.Parallel,
 		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: templateParams,

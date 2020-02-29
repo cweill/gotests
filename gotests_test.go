@@ -23,6 +23,7 @@ func TestGenerateTests(t *testing.T) {
 		exported           bool
 		printInputs        bool
 		subtests           bool
+		parallel           bool
 		importer           types.Importer
 		templateDir        string
 		template           string
@@ -729,6 +730,7 @@ func TestGenerateTests(t *testing.T) {
 			Exported:       tt.args.exported,
 			PrintInputs:    tt.args.printInputs,
 			Subtests:       tt.args.subtests,
+			Parallel:       tt.args.parallel,
 			Importer:       func() types.Importer { return tt.args.importer },
 			TemplateDir:    tt.args.templateDir,
 			Template:       tt.args.template,
