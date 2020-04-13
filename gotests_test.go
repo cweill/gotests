@@ -23,6 +23,7 @@ func TestGenerateTests(t *testing.T) {
 		exported           bool
 		printInputs        bool
 		subtests           bool
+		parallel           bool
 		importer           types.Importer
 		templateDir        string
 		template           string
@@ -582,12 +583,29 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_subtests.go"),
 		},
 		{
+			name: "Naked function with parallel subtests",
+			args: args{
+				srcPath:  "testdata/naked_function_with_parallel_subtests.go",
+				subtests: true,
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_parallel_subtests.go"),
+		},
+		{
 			name: "Naked function without subtests",
 			args: args{
 				srcPath:  "testdata/naked_function_without_subtests.go",
 				subtests: false,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests.go"),
+		},
+		{
+			name: "Naked function without subtests with parallel",
+			args: args{
+				srcPath:  "testdata/naked_function_without_subtests_with_parallel.go",
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests_with_parallel.go"),
 		},
 		{
 			name: "Test non existing template path",
@@ -729,6 +747,7 @@ func TestGenerateTests(t *testing.T) {
 			Exported:       tt.args.exported,
 			PrintInputs:    tt.args.printInputs,
 			Subtests:       tt.args.subtests,
+			Parallel:       tt.args.parallel,
 			Importer:       func() types.Importer { return tt.args.importer },
 			TemplateDir:    tt.args.templateDir,
 			Template:       tt.args.template,

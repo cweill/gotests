@@ -17,6 +17,7 @@ import (
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
+	Parallel       bool
 	Template       string
 	TemplateDir    string
 	TemplateParams map[string]interface{}
@@ -64,7 +65,7 @@ func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt 
 		return fmt.Errorf("render.Header: %v", err)
 	}
 	for _, fun := range funcs {
-		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests, opt.TemplateParams); err != nil {
+		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests, opt.Parallel, opt.TemplateParams); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}

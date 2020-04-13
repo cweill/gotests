@@ -44,6 +44,8 @@ Available options:
 
   -nosubtests           disable subtest generation when >= Go 1.7
 
+  -parallel             enable parallel subtest generation when >= Go 1.7.
+
   -w                    write output to (test) files instead of stdout
 
   -template_dir         Path to a directory containing custom test code templates. Takes
