@@ -21,7 +21,7 @@ $ go get -u github.com/cweill/gotests/...
 ## Usage
 
 From the commandline, `gotests` can generate Go tests for specific source files or an entire directory. By default, it prints its output to `stdout`.
-
+It is amazing
 ```sh
 $ gotests [options] PATH ...
 ```
