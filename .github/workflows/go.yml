@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [ develop, master ]
+    branches: [ develop ]
   pull_request:
     branches: [ develop ]
 
@@ -13,12 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.9', '1.10', '1.11' ]
+        go: [ '1.9' ]
     steps:
+      
     - name: Set up Go ${{ matrix.go }}
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }}
+
+    - name: Check out develop
+    - uses: actions/checkout@v2
 
     - name: Get dependencies
       run: |
