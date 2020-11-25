@@ -21,6 +21,7 @@ type Options struct {
 	Template       string
 	TemplateDir    string
 	TemplateParams map[string]interface{}
+	TemplateData   [][]byte
 }
 
 func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byte, error) {
@@ -34,6 +35,8 @@ func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byt
 		if err != nil {
 			return nil, fmt.Errorf("loading custom templates of name: %v", err)
 		}
+	} else if opt != nil && opt.TemplateData != nil {
+		render.LoadFromData(opt.TemplateData)
 	}
 
 	tf, err := ioutil.TempFile("", "gotests_")

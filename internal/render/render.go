@@ -30,6 +30,14 @@ func init() {
 	}
 }
 
+// LoadFromData allows to load from a data slice
+func LoadFromData(templateData [][]byte) {
+	initEmptyTmpls()
+	for _, d := range templateData {
+		tmpls = template.Must(tmpls.Parse(string(d)))
+	}
+}
+
 // LoadCustomTemplates allows to load in custom templates from a specified path.
 func LoadCustomTemplates(dir string) error {
 	initEmptyTmpls()
