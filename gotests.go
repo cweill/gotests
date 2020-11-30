@@ -23,6 +23,7 @@ type Options struct {
 	Exported       bool                   // Include only exported methods
 	PrintInputs    bool                   // Print function parameters in error messages
 	Subtests       bool                   // Print tests using Go 1.7 subtests
+	Parallel       bool                   // Print tests that runs the subtests in parallel.
 	Importer       func() types.Importer  // A custom importer.
 	Template       string                 // Name of custom template set
 	TemplateDir    string                 // Path to custom template set
@@ -119,6 +120,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	b, err := output.Process(h, funcs, &output.Options{
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
+		Parallel:       opt.Parallel,
 		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,

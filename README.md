@@ -44,12 +44,16 @@ Available options:
 
   -nosubtests           disable subtest generation when >= Go 1.7
 
+  -parallel             enable parallel subtest generation when >= Go 1.7.
+
   -w                    write output to (test) files instead of stdout
 
   -template_dir         Path to a directory containing custom test code templates. Takes
-                         precedence over -template
+                         precedence over -template. This can also be set via environment
+                         variable GOTESTS_TEMPLATE_DIR
 
-  -template             Specify custom test code templates, e.g. testify
+  -template             Specify custom test code templates, e.g. testify. This can also
+                         be set via environment variable GOTESTS_TEMPLATE
 
   -template_params_file read external parameters to template by json with file
 

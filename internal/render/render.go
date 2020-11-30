@@ -157,16 +157,18 @@ func Header(w io.Writer, h *models.Header) error {
 	return err
 }
 
-func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool, templateParams map[string]interface{}) error {
+func TestFunction(w io.Writer, f *models.Function, printInputs, subtests, parallel bool, templateParams map[string]interface{}) error {
 	return tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
-		PrintInputs     bool
-		Subtests        bool
+		PrintInputs    bool
+		Subtests       bool
+		Parallel       bool
 		TemplateParams map[string]interface{}
 	}{
-		Function:        f,
-		PrintInputs:     printInputs,
-		Subtests:        subtests,
+		Function:       f,
+		PrintInputs:    printInputs,
+		Subtests:       subtests,
+		Parallel:       parallel,
 		TemplateParams: templateParams,
 	})
 }

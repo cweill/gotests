@@ -15,7 +15,7 @@ func TestFoo18(t *testing.T) {
 		args args
 		want *os.File
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Foo18(tt.args.t); !reflect.DeepEqual(got, tt.want) {

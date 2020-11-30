@@ -1,7 +1,3 @@
-github.com/cweill/gotests v1.5.3 h1:k3t4wW/x/YNixWZJhUIn+mivmK5iV1tJVOwVYkx0UcU=
-github.com/cweill/gotests v1.5.3/go.mod h1:XZYOJkGVkCRoymaIzmp9Wyi3rUgfA3oOnkuljYrjFV8=
-github.com/cweill/gotests v1.5.3 h1:ETjG/s5VVZw7+7rTkiQhLFZAJvkNl7m8yZB7n9tXL9Y=
-github.com/cweill/gotests v1.5.3/go.mod h1:dEpq7pEqfd31BjgAZvHSuWglKcYsFArtMndC+lLGBYs=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=

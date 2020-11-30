@@ -20,7 +20,7 @@ func TestNot(t *testing.T) {
 		args args
 		want string
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := Not(tt.args.this); got != tt.want {

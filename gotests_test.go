@@ -23,6 +23,7 @@ func TestGenerateTests(t *testing.T) {
 		exported           bool
 		printInputs        bool
 		subtests           bool
+		parallel           bool
 		importer           types.Importer
 		templateDir        string
 		template           string
@@ -562,14 +563,14 @@ func TestGenerateTests(t *testing.T) {
 		{
 			name: "Existing test file with package level comments without newline",
 			args: args{
-				srcPath: `testdata/test_existing_test_file_wih_comments_without_newline.go`,
+				srcPath: `testdata/test_existing_test_file_with_comments_without_newline.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_comments_without_newline.go"),
 		},
 		{
 			name: "Existing test file with mixed types package level comments",
 			args: args{
-				srcPath: `testdata/test_existing_test_file_wih_mixed_comments.go`,
+				srcPath: `testdata/test_existing_test_file_with_mixed_comments.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_package_level_mixed_types_comments.go"),
 		},
@@ -582,6 +583,15 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_subtests.go"),
 		},
 		{
+			name: "Naked function with parallel subtests",
+			args: args{
+				srcPath:  "testdata/naked_function_with_parallel_subtests.go",
+				subtests: true,
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_with_parallel_subtests.go"),
+		},
+		{
 			name: "Naked function without subtests",
 			args: args{
 				srcPath:  "testdata/naked_function_without_subtests.go",
@@ -590,10 +600,18 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests.go"),
 		},
 		{
+			name: "Naked function without subtests with parallel",
+			args: args{
+				srcPath:  "testdata/naked_function_without_subtests_with_parallel.go",
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/naked_function_without_subtests_with_parallel.go"),
+		},
+		{
 			name: "Test non existing template path",
 			args: args{
 				srcPath:     `testdata/calculator.go`,
-				templateDir: `/tmp/not/exising/path`,
+				templateDir: `/tmp/not/existing/path`,
 			},
 			wantErr:     true,
 			wantNoTests: true,
@@ -729,6 +747,7 @@ func TestGenerateTests(t *testing.T) {
 			Exported:       tt.args.exported,
 			PrintInputs:    tt.args.printInputs,
 			Subtests:       tt.args.subtests,
+			Parallel:       tt.args.parallel,
 			Importer:       func() types.Importer { return tt.args.importer },
 			TemplateDir:    tt.args.templateDir,
 			Template:       tt.args.template,
