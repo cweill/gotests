@@ -23,14 +23,9 @@ jobs:
 
     - name: Get dependencies
       run: |
-        go get -v -t -d ./...
         go get github.com/mattn/goveralls
         go get github.com/golang/tools/cmd/cover
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
-
+        
     - name: Build
       run: go build -v ./...
 
