@@ -20,7 +20,7 @@ jobs:
       GO111MODULE: auto
     defaults:
       run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/cweill/gotests
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
     steps:
 
     - name: Set up Go 1.x
@@ -31,7 +31,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
       with:
-        path: src/github.com/cweill/gotests
+        path: src/github.com/${{ github.repository }}
 
     - name: Get dependencies
       run: |
