@@ -35,12 +35,8 @@ jobs:
 
     - name: Get dependencies
       run: |
-        echo Gopath: $GOPATH
-        echo `ls $GOPATH/src/github.com/cweill/gotests`
-        echo Workspace: ${{ github.workspace }}
         go get github.com/mattn/goveralls
-        go get golang.org/x/tools/cmd/cover
-        golang.org/x/mod/module
+        go get github.com/tools/cmd/cover || go get golang.org/x/tools/cmd/cover
 
     - name: Test
       run: go test ./...
