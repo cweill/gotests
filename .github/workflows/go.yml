@@ -28,7 +28,8 @@ jobs:
     - name: Get dependencies
       run: |
         echo $GOPATH
-        echo ${{ github.workspace }}
+        echo Workspace: ${{ github.workspace }}
+        echo Repo: ${{ github.repository }}
         go get -v -t -d ./...
         go get github.com/mattn/goveralls
         go get golang.org/x/tools/cmd/cover
