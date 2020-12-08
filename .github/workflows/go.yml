@@ -15,8 +15,6 @@ jobs:
         go-version: [1.9.x, 1.10.x, 1.11.x, 1.12.x, 1.13.x, 1.14.x, 1.15.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      GOPATH: $GITHUB_WORKSPACE/go
     steps:
 
     - name: Set up Go 1.x
@@ -35,9 +33,15 @@ jobs:
         echo Workspace: ${{ github.workspace }}
         go get github.com/mattn/goveralls
         go get golang.org/x/tools/cmd/cover
+      env:
+        GOPATH: ${{ github.workspace }}/go
 
     - name: Test
       run: go test ./...
+      env:
+        GOPATH: ${{ github.workspace }}/go
       
     - name: Coverage
       run: go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
+      env:
+        GOPATH: ${{ github.workspace }}/go
