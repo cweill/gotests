@@ -41,15 +41,9 @@ jobs:
         go get github.com/mattn/goveralls
         go get golang.org/x/tools/cmd/cover
         golang.org/x/mod/module
-      env:
-        GOPATH: ${{ github.workspace }}/go
 
     - name: Test
       run: go test ./...
-      env:
-        GOPATH: ${{ github.workspace }}/go
       
     - name: Coverage
       run: go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
-      env:
-        GOPATH: ${{ github.workspace }}/go
