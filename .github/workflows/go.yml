@@ -34,6 +34,7 @@ jobs:
         echo Workspace: ${{ github.workspace }}
         go get github.com/mattn/goveralls
         go get golang.org/x/tools/cmd/cover
+        golang.org/x/mod/module
       env:
         GOPATH: ${{ github.workspace }}/go
 
