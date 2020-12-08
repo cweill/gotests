@@ -37,7 +37,7 @@ jobs:
       run: |
         go get github.com/mattn/goveralls
         go get github.com/tools/cmd/cover || go get golang.org/x/tools/cmd/cover
-        go get golang.org/x/mod
+        go get -v ./...
 
     - name: Test
       run: go test ./...
