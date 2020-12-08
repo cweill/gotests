@@ -12,7 +12,7 @@ jobs:
     name: Test
     strategy:
       matrix:
-        go-version: [1.9.x, 1.10.x]
+        go-version: [1.9.x, 1.10.x, 1.11.x, 1.12.x, 1.13.x, 1.14.x, 1.15.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     env:
@@ -36,7 +36,7 @@ jobs:
     - name: Get dependencies
       run: |
         go get github.com/mattn/goveralls
-        go get github.com/tools/cmd/cover || go get golang.org/x/tools/cmd/cover
+        if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
         go get -v ./...
 
     - name: Test
