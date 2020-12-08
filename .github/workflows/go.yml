@@ -28,12 +28,12 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
-    - name: Check out code into the Go module directory
+    - name: Check Out code
       uses: actions/checkout@v2
       with:
         path: src/github.com/cweill/gotests
 
-    - name: Get dependencies
+    - name: Get Dependencies
       run: |
         go get github.com/mattn/goveralls
         if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
@@ -43,4 +43,11 @@ jobs:
       run: go test ./...
       
     - name: Coverage
-      run: go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
+      run: |
+        go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
+        ./gotests.test -test.coverprofile coverage.cov
+        
+    - name: Send Coverate Report
+      run: $GOPATH/bin/goveralls -coverprofile=coverage.cov -service=github
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
