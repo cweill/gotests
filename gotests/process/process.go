@@ -23,17 +23,18 @@ const (
 
 // Set of options to use when generating tests.
 type Options struct {
-	OnlyFuncs          string // Regexp string for filter matches.
-	ExclFuncs          string // Regexp string for excluding matches.
-	ExportedFuncs      bool   // Only include exported functions.
-	AllFuncs           bool   // Include all non-tested functions.
-	PrintInputs        bool   // Print function parameters as part of error messages.
-	Subtests           bool   // Print tests using Go 1.7 subtests
-	Parallel           bool   // Print tests that runs the subtests in parallel.
-	WriteOutput        bool   // Write output to test file(s).
-	Template           string // Name of custom template set
-	TemplateDir        string // Path to custom template set
-	TemplateParamsPath string // Path to custom parameters json file(s).
+	OnlyFuncs          string   // Regexp string for filter matches.
+	ExclFuncs          string   // Regexp string for excluding matches.
+	ExportedFuncs      bool     // Only include exported functions.
+	AllFuncs           bool     // Include all non-tested functions.
+	PrintInputs        bool     // Print function parameters as part of error messages.
+	Subtests           bool     // Print tests using Go 1.7 subtests
+	Parallel           bool     // Print tests that runs the subtests in parallel.
+	WriteOutput        bool     // Write output to test file(s).
+	Template           string   // Name of custom template set
+	TemplateDir        string   // Path to custom template set
+	TemplateParamsPath string   // Path to custom parameters json file(s).
+	TemplateData       [][]byte // Data slice for templates
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -98,6 +99,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: templateParams,
+		TemplateData:   opt.TemplateData,
 	}
 }
 

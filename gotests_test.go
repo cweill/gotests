@@ -6,6 +6,7 @@ import (
 	"go/types"
 	"io/ioutil"
 	"path"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -28,6 +29,7 @@ func TestGenerateTests(t *testing.T) {
 		templateDir        string
 		template           string
 		templateParamsPath string
+		templateData       [][]byte
 	}
 	tests := []struct {
 		name              string
@@ -725,6 +727,14 @@ func TestGenerateTests(t *testing.T) {
 			wantNoTests: true,
 			wantErr:     true,
 		},
+		{
+			name: "With templateData",
+			args: args{
+				srcPath:      `testdata/test004.go`,
+				templateData: mustLoadExternalTemplateDir(t, "testdata/templatedata/"),
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_template_data.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -752,6 +762,7 @@ func TestGenerateTests(t *testing.T) {
 			TemplateDir:    tt.args.templateDir,
 			Template:       tt.args.template,
 			TemplateParams: params,
+			TemplateData:   tt.args.templateData,
 		})
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
@@ -814,6 +825,31 @@ func loadExternalJsonFile(file string) (map[string]interface{}, error) {
 	params := map[string]interface{}{}
 	err = json.Unmarshal(buf, &params)
 	return params, err
+}
+
+func mustLoadExternalTemplateDir(t *testing.T, dir string) [][]byte {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		t.Fatalf("ioutil.ReadDir: %v", err)
+	}
+
+	templateData := make([][]byte, 0)
+
+	for _, f := range files {
+		filePath := filepath.Join(dir, f.Name())
+		templateData = append(templateData, mustLoadExternalTemplateFile(t, filePath))
+	}
+
+	return templateData
+}
+
+func mustLoadExternalTemplateFile(t *testing.T, file string) []byte {
+	buf, err := ioutil.ReadFile(file)
+	if err != nil {
+		t.Fatalf("loading external template file: %v", err)
+	}
+
+	return buf
 }
 
 func toSnakeCase(s string) string {

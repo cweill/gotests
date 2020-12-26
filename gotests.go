@@ -28,6 +28,7 @@ type Options struct {
 	Template       string                 // Name of custom template set
 	TemplateDir    string                 // Path to custom template set
 	TemplateParams map[string]interface{} // Custom external parameters
+	TemplateData   [][]byte               // Data slice for templates
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -124,6 +125,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,
+		TemplateData:   opt.TemplateData,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)
