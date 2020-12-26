@@ -1,0 +1,53 @@
+name: Go
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        go-version: [1.9.x, 1.10.x, 1.11.x, 1.12.x, 1.13.x, 1.14.x, 1.15.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: auto
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        path: src/github.com/${{ github.repository }}
+
+    - name: Get dependencies
+      run: |
+        go get github.com/mattn/goveralls
+        if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+        go get -v ./...
+
+    - name: Test
+      run: go test ./...
+      
+    - name: Get Coverage Report
+      run: |
+        go test -c -covermode=count -coverpkg=github.com/cweill/gotests,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/render,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/models
+        ./gotests.test -test.coverprofile coverage.cov
+        
+    - name: Send Coverage Report
+      run: $GOPATH/bin/goveralls -coverprofile=coverage.cov -service=github
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
