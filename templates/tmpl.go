@@ -213,7 +213,7 @@ var _escData = map[string]*_escFile{
 		name:    "call.tmpl",
 		local:   "test/call.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613750493,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -223,7 +223,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "function.tmpl",
 		local:   "test/function.tmpl",
 		size:    19,
-		modtime: 1573266938,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/6qu1tdSSFRIzs/NTc0rUdDSr+UCBAAA//+6o7WcEwAAAA==
 `,
@@ -233,7 +233,7 @@ H4sIAAAAAAAC/6qu1tdSSFRIzs/NTc0rUdDSr+UCBAAA//+6o7WcEwAAAA==
 		name:    "header.tmpl",
 		local:   "test/header.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -243,7 +243,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "inline.tmpl",
 		local:   "test/inline.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -253,7 +253,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "inputs.tmpl",
 		local:   "test/inputs.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -263,7 +263,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "message.tmpl",
 		local:   "test/message.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -273,7 +273,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "results.tmpl",
 		local:   "test/results.tmpl",
 		size:    0,
-		modtime: 1573266911,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -283,7 +283,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "call.tmpl",
 		local:   "testify/call.tmpl",
 		size:    241,
-		modtime: 1571318606,
+		modtime: 1613754073,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -294,23 +294,24 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 	"/testify/function.tmpl": {
 		name:    "function.tmpl",
 		local:   "testify/function.tmpl",
-		size:    2534,
-		modtime: 1572158668,
+		size:    2798,
+		modtime: 1615435903,
 		compressed: `
-H4sIAAAAAAAC/5xWTW/jNhA9S79iIASBVTjM3UAOKZoUucSBHTSHoigYa+QKlWmXHHVhEPzvCw71bSmb
-rA675pCc92aGbybWZpgXCiGRxqCm4qgSuHEuJhKtZUFLsLbIQaxVed4gVVqZB62P2jlrCQ+nUhJCspNl
-mYDwRiwNOodaW4sqcy629gaKHI4aFupIILbVO6Ehk4J40YWiJ3WqyDA0AMAS8gOJ7clv5Yukj3JAY+Qe
-GSjxxLqtgp3wTsqIqDJ22a6ci+O4Cxr/q2SZOBdCFQ9+yZH+gKdzeR1YE1/f68HsE7/zGT+whJ+IbggO
-A/S8UjuuY531qxxWd/5SHPstsFa8oqFneUDnFgS/eF6F2ovXFGwc+SvfCvoHxAZ3WPyP2rk4iur6iSez
-JV3tiI2t9bHAMjPBFtH5hJCzBQwf9n7r01qqPY4uRNby2pNkeucT1ltd2fyqxWxMvd+jn56VD/NFanlA
-Qs1gTE3q/YBYj9blDQZk0wW7HuIQnwvtk/7nXz0YJQ/oYQu1ry9PpLnhLlXW5XqUrjq14b82Iyy4mm/j
-8jKhM8n7IGVRxPny/0zc6eVtg6YqyTQ4b1LRRylrIYf9hAGbxgONLv3efWN9rNRulH6f39tbeF3/tl7B
-fZaBLwHspEEjuDr5UYcWtjjqToy1Np/Ms/wXszR1Dv5eApGvXaOtEGE4brk3+a8h33pyjsSmUgsi4Qu9
-BK+1sbqg35Oi+Ucwo7aL0jJNLtv5hHxYaueu2+4Q7H/IskLnbONiRoSRtSI0hRUQifC8RE+ay85BJ8lo
-QqcXixpvQllNmG+6oDb6geJWd3D9fiY04tcqz1HbzwDWCgrlHQ+t9NK+VshZSqFl1vVdHR52Alc5P+fx
-wPPmORbj1w2jr++tN4FnXc7pbSqVMPH18cLwYyw/4YlEp1o/edoaiC13rUU6GFRmH+6mXT1CD5rGZXpX
-+VTWZ+58lW9/UpaFwnB0hvMcyQ9i+Cqf348UZvXXCLTSmn3iE80HXDpsLi52/o+CcOV7AAAA//+jWbgI
-5gkAAA==
+H4sIAAAAAAAC/5xWUW/cNgx+tn8FYQTFebiq7yn60GHtkJemSIL1oRgG9UzfjPl0N4necBD43wdRlu3z
+2VnTPOQsyiQ/8qM+y/sK68YgFNo5tNQcTQGvmXMiNVg2tAXvmxrUvWnPD0idNe6DtUfL7D3h4dRqQih2
+um0LUMGIrUNmtNZ7NBVz7v1raGo4WtiYI4F67L4ROnIlqM+2MXRnTh05SQ0AsIX6QOrxFLbqTTHNckDn
+9B4lURGAjVuNBJGdUjKiqSTksGLO83wsGv/udFswx1LVh7CUSv8HJ3PdF5bqm0Y9uH0Rdr4nDmzhB6p7
+JnndmZ3Q2Df9pobbd8Enz8MWeK+e0NEnfUDmDcFPAVZj9uqpBJ9nweXfhv4E9YA7bP5By5xnWU+funOP
+ZLsdiXGwfmywrVy0ZXQ+IdRiAScvh7j921abPc4cMu9lHUAKvPMJ+62RtbAacibT5Hn2GFCFMj9rqw9I
+aCWZQNN2fwFsAuvaQxKK6QrdJONlfuE5NN17wRFaXTEf9OmrI9uY/e8xezolX8d1CNCDCq5xdMS/ZDb6
+gBAjJOKzNb5SE7SpRtJmfe85ij9DawVSX3gKec3MCgvP9D7LpPHh34LPhIAHdF1LLuX5og091/sh5aUu
+ScIkYJDOd9h7n6wfO7Ob8Rha/+YNPN3/cn8L76sKApew0w6dEprro41SuDna8VD3RN25T/ovrMpS0E6o
+D8wltv/oudsCURySyHrsQAznJ2WlHBe1hta2LbbMMQjR28uRSNSnFy+gBI/w+9Z7UUjxIvXQmc0qbCLV
+LyP4oCXX6rGIcHjelJcgh5O9NsQrsnM1mtJGGbvzCeVlbZlfDSoZ7b/ptkNmn0KsqFHmvYrqeAtEKh4P
+NdGo7Rhg1KZsQbCuFn2+BYlJZX6xDQ3VX0jP7Tt49e1M6NTPXV2j9d+TsB+DOJ7zj3d5bb83KF0qYUA2
+fn9sPJgF3NQy4PMPfzCvoZifTpj9TaNNbiKrIdf0YqmVsPA3zRcvAZIr3HSI1Kg64Qs8cKAeRXzDGE8+
+2G4ffcuRj6ihy3kF3k291PUVn5find4Y2sZgfHUF8xrIZ2p4KZ5fjxTvLC8DMByt1RGfSyQwA5cwvfhl
+nHO4HUWX/wIAAP//vN7yje4KAAA=
 `,
 	},
 
@@ -318,7 +319,7 @@ wPPmORbj1w2jr++tN4FnXc7pbSqVMPH18cLwYyw/4YlEp1o/edoaiC13rUU6GFRmH+6mXT1CD5rGZXpX
 		name:    "header.tmpl",
 		local:   "testify/header.tmpl",
 		size:    142,
-		modtime: 1571318606,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
 iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
@@ -330,7 +331,7 @@ jgAAAA==
 		name:    "inline.tmpl",
 		local:   "testify/inline.tmpl",
 		size:    49,
-		modtime: 1571318606,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -340,12 +341,12 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 	"/testify/inputs.tmpl": {
 		name:    "inputs.tmpl",
 		local:   "testify/inputs.tmpl",
-		size:    152,
-		modtime: 1571318606,
+		size:    177,
+		modtime: 1615435903,
 		compressed: `
-H4sIAAAAAAAC/0yNMQoCQQxFrxKWLSUHEDyAneAJIptZptgomWz1yd1lRoupEh7/vw9sWqopLdU+Z7Ql
-E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
-/468z9qYAAAA
+H4sIAAAAAAAC/0yNMaoDMQxE+38KsWz58QECOUCaEMgJFCwvLqwESVsJ3T1YpHAlzWN4416pdSbYOn9O
+0y3CfW9wuUKZb2/Ab4PyPF9GarqyOw6qEWbFnbhGMA76h1/I3t7KQzrbLeUTCvJByVFwkJFoKlAOLe5J
+5/TiWc/fNwAA//94+RPrsQAAAA==
 `,
 	},
 
@@ -353,7 +354,7 @@ E1gLXW/E/a2F7B3Ez/MV2qJlRrDJoRcC1LZ/Zi388GpxH5IOXWzXwcXl0FD/dcX3xsCgfWLyzOcbAAD/
 		name:    "message.tmpl",
 		local:   "testify/message.tmpl",
 		size:    201,
-		modtime: 1571318606,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -365,7 +366,7 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 		name:    "results.tmpl",
 		local:   "testify/results.tmpl",
 		size:    168,
-		modtime: 1571318606,
+		modtime: 1613735787,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
