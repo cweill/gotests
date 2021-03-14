@@ -39,25 +39,21 @@ jobs:
       run: |
         go test -v ./...
 
-    - name: Coverage - Geting Report
+    - name: Coverage Dependencies
       if: matrix.go == '1.16.x'
       run: |
-        PKGS=$(go list ./... | grep -vE "(gotests/gotests|.*data|templates)" | tr -s '\n' ',' | sed 's/.\{1\}$//')
-        echo "Generate covering for ${PKGS}"
-        go test -v -covermode=count -coverpkg=$PKGS -coverprofile=coverage.out
-        ls -la
+        go get github.com/mattn/goveralls
+        go get -v ./...
 
-    - name: Coverage - Converting coverage to lcov
-      uses: jandelgado/gcov2lcov-action@v1.0.5
-      if: matrix.go == '1.16.x'
-      with:
-          working-directory:  ${{ env.GOPATH }}/src/github.com/cweill/gotests/
-          infile: ${{ env.GOPATH }}/src/github.com/cweill/gotests/coverage.out
-          outfile: ${{ env.GOPATH }}/src/github.com/cweill/gotests/coverage.lcov
 
-    - name: Coverage - reporting to Coveralls
-      uses: coverallsapp/github-action@master
+    - name: Coverage Reporting Generation
       if: matrix.go == '1.16.x'
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ env.GOPATH }}/src/github.com/cweill/gotests/coverage.lcov
+      run: |
+        export PKGS=$(go list ./... | grep -vE "(gotests/gotests|.*data|templates)" | tr -s '\n' ',' | sed 's/.\{1\}$//')
+        go test -v -covermode=count -coverpkg=$PKGS -coverprofile=coverage.cov
+
+    - name: Coverage - Sending Report to Coveral
+      if: matrix.go == '1.16.x'
+      run: $GOPATH/bin/goveralls -coverprofile=coverage.cov -service=github
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
