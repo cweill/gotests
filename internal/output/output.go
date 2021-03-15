@@ -24,19 +24,24 @@ type Options struct {
 	TemplateData   [][]byte
 }
 
+func (o *Options) isProvidesTemplateData() bool { return o != nil && len(o.TemplateData) > 0 }
+func (o *Options) isProvidesTemplateDir() bool  { return o != nil && o.TemplateDir != "" }
+func (o *Options) isProvidesTemplate() bool     { return o != nil && o.Template != "" }
+
 func Process(head *models.Header, funcs []*models.Function, opt *Options) ([]byte, error) {
-	if opt != nil && opt.TemplateDir != "" {
-		err := render.LoadCustomTemplates(opt.TemplateDir)
-		if err != nil {
+	switch {
+	case opt.isProvidesTemplateDir():
+		if err := render.LoadCustomTemplates(opt.TemplateDir); err != nil {
 			return nil, fmt.Errorf("loading custom templates: %v", err)
 		}
-	} else if opt != nil && opt.Template != "" {
-		err := render.LoadCustomTemplatesName(opt.Template)
-		if err != nil {
+	case opt.isProvidesTemplate():
+		if err := render.LoadCustomTemplatesName(opt.Template); err != nil {
 			return nil, fmt.Errorf("loading custom templates of name: %v", err)
 		}
-	} else if opt != nil && opt.TemplateData != nil {
+	case opt.isProvidesTemplateData():
 		render.LoadFromData(opt.TemplateData)
+	default:
+		render.Reset()
 	}
 
 	tf, err := ioutil.TempFile("", "gotests_")

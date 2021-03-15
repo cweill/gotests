@@ -24,6 +24,10 @@ var (
 )
 
 func init() {
+	Reset()
+}
+
+func Reset() {
 	initEmptyTmpls()
 	for _, name := range bindata.AssetNames() {
 		tmpls = template.Must(tmpls.Parse(bindata.FSMustString(false, name)))

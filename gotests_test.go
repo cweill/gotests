@@ -492,6 +492,7 @@ func TestGenerateTests(t *testing.T) {
 			name: "Entire testdata directory",
 			args: args{
 				srcPath: `testdata/`,
+				template: "testify",
 			},
 			wantMultipleTests: true,
 		}, {
