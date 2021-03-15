@@ -25,6 +25,7 @@ func TestGenerateTests(t *testing.T) {
 		printInputs        bool
 		subtests           bool
 		parallel           bool
+		named              bool
 		importer           types.Importer
 		templateDir        string
 		template           string
@@ -561,7 +562,7 @@ func TestGenerateTests(t *testing.T) {
 		{
 			name: "Entire testdata directory",
 			args: args{
-				srcPath: `testdata/`,
+				srcPath:  `testdata/`,
 				template: "testify",
 			},
 			wantMultipleTests: true,
@@ -812,6 +813,124 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_template_data.go"),
 		},
+		{
+			name: "named_named=on",
+			args: args{
+				srcPath: "testdata/test038.go",
+				named:   true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on.go"),
+		},
+		{
+			name: "named_named=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				template: "testify",
+				named:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_template_testify.go"),
+		},
+		{
+			name: "named_named=off",
+			args: args{
+				srcPath: "testdata/test038.go",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off.go"),
+		},
+		{
+			name: "named_named=off,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_template_testify.go"),
+		},
+		{
+			name: "named_named=on,subtests=on",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				named:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on.go"),
+		},
+		{
+			name: "named_named=on,subtests=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				named:    true,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_template_testify.go"),
+		},
+		{
+			name: "named_named=off,subtests=on",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on.go"),
+		},
+		{
+			name: "named_named=off,subtests=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_template_testify.go"),
+		},
+		{
+			name: "named_named=off,subtests=on,parallel=on",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				parallel: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on.go"),
+		},
+		{
+			name: "named_named=off,subtests=on,parallel=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				parallel: true,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on_template_testify.go"),
+		},
+		{
+			name: "named_named=on,subtests=on,parallel=on",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				parallel: true,
+				named:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_parallel_on.go"),
+		},
+		{
+			name: "named_named=on,subtests=on,parallel=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				parallel: true,
+				named:    true,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_parallel_on_template_testify.go"),
+		},
+		{
+			name: "named_named=off,subtests=on,parallel=on,template=testify",
+			args: args{
+				srcPath:  "testdata/test038.go",
+				subtests: true,
+				parallel: true,
+				template: "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on_template_testify.go"),
+		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
 	if err != nil {
@@ -836,6 +955,7 @@ func TestGenerateTests(t *testing.T) {
 				PrintInputs:    tt.args.printInputs,
 				Subtests:       tt.args.subtests,
 				Parallel:       tt.args.parallel,
+				Named:          tt.args.named,
 				Importer:       func() types.Importer { return tt.args.importer },
 				TemplateDir:    tt.args.templateDir,
 				Template:       tt.args.template,
