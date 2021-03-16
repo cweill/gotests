@@ -1,7 +1,7 @@
 package testdata
 
-import "github.com/cweill/gotests"
+import "net/url"
 
-type someIndirectImportedStruct gotests.Options
+type someIndirectImportedStruct url.URL
 
 func (smtg *someIndirectImportedStruct) Foo037() {}
