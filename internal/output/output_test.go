@@ -1,6 +1,10 @@
 package output
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+)
 
 func TestOptions_providesTemplateData(t *testing.T) {
 	tests := []struct {
@@ -16,8 +20,8 @@ func TestOptions_providesTemplateData(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.otpions.providesTemplateData(); got != tt.want {
-				t.Errorf("Options.isProvidesTemplateData() = %v, want %v", got, tt.want)
+			if got := tt.otpions.providesTemplateData(); !cmp.Equal(got, tt.want) {
+				t.Errorf("Options.isProvidesTemplateData() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}
@@ -36,8 +40,8 @@ func TestOptions_providesTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.otpions.providesTemplate(); got != tt.want {
-				t.Errorf("Options.isProvidesTemplate() = %v, want %v", got, tt.want)
+			if got := tt.otpions.providesTemplate(); !cmp.Equal(got, tt.want) {
+				t.Errorf("Options.isProvidesTemplate() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}
@@ -56,8 +60,8 @@ func TestOptions_providesTemplateDir(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.otpions.providesTemplateDir(); got != tt.want {
-				t.Errorf("Options.isProvidesTemplate() = %v, want %v", got, tt.want)
+			if got := tt.otpions.providesTemplateDir(); !cmp.Equal(got, tt.want) {
+				t.Errorf("Options.isProvidesTemplate() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}

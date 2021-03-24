@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func Test_valOrGetenv(t *testing.T) {
@@ -65,8 +67,8 @@ func Test_valOrGetenv(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := valOrGetenv(tt.args.val, tt.args.key); got != tt.want {
-				t.Errorf("valOrGetenv() = %v, want %v", got, tt.want)
+			if got := valOrGetenv(tt.args.val, tt.args.key); !cmp.Equal(got, tt.want) {
+				t.Errorf("valOrGetenv() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}

@@ -13,6 +13,7 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/google/go-cmp/cmp"
 	"golang.org/x/tools/imports"
 )
 
@@ -858,7 +859,7 @@ func TestGenerateTests(t *testing.T) {
 				return
 			}
 			if got := string(gts[0].Output); got != tt.want {
-				t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
+				t.Errorf("%q. GenerateTests(%v) = diff=%v", tt.name, tt.args.srcPath, cmp.Diff(got, tt.want))
 				outputResult(t, tmp, tt.name, gts[0].Output)
 			}
 		})

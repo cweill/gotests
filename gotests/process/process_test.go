@@ -3,6 +3,8 @@ package process
 import (
 	"bytes"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestRun(t *testing.T) {
@@ -53,8 +55,8 @@ func TestRun(t *testing.T) {
 	for _, tt := range tests {
 		out := &bytes.Buffer{}
 		Run(out, tt.args, tt.opts)
-		if got := out.String(); got != tt.want {
-			t.Errorf("%q. Run() =\n%v, want\n%v", tt.name, got, tt.want)
+		if got := out.String(); !cmp.Equal(got, tt.want) {
+			t.Errorf("%q. Run() =\n%v, want\n%v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }
