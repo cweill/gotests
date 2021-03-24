@@ -8,7 +8,7 @@ func TestSameName(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := SameName()
@@ -28,7 +28,7 @@ func Test_sameName(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		got, err := sameName()
@@ -45,15 +45,15 @@ func Test_sameName(t *testing.T) {
 func TestSameTypeName_SameName(t *testing.T) {
 	tests := []struct {
 		name    string
-		t       *SameTypeName
+		tr      *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t := &SameTypeName{}
-		got, err := t.SameName()
+		tr := &SameTypeName{}
+		got, err := tr.SameName()
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. SameTypeName.SameName() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -67,15 +67,15 @@ func TestSameTypeName_SameName(t *testing.T) {
 func TestSameTypeName_sameName(t *testing.T) {
 	tests := []struct {
 		name    string
-		t       *SameTypeName
+		tr      *SameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t := &SameTypeName{}
-		got, err := t.sameName()
+		tr := &SameTypeName{}
+		got, err := tr.sameName()
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. SameTypeName.sameName() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -89,15 +89,15 @@ func TestSameTypeName_sameName(t *testing.T) {
 func Test_sameTypeName_SameName(t *testing.T) {
 	tests := []struct {
 		name    string
-		t       *sameTypeName
+		tr      *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t := &sameTypeName{}
-		got, err := t.SameName()
+		tr := &sameTypeName{}
+		got, err := tr.SameName()
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. sameTypeName.SameName() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
@@ -111,15 +111,15 @@ func Test_sameTypeName_SameName(t *testing.T) {
 func Test_sameTypeName_sameName(t *testing.T) {
 	tests := []struct {
 		name    string
-		t       *sameTypeName
+		tr      *sameTypeName
 		want    int
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t := &sameTypeName{}
-		got, err := t.sameName()
+		tr := &sameTypeName{}
+		got, err := tr.sameName()
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. sameTypeName.sameName() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue

@@ -1,4 +1,4 @@
-# gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![godoc](https://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/cweill/gotests) [![Build Status](https://travis-ci.org/cweill/gotests.svg?branch=master)](https://travis-ci.org/cweill/gotests) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master) [![codebeat badge](https://codebeat.co/badges/7ef052e3-35ff-4cab-88f9-e13393c8ab35)](https://codebeat.co/projects/github-com-cweill-gotests) [![Go Report Card](https://goreportcard.com/badge/github.com/cweill/gotests)](https://goreportcard.com/report/github.com/cweill/gotests)
+# gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![godoc](https://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/cweill/gotests) [![Build Status](https://github.com/cweill/gotests/workflows/Go/badge.svg)](https://github.com/cweill/gotests/actions) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master) [![codebeat badge](https://codebeat.co/badges/7ef052e3-35ff-4cab-88f9-e13393c8ab35)](https://codebeat.co/projects/github-com-cweill-gotests) [![Go Report Card](https://goreportcard.com/badge/github.com/cweill/gotests)](https://goreportcard.com/report/github.com/cweill/gotests)
 
 `gotests` makes writing Go tests easy. It's a Golang commandline tool that generates [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests) based on its target source files' function and method signatures. Any new dependencies in the test files are automatically imported.
 
@@ -29,24 +29,35 @@ $ gotests [options] PATH ...
 Available options:
 
 ```
-  -all           generate go tests for all functions and methods
+  -all                  generate tests for all functions and methods
 
-  -excl          regexp. generate go tests for functions and methods that don't
-                 match. Takes precedence over -only, -exported, and -all
+  -excl                 regexp. generate tests for functions and methods that don't
+                         match. Takes precedence over -only, -exported, and -all
 
-  -exported      generate go tests for exported functions and methods. Takes
-                 precedence over -only and -all
+  -exported             generate tests for exported functions and methods. Takes
+                         precedence over -only and -all
 
-  -i             print test inputs in error messages
+  -i                    print test inputs in error messages
 
-  -only          regexp. generate go tests for functions and methods that match only.
-                 Takes precedence over -all
+  -only                 regexp. generate tests for functions and methods that match only.
+                         Takes precedence over -all
 
-  -w             write output to (test) files instead of stdout
+  -nosubtests           disable subtest generation when >= Go 1.7
 
-  -nosubtests    disable subtest generation. Only available for Go 1.7+
+  -parallel             enable parallel subtest generation when >= Go 1.7.
 
-  -template_dir  optional. Path to a directory containing custom test code templates
+  -w                    write output to (test) files instead of stdout
+
+  -template_dir         Path to a directory containing custom test code templates. Takes
+                         precedence over -template. This can also be set via environment
+                         variable GOTESTS_TEMPLATE_DIR
+
+  -template             Specify custom test code templates, e.g. testify. This can also
+                         be set via environment variable GOTESTS_TEMPLATE
+
+  -template_params_file read external parameters to template by json with file
+
+  -template_params      read external parameters to template by json with stdin
 ```
 
 ## Contributions

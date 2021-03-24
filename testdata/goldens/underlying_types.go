@@ -11,7 +11,7 @@ func TestCelsius_ToFahrenheit(t *testing.T) {
 		c    Celsius
 		want Fahrenheit
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := tt.c.ToFahrenheit(); got != tt.want {
@@ -29,7 +29,7 @@ func TestHourToSecond(t *testing.T) {
 		args args
 		want time.Duration
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		if got := HourToSecond(tt.args.h); got != tt.want {

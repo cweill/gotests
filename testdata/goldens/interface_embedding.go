@@ -6,13 +6,13 @@ func TestSomeStruct_Do(t *testing.T) {
 	type fields struct {
 		Doer some.Doer
 	}
-	testCases := []struct {
+	tests := []struct {
 		name   string
 		fields fields
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range testCases {
+	for _, tt := range tests {
 		c := &SomeStruct{
 			Doer: tt.fields.Doer,
 		}

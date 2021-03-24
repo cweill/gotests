@@ -4,6 +4,7 @@
 package process
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -22,14 +23,18 @@ const (
 
 // Set of options to use when generating tests.
 type Options struct {
-	OnlyFuncs     string // Regexp string for filter matches.
-	ExclFuncs     string // Regexp string for excluding matches.
-	ExportedFuncs bool   // Only include exported functions.
-	AllFuncs      bool   // Include all non-tested functions.
-	PrintInputs   bool   // Print function parameters as part of error messages.
-	Subtests      bool   // Print tests using Go 1.7 subtests
-	WriteOutput   bool   // Write output to test file(s).
-	TemplateDir   string // Path to custom template set
+	OnlyFuncs          string   // Regexp string for filter matches.
+	ExclFuncs          string   // Regexp string for excluding matches.
+	ExportedFuncs      bool     // Only include exported functions.
+	AllFuncs           bool     // Include all non-tested functions.
+	PrintInputs        bool     // Print function parameters as part of error messages.
+	Subtests           bool     // Print tests using Go 1.7 subtests
+	Parallel           bool     // Print tests that runs the subtests in parallel.
+	WriteOutput        bool     // Write output to test file(s).
+	Template           string   // Name of custom template set
+	TemplateDir        string   // Path to custom template set
+	TemplateParamsPath string   // Path to custom parameters json file(s).
+	TemplateData       [][]byte // Data slice for templates
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -67,13 +72,34 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		fmt.Fprintln(out, "Invalid -excl regex:", err)
 		return nil
 	}
+
+	templateParams := map[string]interface{}{}
+	jfile := opt.TemplateParamsPath
+	if jfile != "" {
+		buf, err := ioutil.ReadFile(jfile)
+		if err != nil {
+			fmt.Fprintf(out, "Failed to read from %s ,err %s", jfile, err)
+			return nil
+		}
+
+		err = json.Unmarshal(buf, &templateParams)
+		if err != nil {
+			fmt.Fprintf(out, "Failed to umarshal %s er %s", jfile, err)
+			return nil
+		}
+	}
+
 	return &gotests.Options{
-		Only:        onlyRE,
-		Exclude:     exclRE,
-		Exported:    opt.ExportedFuncs,
-		PrintInputs: opt.PrintInputs,
-		Subtests:    opt.Subtests,
-		TemplateDir: opt.TemplateDir,
+		Only:           onlyRE,
+		Exclude:        exclRE,
+		Exported:       opt.ExportedFuncs,
+		PrintInputs:    opt.PrintInputs,
+		Subtests:       opt.Subtests,
+		Parallel:       opt.Parallel,
+		Template:       opt.Template,
+		TemplateDir:    opt.TemplateDir,
+		TemplateParams: templateParams,
+		TemplateData:   opt.TemplateData,
 	}
 }
 

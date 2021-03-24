@@ -1,0 +1,59 @@
+name: Go
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ 1.16.x, 1.15.x, 1.14.x, 1.13.x, 1.12.x, 1.11.x, 1.10.x, 1.9.x ]
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: auto
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/cweill/gotests
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        path: ${{ env.GOPATH }}/src/github.com/cweill/gotests
+
+    - name: Get Dependencies (github.com/golang.org/x/tools/imports)
+      run: go get -v ./...
+
+    - name: Test
+      run: |
+        go test -v ./...
+
+    - name: Coverage Dependencies
+      if: matrix.go == '1.16.x'
+      run: |
+        go get github.com/mattn/goveralls
+        go get -v ./...
+
+
+    - name: Coverage Reporting Generation
+      if: matrix.go == '1.16.x'
+      run: |
+        export PKGS=$(go list ./... | grep -vE "(gotests/gotests|.*data|templates)" | tr -s '\n' ',' | sed 's/.\{1\}$//')
+        go test -v -covermode=count -coverpkg=$PKGS -coverprofile=coverage.cov
+
+    - name: Coverage - Sending Report to Coveral
+      if: matrix.go == '1.16.x'
+      run: $GOPATH/bin/goveralls -coverprofile=coverage.cov -service=github
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -11,18 +11,34 @@ import (
 
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/render/bindata"
+	"github.com/cweill/gotests/templates"
 )
 
-const name = "name"
+const (
+	name  = "name"
+	nFile = 7
+)
 
 var (
 	tmpls *template.Template
 )
 
 func init() {
+	Reset()
+}
+
+func Reset() {
 	initEmptyTmpls()
 	for _, name := range bindata.AssetNames() {
 		tmpls = template.Must(tmpls.Parse(bindata.FSMustString(false, name)))
+	}
+}
+
+// LoadFromData allows to load from a data slice
+func LoadFromData(templateData [][]byte) {
+	initEmptyTmpls()
+	for _, d := range templateData {
+		tmpls = template.Must(tmpls.Parse(string(d)))
 	}
 }
 
@@ -43,6 +59,33 @@ func LoadCustomTemplates(dir string) error {
 	if err != nil {
 		return fmt.Errorf("tmpls.ParseFiles: %v", err)
 	}
+	return nil
+}
+
+// LoadCustomTemplatesName allows to load in custom templates of a specified name from the templates directory.
+func LoadCustomTemplatesName(name string) error {
+	f, err := templates.Dir(false, "/").Open(name)
+	if err != nil {
+		return fmt.Errorf("templates.Open: %v", err)
+	}
+
+	files, err := f.Readdir(nFile)
+	if err != nil {
+		return fmt.Errorf("f.Readdir: %v", err)
+	}
+
+	for _, f := range files {
+		text, err := templates.FSString(false, path.Join("/", name, f.Name()))
+		if err != nil {
+			return fmt.Errorf("templates.FSString: %v", err)
+		}
+
+		tmpls, err = tmpls.Parse(text)
+		if err != nil {
+			return fmt.Errorf("tmpls.Parse: %v", err)
+		}
+	}
+
 	return nil
 }
 
@@ -76,6 +119,10 @@ func receiverName(f *models.Receiver) string {
 	if n == "name" {
 		// Avoid conflict with test struct's "name" field.
 		n = "n"
+	} else if n == "t" {
+		// Avoid conflict with test argument.
+		// "tr" is short for t receiver.
+		n = "tr"
 	}
 	return n
 }
@@ -122,14 +169,18 @@ func Header(w io.Writer, h *models.Header) error {
 	return err
 }
 
-func TestFunction(w io.Writer, f *models.Function, printInputs bool, subtests bool) error {
+func TestFunction(w io.Writer, f *models.Function, printInputs, subtests, parallel bool, templateParams map[string]interface{}) error {
 	return tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
-		PrintInputs bool
-		Subtests    bool
+		PrintInputs    bool
+		Subtests       bool
+		Parallel       bool
+		TemplateParams map[string]interface{}
 	}{
-		Function:    f,
-		PrintInputs: printInputs,
-		Subtests:    subtests,
+		Function:       f,
+		PrintInputs:    printInputs,
+		Subtests:       subtests,
+		Parallel:       parallel,
+		TemplateParams: templateParams,
 	})
 }
