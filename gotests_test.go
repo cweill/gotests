@@ -830,21 +830,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_template_testify.go"),
 		},
-		{
-			name: "named_named=off",
-			args: args{
-				srcPath: "testdata/test038.go",
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off.go"),
-		},
-		{
-			name: "named_named=off,template=testify",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				template: "testify",
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_template_testify.go"),
-		},
+
 		{
 			name: "named_named=on,subtests=on",
 			args: args{
@@ -863,42 +849,6 @@ func TestGenerateTests(t *testing.T) {
 				template: "testify",
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_template_testify.go"),
-		},
-		{
-			name: "named_named=off,subtests=on",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				subtests: true,
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on.go"),
-		},
-		{
-			name: "named_named=off,subtests=on,template=testify",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				subtests: true,
-				template: "testify",
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_template_testify.go"),
-		},
-		{
-			name: "named_named=off,subtests=on,parallel=on",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				subtests: true,
-				parallel: true,
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on.go"),
-		},
-		{
-			name: "named_named=off,subtests=on,parallel=on,template=testify",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				subtests: true,
-				parallel: true,
-				template: "testify",
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on_template_testify.go"),
 		},
 		{
 			name: "named_named=on,subtests=on,parallel=on",
@@ -920,16 +870,6 @@ func TestGenerateTests(t *testing.T) {
 				template: "testify",
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_parallel_on_template_testify.go"),
-		},
-		{
-			name: "named_named=off,subtests=on,parallel=on,template=testify",
-			args: args{
-				srcPath:  "testdata/test038.go",
-				subtests: true,
-				parallel: true,
-				template: "testify",
-			},
-			want: mustReadAndFormatGoFile(t, "testdata/named/named_off_subtests_on_parallel_on_template_testify.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
