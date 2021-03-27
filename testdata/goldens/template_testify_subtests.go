@@ -1,6 +1,10 @@
 package testdata
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestFoo201a(t *testing.T) {
 	tests := []struct {
