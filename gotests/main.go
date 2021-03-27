@@ -19,12 +19,14 @@
 //
 //   -i                    print test inputs in error messages
 //
+//   -named                switch table tests from using slice to map (with test name for the key)
+//
 //   -only                 regexp. generate tests for functions and methods that match only.
 //                         Takes precedence over -all
 //
-//   -nosubtests           disable subtest generation when >= Go 1.7
+//   -nosubtests           disable generating tests using the Go 1.7 subtests feature
 //
-//   -parallel             enable parallel subtest generation when >= Go 1.7.
+//   -parallel             enable generating parallel subtests using the Go 1.7 feature
 //
 //   -w                    write output to (test) files instead of stdout
 //
@@ -37,7 +39,7 @@
 //
 //   -template_params_file read external parameters to template by json with file
 //
-//   -template_params	   read external parameters to template by json with stdin
+//   -template_params      read external parameters to template by json with stdin
 package main
 
 import (
@@ -68,6 +70,9 @@ var (
 
 	// parallel is default false.
 	parallel bool
+
+	// use map instead of slice for table tests.
+	named bool
 )
 
 func main() {
@@ -82,6 +87,7 @@ func main() {
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
 		Parallel:           parallel,
+		Named:              named,
 		WriteOutput:        *writeOutput,
 		Template:           valOrGetenv(*template, "GOTESTS_TEMPLATE"),
 		TemplateDir:        valOrGetenv(*templateDir, "GOTESTS_TEMPLATE_DIR"),

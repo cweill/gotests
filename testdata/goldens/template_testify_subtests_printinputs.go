@@ -3,6 +3,8 @@ package testdata
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFoo201a(t *testing.T) {

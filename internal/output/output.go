@@ -14,10 +14,16 @@ import (
 	"github.com/cweill/gotests/internal/render"
 )
 
+// we do not need support for aliases in import for now.
+var importsMap = map[string]string{
+	"testify": "github.com/stretchr/testify/assert",
+}
+
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
 	Parallel       bool
+	Named          bool
 	Template       string
 	TemplateDir    string
 	TemplateParams map[string]interface{}
@@ -68,12 +74,19 @@ func IsFileExist(path string) bool {
 }
 
 func writeTests(w io.Writer, head *models.Header, funcs []*models.Function, opt *Options) error {
+	if path, ok := importsMap[opt.Template]; ok {
+		head.Imports = append(head.Imports, &models.Import{
+			Path: fmt.Sprintf(`"%s"`, path),
+		})
+	}
+
 	b := bufio.NewWriter(w)
 	if err := render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
+
 	for _, fun := range funcs {
-		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests, opt.Parallel, opt.TemplateParams); err != nil {
+		if err := render.TestFunction(b, fun, opt.PrintInputs, opt.Subtests, opt.Named, opt.Parallel, opt.TemplateParams); err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
 	}
