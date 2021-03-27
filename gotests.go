@@ -30,6 +30,7 @@ type Options struct {
 	TemplateDir    string                 // Path to custom template set
 	TemplateParams map[string]interface{} // Custom external parameters
 	TemplateData   [][]byte               // Data slice for templates
+	Version        bool                   // Show version of gotests installed
 }
 
 // A GeneratedTest contains information about a test file with generated tests.

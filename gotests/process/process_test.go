@@ -2,6 +2,7 @@ package process
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 )
 
@@ -48,6 +49,11 @@ func TestRun(t *testing.T) {
 			args: []string{"testdata/foobar.go"},
 			opts: &Options{ExclFuncs: "??"},
 			want: "Invalid -excl regex: error parsing regexp: missing argument to repetition operator: `??`\n",
+		}, {
+			name: "Version option",
+			args: []string{},
+			opts: &Options{Version: true},
+			want: fmt.Sprintf("%s\n", versionMessage()),
 		},
 	}
 	for _, tt := range tests {

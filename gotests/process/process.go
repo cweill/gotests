@@ -15,6 +15,7 @@ import (
 )
 
 const newFilePerm os.FileMode = 0644
+const versionNumber = "v1.6.1"
 
 const (
 	specifyFlagMessage = "Please specify either the -only, -excl, -exported, or -all flag"
@@ -36,6 +37,7 @@ type Options struct {
 	TemplateDir        string   // Path to custom template set
 	TemplateParamsPath string   // Path to custom parameters json file(s).
 	TemplateData       [][]byte // Data slice for templates
+	Version            bool     // Print version number of gotests being used
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -58,7 +60,15 @@ func Run(out io.Writer, args []string, opts *Options) {
 	}
 }
 
+func versionMessage() string {
+	return fmt.Sprintf("gotests version %s", versionNumber)
+}
+
 func parseOptions(out io.Writer, opt *Options) *gotests.Options {
+	if opt.Version {
+		fmt.Fprintln(out, versionMessage())
+		return nil
+	}
 	if opt.OnlyFuncs == "" && opt.ExclFuncs == "" && !opt.ExportedFuncs && !opt.AllFuncs {
 		fmt.Fprintln(out, specifyFlagMessage)
 		return nil
@@ -102,6 +112,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: templateParams,
 		TemplateData:   opt.TemplateData,
+		Version:        opt.Version,
 	}
 }
 
