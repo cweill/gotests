@@ -35,6 +35,9 @@ jobs:
     - name: Get Dependencies (github.com/golang.org/x/tools/imports)
       run: go get -v ./...
 
+    - name: Get go-cmp
+      run: go get github.com/google/go-cmp/cmp
+
     - name: Test
       run: |
         go test -v ./...
