@@ -29,7 +29,7 @@ func TestImporter_Foo35(t *testing.T) {
 			Field:    tt.fields.Field,
 		}
 		if got := i.Foo35(tt.args.t); !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Importer.Foo35() = %v, want %v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+			t.Errorf("%q. Importer.Foo35() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }

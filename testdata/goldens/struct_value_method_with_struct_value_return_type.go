@@ -17,7 +17,7 @@ func TestBar_Foo9(t *testing.T) {
 	for _, tt := range tests {
 		b := Bar{}
 		if got := b.Foo9(); !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Bar.Foo9() = %v, want %v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+			t.Errorf("%q. Bar.Foo9() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }

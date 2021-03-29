@@ -69,7 +69,7 @@ func Test_wrapToString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := wrapToString(tt.args.in); !cmp.Equal(got, tt.want) {
-				t.Errorf("wrapToString() = %v, want %v\ndiff=%v", got, tt.want, cmp.Diff(got, tt.want))
+				t.Errorf("wrapToString() = %v, want %v\ndiff=%s", got, tt.want, cmp.Diff(got, tt.want))
 			}
 		})
 	}

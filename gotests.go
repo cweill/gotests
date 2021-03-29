@@ -16,12 +16,10 @@ import (
 	"github.com/cweill/gotests/internal/output"
 )
 
-var (
-	cmpImport = &models.Import{
-		Name: "",
-		Path: `"github.com/google/go-cmp/cmp"`,
-	}
-)
+var cmpImport = &models.Import{
+	Name: "",
+	Path: `"github.com/google/go-cmp/cmp"`,
+}
 
 // Options provides custom filters and parameters for generating tests.
 type Options struct {

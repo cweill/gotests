@@ -25,7 +25,7 @@ func TestFoo11(t *testing.T) {
 			continue
 		}
 		if !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Foo11() = %v, want %v\ndiff=%v", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+			t.Errorf("%q. Foo11() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
 		}
 	}
 }

@@ -33,7 +33,7 @@ func TestFoo26(t *testing.T) {
 			t.Errorf("%q. Foo26() gotI = %v, want %v", tt.name, gotI, tt.wantI)
 		}
 		if !cmp.Equal(got2, tt.want2) {
-			t.Errorf("%q. Foo26() got2 = %v, want %v\ndiff=%v", tt.name, got2, tt.want2, cmp.Diff(got2, tt.want2))
+			t.Errorf("%q. Foo26() got2 = %v, want %v\ndiff=%s", tt.name, got2, tt.want2, cmp.Diff(got2, tt.want2))
 		}
 	}
 }
