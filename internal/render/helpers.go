@@ -3,19 +3,12 @@ package render
 //go:generate esc -o bindata/esc.go -pkg=bindata templates
 import (
 	"fmt"
-	"io"
 	"strings"
-	"text/template"
 
 	"github.com/cweill/gotests/internal/models"
 )
 
-const (
-	name  = "name"
-	nFile = 7
-)
-
-var tmpls *template.Template
+const nFile = 7 // Number of files to be read from template (package) template (directory)
 
 func fieldName(f *models.Field) string {
 	var n string
@@ -77,30 +70,4 @@ func gotName(f *models.Field) string {
 		n = fmt.Sprintf("got%v", f.Index)
 	}
 	return n
-}
-
-func Header(w io.Writer, h *models.Header) error {
-	if err := tmpls.ExecuteTemplate(w, "header", h); err != nil {
-		return err
-	}
-	_, err := w.Write(h.Code)
-	return err
-}
-
-func TestFunction(w io.Writer, f *models.Function, printInputs, subtests, named, parallel bool, templateParams map[string]interface{}) error {
-	return tmpls.ExecuteTemplate(w, "function", struct {
-		*models.Function
-		PrintInputs    bool
-		Subtests       bool
-		Parallel       bool
-		Named          bool
-		TemplateParams map[string]interface{}
-	}{
-		Function:       f,
-		PrintInputs:    printInputs,
-		Subtests:       subtests,
-		Parallel:       parallel,
-		Named:          named,
-		TemplateParams: templateParams,
-	})
 }

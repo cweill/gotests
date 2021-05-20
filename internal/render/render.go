@@ -29,10 +29,6 @@ func New() *Render {
 
 	// default templates first
 	for _, name := range bindata.AssetNames() {
-		// if strings.Contains(bindata.FSMustString(false, name), "function") {
-		// 	fmt.Printf("render.New - bindata.[%s]\n", name)
-		// 	// fmt.Printf("> %s\n", bindata.FSMustString(false, name))
-		// }
 		r.tmpls = template.Must(r.tmpls.Parse(bindata.FSMustString(false, name)))
 	}
 
@@ -50,9 +46,6 @@ func (r *Render) LoadCustomTemplates(dir string) error {
 	for _, f := range files {
 		templateFiles = append(templateFiles, path.Join(dir, f.Name()))
 	}
-
-	// fmt.Printf("template(s)- %#v\n", templateFiles)
-
 	r.tmpls, err = r.tmpls.ParseFiles(templateFiles...)
 	if err != nil {
 		return fmt.Errorf("tmpls.ParseFiles: %v", err)
@@ -79,16 +72,17 @@ func (r *Render) LoadCustomTemplatesName(name string) error {
 			return fmt.Errorf("templates.FSString: %v", err)
 		}
 
-		tmpls, err = r.tmpls.Parse(text)
-		if err != nil {
+		if tmpls, err := r.tmpls.Parse(text); err != nil {
 			return fmt.Errorf("tmpls.Parse: %v", err)
+		} else {
+			r.tmpls = tmpls
 		}
-		r.tmpls = tmpls
 	}
 
 	return nil
 }
 
+// LoadFromData allows to load from a data slice
 func (r *Render) LoadFromData(templateData [][]byte) {
 	for _, d := range templateData {
 		r.tmpls = template.Must(r.tmpls.Parse(string(d)))
