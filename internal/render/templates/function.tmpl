@@ -69,6 +69,9 @@ func {{.TestName}}(t *testing.T) {
 				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
 					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
 					{{- if .TestResults}}
+						if tt.wantErr {
+							return
+						}
 						{{if .Subtests }}return{{else}}continue{{end}}
 					{{- end}}
 				}
