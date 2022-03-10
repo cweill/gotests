@@ -110,7 +110,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	}
 	h := sr.Header
 	h.Code = nil // Code is only needed from parsed test files.
-	testPath := models.Path(src).TestPath()
+	testPath := src.TestPath()
 	h, tf, err := parseTestFile(p, testPath, h)
 	if err != nil {
 		return nil, err
