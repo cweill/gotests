@@ -30,6 +30,7 @@ type Options struct {
 	TemplateDir    string                 // Path to custom template set
 	TemplateParams map[string]interface{} // Custom external parameters
 	TemplateData   [][]byte               // Data slice for templates
+	TestFileSuffix string                 // Test file custom suffix
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -110,7 +111,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	}
 	h := sr.Header
 	h.Code = nil // Code is only needed from parsed test files.
-	testPath := src.TestPath()
+	testPath := src.TestPathWithSuffix(opt.TestFileSuffix)
 	h, tf, err := parseTestFile(p, testPath, h)
 	if err != nil {
 		return nil, err

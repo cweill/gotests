@@ -167,6 +167,21 @@ func (p Path) TestPath() string {
 	return string(p)
 }
 
+// TestPathWithSuffix generate test file path with custom suffix, format: foobar_<suffix>_test.go
+//
+// param: suffix
+//
+// return: string
+func (p Path) TestPathWithSuffix(suffix string) string {
+	if p.IsTestPath() {
+		return string(p)
+	}
+	if suffix != "" {
+		suffix = "_" + suffix
+	}
+	return strings.TrimSuffix(string(p), ".go") + suffix + "_test.go"
+}
+
 func (p Path) IsTestPath() bool {
 	return strings.HasSuffix(string(p), "_test.go")
 }
