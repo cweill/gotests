@@ -61,7 +61,7 @@ Available options:
 
   -template_params      read external parameters to template by json with stdin
 
-  -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEquals
+  -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 ```
 
 ## Contributions

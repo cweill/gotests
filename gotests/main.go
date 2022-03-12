@@ -41,7 +41,7 @@
 //
 //   -template_params      read external parameters to template by json with stdin
 //
-//   -use_go_cmp		   use cmp.Equal (google/go-cmp) instead of reflect.DeepEquals
+//   -use_go_cmp		   use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 package main
 
 import (
@@ -62,7 +62,7 @@ var (
 	template           = flag.String("template", "", `optional. Specify custom test code templates, e.g. testify. This can also be set via environment variable GOTESTS_TEMPLATE`)
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
-	useGoCmp           = flag.Bool("use_go_cmp", false, `use cmp.Equal (google/go-cmp) instead of reflect.DeepEquals to perform equality checks`)
+	useGoCmp           = flag.Bool("use_go_cmp", false, `use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual to perform equality checks`)
 )
 
 var (
