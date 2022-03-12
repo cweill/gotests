@@ -380,7 +380,6 @@ func TestGenerateTests(t *testing.T) {
 		{
 			name: "Receiver is indirect imported struct",
 			args: args{
-				// only:    regexp.MustCompile("^Foo037$"),
 				srcPath: `testdata/test037.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/receiver_is_indirect_imported_struct.go"),
@@ -560,7 +559,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_multiple_imports.go"),
 		},
-		{
+		{ // WORNING: data race condition, if called with -race flag, because of structure in `internal/templates` package.
 			name: "Entire testdata directory",
 			args: args{
 				srcPath:  `testdata/`,
@@ -714,7 +713,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_return_value_custom_template.go"),
 		},
-		{
+		{ // WORNING: panics on -race flag.
 			name: "Test interface embedding",
 			args: args{
 				srcPath: `testdata/undefinedtypes/interface_embedding.go`,

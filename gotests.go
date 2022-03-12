@@ -125,7 +125,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		return nil, nil
 	}
 
-	b, err := output.Process(h, funcs, &output.Options{
+	options := output.Options{
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
 		Parallel:       opt.Parallel,
@@ -134,7 +134,9 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,
 		TemplateData:   opt.TemplateData,
-	})
+	}
+
+	b, err := options.Process(h, funcs)
 	if err != nil {
 		return nil, fmt.Errorf("output.Process: %v", err)
 	}
