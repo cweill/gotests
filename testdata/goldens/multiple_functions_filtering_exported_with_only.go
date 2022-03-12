@@ -1,9 +1,8 @@
 package testdata
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestFooFilter(t *testing.T) {
@@ -24,8 +23,8 @@ func TestFooFilter(t *testing.T) {
 			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

@@ -213,7 +213,7 @@ var _escData = map[string]*_escFile{
 		name:    "call.tmpl",
 		local:   "test/call.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -223,7 +223,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "function.tmpl",
 		local:   "test/function.tmpl",
 		size:    19,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/6qu1tdSSFRIzs/NTc0rUdDSr+UCBAAA//+6o7WcEwAAAA==
 `,
@@ -233,7 +233,7 @@ H4sIAAAAAAAC/6qu1tdSSFRIzs/NTc0rUdDSr+UCBAAA//+6o7WcEwAAAA==
 		name:    "header.tmpl",
 		local:   "test/header.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -243,7 +243,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "inline.tmpl",
 		local:   "test/inline.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -253,7 +253,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "inputs.tmpl",
 		local:   "test/inputs.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -263,7 +263,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "message.tmpl",
 		local:   "test/message.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -273,7 +273,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "results.tmpl",
 		local:   "test/results.tmpl",
 		size:    0,
-		modtime: 1615633710,
+		modtime: 1616493590,
 		compressed: `
 H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 `,
@@ -283,7 +283,7 @@ H4sIAAAAAAAC/wEAAP//AAAAAAAAAAA=
 		name:    "call.tmpl",
 		local:   "testify/call.tmpl",
 		size:    241,
-		modtime: 1613754073,
+		modtime: 1616493299,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -295,7 +295,7 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 		name:    "function.tmpl",
 		local:   "testify/function.tmpl",
 		size:    2798,
-		modtime: 1616467003,
+		modtime: 1616880641,
 		compressed: `
 H4sIAAAAAAAC/5xWUW/cNgx+tn8FYQTFebiq7yn60GHtkJemSIL1oRgG9UzfjPl0N4necBD43wdRlu3z
 2VnTPOQsyiQ/8qM+y/sK68YgFNo5tNQcTQGvmXMiNVg2tAXvmxrUvWnPD0idNe6DtUfL7D3h4dRqQih2
@@ -319,7 +319,7 @@ nHO4HUWX/wIAAP//vN7yje4KAAA=
 		name:    "header.tmpl",
 		local:   "testify/header.tmpl",
 		size:    142,
-		modtime: 1616472631,
+		modtime: 1616493299,
 		compressed: `
 H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
 iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
@@ -331,7 +331,7 @@ jgAAAA==
 		name:    "inline.tmpl",
 		local:   "testify/inline.tmpl",
 		size:    49,
-		modtime: 1613735787,
+		modtime: 1616493299,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -342,7 +342,7 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 		name:    "inputs.tmpl",
 		local:   "testify/inputs.tmpl",
 		size:    177,
-		modtime: 1616467003,
+		modtime: 1616880641,
 		compressed: `
 H4sIAAAAAAAC/0yNMaoDMQxE+38KsWz58QECOUCaEMgJFCwvLqwESVsJ3T1YpHAlzWN4416pdSbYOn9O
 0y3CfW9wuUKZb2/Ab4PyPF9GarqyOw6qEWbFnbhGMA76h1/I3t7KQzrbLeUTCvJByVFwkJFoKlAOLe5J
@@ -354,7 +354,7 @@ H4sIAAAAAAAC/0yNMaoDMQxE+38KsWz58QECOUCaEMgJFCwvLqwESVsJ3T1YpHAlzWN4416pdSbYOn9O
 		name:    "message.tmpl",
 		local:   "testify/message.tmpl",
 		size:    201,
-		modtime: 1613735787,
+		modtime: 1616493299,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -366,7 +366,7 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 		name:    "results.tmpl",
 		local:   "testify/results.tmpl",
 		size:    168,
-		modtime: 1613735787,
+		modtime: 1616493299,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/

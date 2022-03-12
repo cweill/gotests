@@ -55,8 +55,8 @@ func TestRun(t *testing.T) {
 	for _, tt := range tests {
 		out := &bytes.Buffer{}
 		Run(out, tt.args, tt.opts)
-		if got := out.String(); !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Run() =\n%v, want\n%v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+		if got := out.String(); !cmp.Equal(tt.want, got) {
+			t.Errorf("%q. Run() =\n%v, want\n%v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(tt.want, got))
 		}
 	}
 }

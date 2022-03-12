@@ -1,9 +1,8 @@
 package testdata
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestFoo26(t *testing.T) {
@@ -32,8 +31,8 @@ func TestFoo26(t *testing.T) {
 		if gotI != tt.wantI {
 			t.Errorf("%q. Foo26() gotI = %v, want %v", tt.name, gotI, tt.wantI)
 		}
-		if !cmp.Equal(got2, tt.want2) {
-			t.Errorf("%q. Foo26() got2 = %v, want %v\ndiff=%s", tt.name, got2, tt.want2, cmp.Diff(got2, tt.want2))
+		if !reflect.DeepEqual(got2, tt.want2) {
+			t.Errorf("%q. Foo26() got2 = %v, want %v", tt.name, got2, tt.want2)
 		}
 	}
 }

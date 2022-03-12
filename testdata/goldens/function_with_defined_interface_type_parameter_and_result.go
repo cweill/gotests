@@ -1,9 +1,8 @@
 package testdata
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestFoo16(t *testing.T) {
@@ -18,8 +17,8 @@ func TestFoo16(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		if got := Foo16(tt.args.in); !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Foo16() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+		if got := Foo16(tt.args.in); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. Foo16() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

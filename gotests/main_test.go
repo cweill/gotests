@@ -67,8 +67,8 @@ func Test_valOrGetenv(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := valOrGetenv(tt.args.val, tt.args.key); !cmp.Equal(got, tt.want) {
-				t.Errorf("valOrGetenv() = %v, want %v\ndiff=%s", got, tt.want, cmp.Diff(got, tt.want))
+			if got := valOrGetenv(tt.args.val, tt.args.key); !cmp.Equal(tt.want, got) {
+				t.Errorf("valOrGetenv() = %v, want %v\ndiff=%s", got, tt.want, cmp.Diff(tt.want, got))
 			}
 		})
 	}

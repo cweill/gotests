@@ -32,6 +32,7 @@ func TestGenerateTests(t *testing.T) {
 		template           string
 		templateParamsPath string
 		templateData       [][]byte
+		useGoCmp           bool
 	}
 	tests := []struct {
 		name              string
@@ -93,6 +94,18 @@ func TestGenerateTests(t *testing.T) {
 			want:        mustReadAndFormatGoFile(t, `testdata/goldens/target_test_file.go`),
 		},
 		{
+			name: "Target test file with go-cmp",
+			args: args{
+				srcPath:  `testdata/test103_test.go`,
+				only:     regexp.MustCompile("wrapToString"),
+				subtests: true,
+				useGoCmp: true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadAndFormatGoFile(t, `testdata/goldens/target_test_file_cmp.go`),
+		},
+		{
 			name: "Target test file without only flag",
 			args: args{
 				srcPath:  `testdata/test103_test.go`,
@@ -100,7 +113,18 @@ func TestGenerateTests(t *testing.T) {
 			},
 			wantNoTests: false,
 			wantErr:     false,
-			want:        mustReadAndFormatGoFile(t, `testdata/goldens/target_test_file.go`),
+			want:        mustReadAndFormatGoFile(t, `testdata/goldens/target_test_file_without_only_flag.go`),
+		},
+		{
+			name: "Target test file without only flag with go-cmp",
+			args: args{
+				srcPath:  `testdata/test103_test.go`,
+				subtests: true,
+				useGoCmp: true,
+			},
+			wantNoTests: false,
+			wantErr:     false,
+			want:        mustReadAndFormatGoFile(t, `testdata/goldens/target_test_file_without_only_flag_cmp.go`),
 		},
 		{
 			name: "No funcs",
@@ -182,11 +206,27 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_struct_pointer_argument_and_return_type.go"),
 		},
 		{
+			name: "Function with struct pointer argument and return type and go-cmp",
+			args: args{
+				srcPath:  `testdata/test008.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_struct_pointer_argument_and_return_type_cmp.go"),
+		},
+		{
 			name: "Struct value method with struct value return type",
 			args: args{
 				srcPath: `testdata/test009.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/struct_value_method_with_struct_value_return_type.go"),
+		},
+		{
+			name: "Struct value method with struct value return type and go-cmp",
+			args: args{
+				srcPath:  `testdata/test009.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/struct_value_method_with_struct_value_return_type_cmp.go"),
 		},
 		{
 			name: "Function with map argument and return type",
@@ -196,11 +236,27 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_map_argument_and_return_type.go"),
 		},
 		{
+			name: "Function with map argument, return type and go-cmp",
+			args: args{
+				srcPath:  `testdata/test010.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_map_argument_and_return_type_cmp.go"),
+		},
+		{
 			name: "Function with slice argument and return type",
 			args: args{
 				srcPath: `testdata/test011.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_slice_argument_and_return_type.go"),
+		},
+		{
+			name: "Function with slice argument, return type and go-cmp",
+			args: args{
+				srcPath:  `testdata/test011.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_slice_argument_and_return_type_cmp.go"),
 		},
 		{
 			name: "Function returning only an error",
@@ -238,6 +294,14 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_defined_interface_type_parameter_and_result.go"),
 		},
 		{
+			name: "Function with defined interface type parameter, result and go-cmp",
+			args: args{
+				srcPath:  `testdata/test016.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_defined_interface_type_parameter_and_result_cmp.go"),
+		},
+		{
 			name: "Function with imported interface receiver, parameter, and result",
 			args: args{
 				srcPath: `testdata/test017.go`,
@@ -245,11 +309,27 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_imported_interface_receiver_parameter_and_result.go"),
 		},
 		{
-			name: "Function with imported struct receiver, parameter, and result",
+			name: "Function with imported interface receiver, parameter, result and go-cmp",
+			args: args{
+				srcPath:  `testdata/test017.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_imported_interface_receiver_parameter_and_result_cmp.go"),
+		},
+		{
+			name: "Function with imported struct receiver, parameter and result",
 			args: args{
 				srcPath: `testdata/test018.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_imported_struct_receiver_parameter_and_result.go"),
+		},
+		{
+			name: "Function with imported struct receiver, parameter, result and go-cmp",
+			args: args{
+				srcPath:  `testdata/test018.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_imported_struct_receiver_parameter_and_result_cmp.go"),
 		},
 		{
 			name: "Function with multiple parameters of the same type",
@@ -273,6 +353,14 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_interface_parameter_and_result.go"),
 		},
 		{
+			name: "Function with interface{} parameter, result and go-cmp",
+			args: args{
+				srcPath:  `testdata/test021.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_interface_parameter_and_result_cmp.go"),
+		},
+		{
 			name: "Function with named imports",
 			args: args{
 				srcPath: `testdata/test022.go`,
@@ -280,11 +368,27 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_named_imports.go"),
 		},
 		{
+			name: "Function with named imports and go-cmp",
+			args: args{
+				srcPath:  `testdata/test022.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_named_imports_cmp.go"),
+		},
+		{
 			name: "Function with channel parameter and result",
 			args: args{
 				srcPath: `testdata/test023.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_channel_parameter_and_result.go"),
+		},
+		{
+			name: "Function with channel parameter, result and go-cmp",
+			args: args{
+				srcPath:  `testdata/test023.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_with_channel_parameter_and_result_cmp.go"),
 		},
 		{
 			name: "File with multiple imports",
@@ -301,11 +405,27 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_returning_two_results_and_an_error.go"),
 		},
 		{
+			name: "Function returning two results and an error with go-cmp",
+			args: args{
+				srcPath:  `testdata/test025.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/function_returning_two_results_and_an_error_cmp.go"),
+		},
+		{
 			name: "Multiple named results",
 			args: args{
 				srcPath: `testdata/test026.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_named_results.go"),
+		},
+		{
+			name: "Multiple named results with go-cmp",
+			args: args{
+				srcPath:  `testdata/test026.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_named_results_cmp.go"),
 		},
 		{
 			name: "Two different structs with same method name",
@@ -371,6 +491,14 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/receiver_struct_with_fields_with_complex_package_names.go"),
 		},
 		{
+			name: "Receiver struct with fields with complex package names and go-cmp",
+			args: args{
+				srcPath:  `testdata/test035.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/receiver_struct_with_fields_with_complex_package_names_cmp.go"),
+		},
+		{
 			name: "Functions and receivers with same names except exporting",
 			args: args{
 				srcPath: `testdata/test036.go`,
@@ -392,12 +520,29 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions.go"),
 		},
 		{
+			name: "Multiple functions with go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_cmp.go"),
+		},
+		{
 			name: "Multiple functions with only",
 			args: args{
 				srcPath: `testdata/test_filter.go`,
 				only:    regexp.MustCompile("FooFilter|bazFilter"),
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_with_only.go"),
+		},
+		{
+			name: "Multiple functions with only and go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				only:     regexp.MustCompile("FooFilter|bazFilter"),
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_with_only_cmp.go"),
 		},
 		{
 			name: "Multiple functions with only regexp without matches",
@@ -414,6 +559,15 @@ func TestGenerateTests(t *testing.T) {
 				only:    regexp.MustCompile("(?i)fooFilter|BazFilter"),
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_with_case-insensitive_only.go"),
+		},
+		{
+			name: "Multiple functions with case-insensitive only and go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				only:     regexp.MustCompile("(?i)fooFilter|BazFilter"),
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_with_case-insensitive_only_cmp.go"),
 		},
 		{
 			name: "Multiple functions with only filtering on receiver",
@@ -440,6 +594,15 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported.go"),
 		},
 		{
+			name: "Multiple functions filtering exported with go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				exported: true,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported_cmp.go"),
+		},
+		{
 			name: "Multiple functions filtering exported with only",
 			args: args{
 				srcPath:  `testdata/test_filter.go`,
@@ -447,6 +610,16 @@ func TestGenerateTests(t *testing.T) {
 				exported: true,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_only.go"),
+		},
+		{
+			name: "Multiple functions filtering exported with only and go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				only:     regexp.MustCompile(`FooFilter`),
+				exported: true,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_only_cmp.go"),
 		},
 		{
 			name: "Multiple functions filtering all out",
@@ -498,12 +671,30 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_excluding_on_receiver.go"),
 		},
 		{
+			name: "Multiple functions excluding on receiver with go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				excl:     regexp.MustCompile("^BarBarFilter$"),
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_excluding_on_receiver_cmp.go"),
+		},
+		{
 			name: "Multiple functions excluding on method",
 			args: args{
 				srcPath: `testdata/test_filter.go`,
 				excl:    regexp.MustCompile("^BarFilter$"),
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_excluding_on_method.go"),
+		},
+		{
+			name: "Multiple functions excluding on method with go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				excl:     regexp.MustCompile("^BarFilter$"),
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_excluding_on_method_cmp.go"),
 		},
 		{
 			name: "Multiple functions with both only and excl",
@@ -532,11 +723,28 @@ func TestGenerateTests(t *testing.T) {
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/custom_importer_fails.go"),
 		},
 		{
+			name: "Custom importer fails with go-cmp",
+			args: args{
+				srcPath:  `testdata/test_filter.go`,
+				importer: &fakeImporter{err: errors.New("error")},
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/custom_importer_fails_cmp.go"),
+		},
+		{
 			name: "Existing test file",
 			args: args{
 				srcPath: `testdata/test100.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file.go"),
+		},
+		{
+			name: "Existing test file with go-cmp",
+			args: args{
+				srcPath:  `testdata/test100.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_cmp.go"),
 		},
 		{
 			name: "Existing test file with just package declaration",
@@ -601,6 +809,14 @@ func TestGenerateTests(t *testing.T) {
 				srcPath: `testdata/undefinedtypes/undefined.go`,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/undefined_types.go"),
+		},
+		{
+			name: "Undefined types with go-cmp",
+			args: args{
+				srcPath:  `testdata/undefinedtypes/undefined.go`,
+				useGoCmp: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/undefined_types_cmp.go"),
 		},
 		{
 			name: "Subtest Edition - Functions and receivers with same names except exporting",
@@ -901,6 +1117,7 @@ func TestGenerateTests(t *testing.T) {
 				Template:       tt.args.template,
 				TemplateParams: params,
 				TemplateData:   tt.args.templateData,
+				UseGoCmp:       tt.args.useGoCmp,
 			})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("%q. GenerateTests(%v) error = %v, wantErr %v", tt.name, tt.args.srcPath, err, tt.wantErr)
@@ -917,8 +1134,8 @@ func TestGenerateTests(t *testing.T) {
 			if tt.wantNoTests || tt.wantMultipleTests {
 				return
 			}
-			if got := string(gts[0].Output); got != tt.want {
-				t.Errorf("%q. GenerateTests(%v) = diff=%s", tt.name, tt.args.srcPath, cmp.Diff(got, tt.want))
+			if got := string(gts[0].Output); !cmp.Equal(tt.want, got) {
+				t.Errorf("%q. GenerateTests(%v) = diff=%s", tt.name, tt.args.srcPath, cmp.Diff(tt.want, got))
 				outputResult(t, tmp, tt.name, gts[0].Output)
 			}
 		})

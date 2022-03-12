@@ -1,9 +1,8 @@
 package testdata
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestBarBar100(t *testing.T) {
@@ -64,8 +63,8 @@ func TestFoo100(t *testing.T) {
 			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
-		if !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

@@ -2,9 +2,8 @@ package testdata
 
 import (
 	"go/types"
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestImporter_Foo35(t *testing.T) {
@@ -28,8 +27,8 @@ func TestImporter_Foo35(t *testing.T) {
 			Importer: tt.fields.Importer,
 			Field:    tt.fields.Field,
 		}
-		if got := i.Foo35(tt.args.t); !cmp.Equal(got, tt.want) {
-			t.Errorf("%q. Importer.Foo35() = %v, want %v\ndiff=%s", tt.name, got, tt.want, cmp.Diff(got, tt.want))
+		if got := i.Foo35(tt.args.t); !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("%q. Importer.Foo35() = %v, want %v", tt.name, got, tt.want)
 		}
 	}
 }

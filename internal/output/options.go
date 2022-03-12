@@ -22,6 +22,7 @@ type Options struct {
 	TemplateDir    string
 	TemplateParams map[string]interface{}
 	TemplateData   [][]byte
+	UseGoCmp       bool
 
 	render *render.Render
 }
@@ -89,7 +90,7 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 	}
 
 	for _, fun := range funcs {
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.TemplateParams)
+		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams)
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
