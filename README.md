@@ -39,6 +39,8 @@ Available options:
 
   -i                    print test inputs in error messages
 
+  -named                switch table tests from using slice to map (with test name for the key)
+
   -only                 regexp. generate tests for functions and methods that match only.
                          Takes precedence over -all
 
