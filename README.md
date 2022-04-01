@@ -15,7 +15,10 @@ __Minimum Go version:__ Go 1.6
 Use [`go get`](https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies) to install and update:
 
 ```sh
+# using Go version < 1.17
 $ go get -u github.com/cweill/gotests/...
+# using Go version => 1.17
+go install github.com/cweill/gotests/...@latest
 ```
 
 ## Usage
