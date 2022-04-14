@@ -558,7 +558,7 @@ func TestGenerateTests(t *testing.T) {
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/existing_test_file_with_multiple_imports.go"),
 		},
-		{ // WORNING: data race condition, if called with -race flag, because of structure in `internal/templates` package.
+		{ // WARNING: data race condition, if called with -race flag, because of structure in `internal/templates` package.
 			name: "Entire testdata directory",
 			args: args{
 				srcPath:  `testdata/`,
