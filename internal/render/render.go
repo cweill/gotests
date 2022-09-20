@@ -121,3 +121,28 @@ func (r *Render) TestFunction(
 		TemplateParams: params,
 	})
 }
+
+func (r *Render) TestFunctionWithMock(
+	w io.Writer,
+	f *models.Function,
+	printInputs bool,
+	subtests bool,
+	named bool,
+	parallel bool,
+	params map[string]interface{}) error {
+	return r.tmpls.ExecuteTemplate(w, "functionmock", struct {
+		*models.Function
+		PrintInputs    bool
+		Subtests       bool
+		Parallel       bool
+		Named          bool
+		TemplateParams map[string]interface{}
+	}{
+		Function:       f,
+		PrintInputs:    printInputs,
+		Subtests:       subtests,
+		Parallel:       parallel,
+		Named:          named,
+		TemplateParams: params,
+	})
+}

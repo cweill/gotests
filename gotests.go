@@ -30,6 +30,7 @@ type Options struct {
 	TemplateDir    string                 // Path to custom template set
 	TemplateParams map[string]interface{} // Custom external parameters
 	TemplateData   [][]byte               // Data slice for templates
+	NeedMockCaller bool 
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -104,7 +105,7 @@ func readResults(rs <-chan *result) ([]*GeneratedTest, error) {
 
 func generateTest(src models.Path, files []models.Path, opt *Options) (*GeneratedTest, error) {
 	p := &goparser.Parser{Importer: opt.Importer()}
-	sr, err := p.Parse(string(src), files)
+	sr, err := p.Parse(string(src), files) // 解析原始代码
 	if err != nil {
 		return nil, fmt.Errorf("Parser.Parse source file: %v", err)
 	}
@@ -129,6 +130,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,
 		TemplateData:   opt.TemplateData,
+		NeedMockCaller: opt.NeedMockCaller,
 	}
 
 	b, err := options.Process(h, funcs)

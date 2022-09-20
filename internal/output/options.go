@@ -22,6 +22,7 @@ type Options struct {
 	TemplateDir    string
 	TemplateParams map[string]interface{}
 	TemplateData   [][]byte
+	NeedMockCaller bool
 
 	render *render.Render
 }
@@ -52,11 +53,12 @@ func (o *Options) Process(head *models.Header, funcs []*models.Function) ([]byte
 
 	// create physical copy of test
 	b := &bytes.Buffer{}
-	if err := o.writeTests(b, head, funcs); err != nil {
+	if err := o.writeTests(b, head, funcs); err != nil { // 将实际测试代码写入到测试文件中
 		return nil, err
 	}
 
 	// format file
+	fmt.Println("=============", string(b.Bytes()))
 	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
@@ -83,13 +85,25 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 		})
 	}
 
+	if o.NeedMockCaller {
+		head.Imports = append(head.Imports, &models.Import{
+			Name: GoMonkeyPkg,
+			Path: fmt.Sprintf(`"%s"`, importsMap[GoMonkeyPkg]),
+		})
+	}
+
 	b := bufio.NewWriter(w)
 	if err := o.render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 
+	var err error
 	for _, fun := range funcs {
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.TemplateParams)
+		if o.NeedMockCaller {
+			err = o.render.TestFunctionWithMock(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.TemplateParams)
+		} else {
+			err = o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.TemplateParams)
+		}
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}

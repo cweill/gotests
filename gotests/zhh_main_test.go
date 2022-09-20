@@ -12,6 +12,7 @@ func Test_main(t *testing.T) {
 		"./mock_need_test.go",
 	}, &process.Options{
 		AllFuncs: true,
+		NeedMock: true,
 	})
 }
 

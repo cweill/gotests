@@ -94,15 +94,16 @@ func (p *Parser) parseFiles(fset *token.FileSet, f *ast.File, files []models.Pat
 	return fs, nil
 }
 
+// parseFunctions 会解析 ast.File 中的函数
 func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File) []*models.Function {
-	ul, el := p.parseTypes(fset, fs)
+	ul, el := p.parseTypes(fset, fs) // LEARN: 这里会解析文件中的类型定义
 	var funcs []*models.Function
 	for _, d := range f.Decls {
 		fDecl, ok := d.(*ast.FuncDecl)
 		if !ok {
 			continue
 		}
-		funcs = append(funcs, parseFunc(fDecl, ul, el))
+		funcs = append(funcs, parseFunc(fDecl, ul, el, true))
 	}
 	return funcs
 }
@@ -177,7 +178,8 @@ func goCode(b []byte, f *ast.File) []byte {
 	return b[furthestPos:]
 }
 
-func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Function {
+// parseFunc 是真正解析函数的地方，将 ast 中的结构转化成 models 中的结构
+func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr, needParseCaller bool) *models.Function {
 	f := &models.Function{
 		Name:       fDecl.Name.String(),
 		IsExported: fDecl.Name.IsExported(),
@@ -195,7 +197,30 @@ func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Stru
 		f.Results = append(f.Results, fi)
 		i++
 	}
+
+	if needParseCaller {
+		f.MockCallerFunc = parseCallerFuncs(fDecl.Body, ul)
+	}
+
 	return f
+}
+
+func parseCallerFuncs(fBody *ast.BlockStmt, ul map[string]types.Type) []*models.Function {
+	var callerFunc []*models.Function
+	for _, istmt := range fBody.List {
+		switch stmt := istmt.(type){
+		case *ast.ForStmt:
+			callerFunc = append(callerFunc, parseCallerFuncs(stmt.Body, ul)...) // 这里需要标识是 for 循环中的
+		case *ast.ReturnStmt:
+			for _, r := range stmt.Results {
+				_, f := parseExpr(r, ul)
+				if f != nil {
+					callerFunc = append(callerFunc, f)
+				}
+			}
+		}
+	}
+	return callerFunc
 }
 
 func parseImports(imps []*ast.ImportSpec) []*models.Import {
@@ -261,7 +286,7 @@ func parseFieldList(fl *ast.FieldList, ul map[string]types.Type) []*models.Field
 }
 
 func parseFields(f *ast.Field, ul map[string]types.Type) []*models.Field {
-	t := parseExpr(f.Type, ul)
+	t, _ := parseExpr(f.Type, ul)
 	if len(f.Names) == 0 {
 		return []*models.Field{{
 			Type: t,
@@ -277,7 +302,7 @@ func parseFields(f *ast.Field, ul map[string]types.Type) []*models.Field {
 	return fs
 }
 
-func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
+func parseExpr(e ast.Expr, ul map[string]types.Type) (*models.Expression, *models.Function) {
 	switch v := e.(type) {
 	case *ast.StarExpr:
 		val := types.ExprString(v.X)
@@ -285,22 +310,25 @@ func parseExpr(e ast.Expr, ul map[string]types.Type) *models.Expression {
 			Value:      val,
 			IsStar:     true,
 			Underlying: underlying(val, ul),
-		}
+		}, nil
 	case *ast.Ellipsis:
-		exp := parseExpr(v.Elt, ul)
+		exp, _ := parseExpr(v.Elt, ul)
 		return &models.Expression{
 			Value:      exp.Value,
 			IsStar:     exp.IsStar,
 			IsVariadic: true,
 			Underlying: underlying(exp.Value, ul),
-		}
+		}, nil
+	case *ast.CallExpr:
+		funcObj := v.Fun.(*ast.Ident)
+		return nil, parseFunc(funcObj.Obj.Decl.(*ast.FuncDecl), ul, nil, false)
 	default:
 		val := types.ExprString(e)
 		return &models.Expression{
 			Value:      val,
 			Underlying: underlying(val, ul),
 			IsWriter:   val == "io.Writer",
-		}
+		}, nil
 	}
 }
 

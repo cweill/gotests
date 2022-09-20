@@ -213,7 +213,7 @@ var _escData = map[string]*_escFile{
 		name:    "call.tmpl",
 		local:   "templates/call.tmpl",
 		size:    241,
-		modtime: 1613754073,
+		modtime: 1663641620,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
@@ -225,7 +225,7 @@ Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
 		name:    "function.tmpl",
 		local:   "templates/function.tmpl",
 		size:    2657,
-		modtime: 1616467003,
+		modtime: 1663641620,
 		compressed: `
 H4sIAAAAAAAC/7RWTW/bRhA9U79iIjiBWCibuw0fGsQtcmhcyEZzCIpiLQ3VRVdLdXfoQFjsfy/2i1xK
 pONLLyK5nI83894MZe0OG6EQlk2ntiRatXRuYe17uGrg+haYc4uFfwXWskc09IUf0LkVwU+EhoTas8ca
@@ -245,11 +245,38 @@ CgAA
 `,
 	},
 
+	"/templates/functionmock.tmpl": {
+		name:    "functionmock.tmpl",
+		local:   "templates/functionmock.tmpl",
+		size:    3119,
+		modtime: 1663682015,
+		compressed: `
+H4sIAAAAAAAC/7RWv27cxhOueU8xPtgGaZxX/Qkq7J/lH1xYMiQhLowgWPGGZ0J7S2Z3KOGw2CpFgNRJ
+GwSpUvoF8jhK8hjB/uG/453kJs0dOdyZ+Wbm+4Y0ZoVFKRHmRSNzKiu5qfKbubUzY17C0wKWJ8Csnc3c
+YzCGXaGmM75Ba1OCF4SaSrlmVxmYWeJc7kr6DOwCcyxvUVk7S7y5LIC905ekmpy8sbO+LVGsdLAltK0R
+Cm8B7Q+7uPG04nKNOw6JMf7egfTwtjXGR84F5SredTlb0+B659KhcmV+4IpvkFD5ZB4aV+sRsAGsqYdP
+6E0TdIOM4/yuodo13RiPw7V6Ze2G1580qVKuvw3ZjUGh0dpP/b0LEEE511RWFP0zayXfIIQI8WhEsWde
+bRO4XPVD2+l7nFH461rrIcXC25DTyRyYwgO9TxLfePezx2cwgAvUjSDd5vnIJT3U+y7lBVKjpD5Vqoo9
+uOOSTpWC66oSI6dZkhwdwf3vv97/9Bs4scD9j3/+9cuXUT/fV/nN/7gQqN42Mg8R3dkPnPLPqMGpKa3h
+xbraVPIGtyw+yHa44cfpnI+O4Or8zfkSXq1W4EgCOdeo2VBJjyRdHs46Fdm+WEnNXtW12DpLOjeGhT0w
+X4AxhJtacEKY51yIuWt6NlWhXezO31nsLCkqBcY41lYK2GVzHXQQOPxOn/EbXGWZH+RAFY7UrRC+i7Re
+AFHQTxBEqCeEM4OJtzlGNHCsEwKFtSEI0fFYLa0q2oMjKM7D/R8b4+oD70XsopHpQdhELN4G8H5Ek8W6
+F2F3nWZjkF27D+n7wEaeqNa30StyW6M/zJW1z2O2qCn2DRcNWmvaEAcWddIRZglELGwONljfiz5Av7aT
+Pbt8chPz7dm+bZkfVUld9aOtvDyB59dbQs1eN0WByjyYMErxny8//P3zH179jwkwqaPklyfQ6e4M76L0
+0qASIjZQalr32yBJVliggmhiF6iRgtcEY2RnUM25FNvhWsum9nOJfngZdA3rdazCKp3D08Lrblfhzjxt
+zuGFmpRFZNMuMmsBlQps25fluBNz6s49OQFZisz9E7F2T0f6EfMhC7ef+lgb1JqvMdaC7gScwLPbBbTu
+z2531lgp66arHpVaDJJlPVPb99XoxeOfDZcMWKt8wa3s80pSKRvshfv4B8uD77qDXPdd/39FvaA77rNL
+/z2QZseDI6Grw1dnrwehMeZ4zXWZD761uuE+LfYRzC2LEYZhn0UpcXfQX43nP8r/RGEhMCf2BrE+/b7h
+Iu0iLMaAhi/Pfnpfw8MWcAT7vhFU1mIENuLpufoIUQ+CPPwNvMNTcAWFI/AyfJ/a2azl6b8BAAD//2Ql
+Md8vDAAA
+`,
+	},
+
 	"/templates/header.tmpl": {
 		name:    "header.tmpl",
 		local:   "templates/header.tmpl",
 		size:    142,
-		modtime: 1616472631,
+		modtime: 1663641620,
 		compressed: `
 H4sIAAAAAAAC/0TMMQ7CMAyF4d2nsDrBQC7BxIK4gkUebYXiViGb9e6OlAi6/bL1voiM1+rQaYFl1ImU
 iGo+Q9N1KwXePmRE6g941gspuz3fNkMj0mMkKbKWfatNT4dw65cB3K2AHJO2/DhSzv/6BgAA///GzMM9
@@ -261,7 +288,7 @@ jgAAAA==
 		name:    "inline.tmpl",
 		local:   "templates/inline.tmpl",
 		size:    49,
-		modtime: 1613735787,
+		modtime: 1663641620,
 		compressed: `
 H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 //+q60H/MQAAAA==
@@ -272,7 +299,7 @@ H4sIAAAAAAAC/6quTklNy8xLVVDKzMvJzEtVqq1VqK4uSc0tyEksSVVQSk7MyVFS0AOLpual1NYCAgAA
 		name:    "inputs.tmpl",
 		local:   "templates/inputs.tmpl",
 		size:    177,
-		modtime: 1616467003,
+		modtime: 1663681639,
 		compressed: `
 H4sIAAAAAAAC/0yNMaoDMQxE+38KsWz58QECOUCaEMgJFCwvLqwESVsJ3T1YpHAlzWN4416pdSbYOn9O
 0y3CfW9wuUKZb2/Ab4PyPF9GarqyOw6qEWbFnbhGMA76h1/I3t7KQzrbLeUTCvJByVFwkJFoKlAOLe5J
@@ -284,7 +311,7 @@ H4sIAAAAAAAC/0yNMaoDMQxE+38KsWz58QECOUCaEMgJFCwvLqwESVsJ3T1YpHAlzWN4416pdSbYOn9O
 		name:    "message.tmpl",
 		local:   "templates/message.tmpl",
 		size:    201,
-		modtime: 1613735787,
+		modtime: 1663681656,
 		compressed: `
 H4sIAAAAAAAC/zyN4WqDQBCE//sUiyi0oPsAhT5A/xRpS/9f4mgW9GLuTkNY9t2DB/HXDDPDN6o9BvGg
 ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
@@ -296,7 +323,7 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
 		size:    168,
-		modtime: 1613735787,
+		modtime: 1663641620,
 		compressed: `
 H4sIAAAAAAAC/1yNTQrCQAyFr/Iosyw9gOBS3HsDoRkJlAy8ma5C7i6pRcFVfr4vee6rVDXBROn7NvoU
 AXc+7SUoOqPIhssVy+ODI9y1omjEDHexNTf3NrBkc85a82DstH4jG1MW8uQ4hMbv0385A3/uUd8BAAD/
@@ -316,6 +343,7 @@ var _escDirs = map[string][]os.FileInfo{
 	"templates": {
 		_escData["/templates/call.tmpl"],
 		_escData["/templates/function.tmpl"],
+		_escData["/templates/functionmock.tmpl"],
 		_escData["/templates/header.tmpl"],
 		_escData["/templates/inline.tmpl"],
 		_escData["/templates/inputs.tmpl"],

@@ -73,6 +73,8 @@ type Function struct {
 	Parameters   []*Field
 	Results      []*Field
 	ReturnsError bool
+
+	MockCallerFunc []*Function // 表示在方法中需要被 mock 的方法
 }
 
 func (f *Function) TestParameters() []*Field {

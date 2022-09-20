@@ -36,6 +36,7 @@ type Options struct {
 	TemplateDir        string   // Path to custom template set
 	TemplateParamsPath string   // Path to custom parameters json file(s).
 	TemplateData       [][]byte // Data slice for templates
+	NeedMock bool // Need mock caller functions.
 }
 
 // Generates tests for the Go files defined in args with the given options.
@@ -102,6 +103,7 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: templateParams,
 		TemplateData:   opt.TemplateData,
+		NeedMockCaller: opt.NeedMock,
 	}
 }
 
