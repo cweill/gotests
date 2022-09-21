@@ -39,8 +39,8 @@ func {{.TestName}}(t *testing.T) {
 			wantErr bool
 		{{- end}}
 
-		// 增加 mock 函数
 		{{- with .MockCallerFunc}}
+			// 增加 mock 函数
 			mockPatches func(p *gomonkey.Patches)
 		{{- end}}
 	}{
@@ -76,9 +76,8 @@ func {{.TestName}}(t *testing.T) {
 					{{Param .}} := &bytes.Buffer{}
 				{{- end}}
 			{{- end}}
-
-			// 调用 mock
 			{{- if .MockCallerFunc}}
+				// 调用 mock
 				patches := gomonkey.NewPatches()
 				tt.mockPatches(patches)
 				defer patches.Reset()

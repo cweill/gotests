@@ -218,6 +218,13 @@ func parseCallerFuncs(fBody *ast.BlockStmt, ul map[string]types.Type) []*models.
 					callerFunc = append(callerFunc, f)
 				}
 			}
+		case *ast.AssignStmt:
+			for _, a := range stmt.Rhs { // 调用的函数只会出现在右侧
+				_, f := parseExpr(a, ul)
+				if f != nil {
+					callerFunc = append(callerFunc, f)
+				}
+			}
 		}
 	}
 	return callerFunc
