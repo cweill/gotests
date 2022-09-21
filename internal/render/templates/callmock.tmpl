@@ -1,0 +1,1 @@
+{{define "callmock"}}{{with .Receiver}}{{if not .IsStruct}}tt.{{end}}{{Receiver .}}.{{end}}func({{range $i, $el := .Parameters}}{{if $i}}, {{end}}_ {{ParamType .}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{template "mockreturnparam" .Results}}{panic("")}{{end}}

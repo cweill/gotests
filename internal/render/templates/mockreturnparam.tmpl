@@ -1,0 +1,1 @@
+{{define "returnparam"}}{{$length := len .}}{{if gt $length 0}}{{if gt $length 1}}({{end}}{{range $ri, $rv := .}}{{if $ri}}, {{end}}{{ParamType $rv}}{{end}}{{if gt $length 1}}){{end}}{{end}}{{end}}

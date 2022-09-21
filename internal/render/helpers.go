@@ -48,6 +48,10 @@ func parameterName(f *models.Field) string {
 	return n
 }
 
+func parameterType(f *models.Field) string {
+	return f.Type.Value
+}
+
 func wantName(f *models.Field) string {
 	var n string
 	if f.IsNamed() {

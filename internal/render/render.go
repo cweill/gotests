@@ -22,6 +22,7 @@ func New() *Render {
 			"Field":    fieldName,
 			"Receiver": receiverName,
 			"Param":    parameterName,
+			"ParamType": parameterType,
 			"Want":     wantName,
 			"Got":      gotName,
 		}),

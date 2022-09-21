@@ -213,11 +213,24 @@ var _escData = map[string]*_escFile{
 		name:    "call.tmpl",
 		local:   "templates/call.tmpl",
 		size:    241,
-		modtime: 1663641620,
+		modtime: 1663732644,
 		compressed: `
 H4sIAAAAAAAC/0SOQWrDQAxFryKMFy0YHaDQA3hTSlvatRjLrsCeFo2SEITuHsY4mdWHP2/el/vEs2SG
 LtG6dhHuF7FfwA9OLGfW2sgM+c8Ax/JpekoWYYbunKf6eicBI1qLb7RxxJO7Ul4Yehmg5xVeXgHfSWlj
 Yy2HvZeIAR5/296PitUbzJB0KU2/K+riTuPX9Z9xLN+kQpOkCMTG7vF85C0AAP//ZQi8iPEAAAA=
+`,
+	},
+
+	"/templates/callmock.tmpl": {
+		name:    "callmock.tmpl",
+		local:   "templates/callmock.tmpl",
+		size:    261,
+		modtime: 1663741270,
+		compressed: `
+H4sIAAAAAAAC/0SP4UrEQAyEXyUs/XEHRx5A8AHun6j4V8I21eB2r6SpIiHvLilX/LXsZOYbxn3kSTpD
+qdTafKtfJcL9R+wT8JkryzdrKjJBvxngdX0x3apFmKE79zGvhxMw4lCnrdeTu1L/YBjkAgM3eHgEfCKl
+mY11vYMHibjAPfYO7rvj9Xfh5O0WzB9e1zdSoVFqBOJ//f6c3Y3npZExlFyibJv2JVklx6xbs6xcqEs9
+lXI+kn8BAAD//1mlCFUFAQAA
 `,
 	},
 
@@ -248,8 +261,8 @@ CgAA
 	"/templates/functionmock.tmpl": {
 		name:    "functionmock.tmpl",
 		local:   "templates/functionmock.tmpl",
-		size:    3119,
-		modtime: 1663682015,
+		size:    3124,
+		modtime: 1663683872,
 		compressed: `
 H4sIAAAAAAAC/7RWv27cxhOueU8xPtgGaZxX/Qkq7J/lH1xYMiQhLowgWPGGZ0J7S2Z3KOGw2CpFgNRJ
 GwSpUvoF8jhK8hjB/uG/453kJs0dOdyZ+Wbm+4Y0ZoVFKRHmRSNzKiu5qfKbubUzY17C0wKWJ8Csnc3c
@@ -258,17 +271,17 @@ Cm8B7Q+7uPG04nKNOw6JMf7egfTwtjXGR84F5SredTlb0+B659KhcmV+4IpvkFD5ZB4aV+sRsAGsqYdP
 6E0TdIOM4/yuodo13RiPw7V6Ze2G1580qVKuvw3ZjUGh0dpP/b0LEEE511RWFP0zayXfIIQI8WhEsWde
 bRO4XPVD2+l7nFH461rrIcXC25DTyRyYwgO9TxLfePezx2cwgAvUjSDd5vnIJT3U+y7lBVKjpD5Vqoo9
 uOOSTpWC66oSI6dZkhwdwf3vv97/9Bs4scD9j3/+9cuXUT/fV/nN/7gQqN42Mg8R3dkPnPLPqMGpKa3h
-xbraVPIGtyw+yHa44cfpnI+O4Or8zfkSXq1W4EgCOdeo2VBJjyRdHs46Fdm+WEnNXtW12DpLOjeGhT0w
-X4AxhJtacEKY51yIuWt6NlWhXezO31nsLCkqBcY41lYK2GVzHXQQOPxOn/EbXGWZH+RAFY7UrRC+i7Re
-AFHQTxBEqCeEM4OJtzlGNHCsEwKFtSEI0fFYLa0q2oMjKM7D/R8b4+oD70XsopHpQdhELN4G8H5Ek8W6
-F2F3nWZjkF27D+n7wEaeqNa30StyW6M/zJW1z2O2qCn2DRcNWmvaEAcWddIRZglELGwONljfiz5Av7aT
-Pbt8chPz7dm+bZkfVUld9aOtvDyB59dbQs1eN0WByjyYMErxny8//P3zH179jwkwqaPklyfQ6e4M76L0
-0qASIjZQalr32yBJVliggmhiF6iRgtcEY2RnUM25FNvhWsum9nOJfngZdA3rdazCKp3D08Lrblfhzjxt
-zuGFmpRFZNMuMmsBlQps25fluBNz6s49OQFZisz9E7F2T0f6EfMhC7ef+lgb1JqvMdaC7gScwLPbBbTu
-z2531lgp66arHpVaDJJlPVPb99XoxeOfDZcMWKt8wa3s80pSKRvshfv4B8uD77qDXPdd/39FvaA77rNL
-/z2QZseDI6Grw1dnrwehMeZ4zXWZD761uuE+LfYRzC2LEYZhn0UpcXfQX43nP8r/RGEhMCf2BrE+/b7h
-Iu0iLMaAhi/Pfnpfw8MWcAT7vhFU1mIENuLpufoIUQ+CPPwNvMNTcAWFI/AyfJ/a2azl6b8BAAD//2Ql
-Md8vDAAA
+xbraVPIGtyw+yHa44cfpnI+O4Or8zfkSXq1W4EgCOdeo2VBJjyRdHs46Fdm+WElSs1d1LbbOlM6NYWER
+zBdgDOGmFpwQ5jkXwi8R1/lsKkW72CWBs9hZUlQKjHHUrRSwy+Y6iCEQ+Z0+4ze4yjI/zYE0HLNbNXwX
+ub0AoiCioIpQVAhnBmNvc4y44KgnBAprQxCi47FkWmm0B0dQnIf7PzbG1Qfei9hFI9ODsIlYvA3g/Zwm
+23Uvwu46zcYgu3YfEvmBtTyRrm+jl+W2Rn+YK2ufx2xRWOwbLhq01rQhDmzrpCPNEohYWB9ssMMXfYB+
+dyd7FvrkJubbs4LbMj+qkrrqR6t5eQLPr7eEmr1uigKVeTBh1OM/X374++c//Ap4TIVJHXW/PIFOfGd4
+F/WXBpUQsYFc07pfCUmywgIVRBO7QI0UvCYYIzuDas6l2A53Wza1n0v0w8uga1ivZRX26RyeFl53Y5UH
+87Q5h7dqUhaRTbvIrAVUKrBtX5bjTsypO/fkBGQpMvdPxNplHelHzIcs3I7qY21Qa77GWAu6E3ACz24X
+0Lo/u91ZZaWsm656VGoxSJb1TG1fWqO3j382XDJgrfIFt7LPK0mlbLAX7uNfLQ++8A5y3Xf9/xX1gu64
+zy79R0GaHQ+OhK4O35+9HoTGmOM112U++ODqhvu02EcwtyxGGIZ9FqXE3UF/NZ7/KP8ThYXAnNgbxPr0
++4aLtIuwGAMavkH76X0ND1vAEez7RlBZixHYiKfn6iNEPQjy8IfwDk/BFRSOwMvwkWpns5an/wYAAP//
+0zATYDQMAAA=
 `,
 	},
 
@@ -319,6 +332,18 @@ ckaMbkRJrVmhKgP5ayL+XU8JMUWz+sakCt+bqd4lXYh/cIZsCHvCf48F/O+mFWZ8DPnbzTB7y0Tugvj0
 `,
 	},
 
+	"/templates/mockreturnparam.tmpl": {
+		name:    "mockreturnparam.tmpl",
+		local:   "templates/mockreturnparam.tmpl",
+		size:    197,
+		modtime: 1663740863,
+		compressed: `
+H4sIAAAAAAAC/2SNQQrCQAxFr/IpWSgU0a3gHVx4gYGmY6CGEsaChNxdArYIXQXe+7y4DzyKMjrj9jad
+i5VXF+FOE2ttT1xvmFhxSiYjasNqznt0iTi4sw6prGhlkEkPsiVDa4RMInpsy3t+fXzmXC8JfnwXP27q
+/3wDAAD//+gvBhDFAAAA
+`,
+	},
+
 	"/templates/results.tmpl": {
 		name:    "results.tmpl",
 		local:   "templates/results.tmpl",
@@ -342,12 +367,14 @@ var _escDirs = map[string][]os.FileInfo{
 
 	"templates": {
 		_escData["/templates/call.tmpl"],
+		_escData["/templates/callmock.tmpl"],
 		_escData["/templates/function.tmpl"],
 		_escData["/templates/functionmock.tmpl"],
 		_escData["/templates/header.tmpl"],
 		_escData["/templates/inline.tmpl"],
 		_escData["/templates/inputs.tmpl"],
 		_escData["/templates/message.tmpl"],
+		_escData["/templates/mockreturnparam.tmpl"],
 		_escData["/templates/results.tmpl"],
 	},
 }

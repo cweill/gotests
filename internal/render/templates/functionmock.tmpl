@@ -49,7 +49,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- if .MockCallerFunc}}
 			mockPatches: func(p *gomonkey.Patches) {
 				{{- range .MockCallerFunc}}
-				p.ApplyFunc("{{.Name}}", {{template "call" .}})
+					p.ApplyFunc("{{.Name}}", {{template "callmock" .}})
 				{{- end}}
 			},
 			{{- end}}
