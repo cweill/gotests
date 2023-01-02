@@ -48,7 +48,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Result{
+	result := &Result{
 		Header: &models.Header{
 			Comments: parsePkgComment(f, f.Package),
 			Package:  f.Name.String(),
@@ -56,7 +56,11 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			Code:     goCode(b, f),
 		},
 		Funcs: p.parseFunctions(fset, f, fs),
-	}, nil
+	}
+	for _, v := range fs {
+		result.Header.Imports = append(result.Header.Imports, parseImports(v.Imports)...)
+	}
+	return result, nil
 }
 
 func (p *Parser) readFile(srcPath string) ([]byte, error) {

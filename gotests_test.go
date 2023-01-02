@@ -869,6 +869,12 @@ func TestGenerateTests(t *testing.T) {
 				template: "testify",
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/named/named_on_subtests_on_parallel_on_template_testify.go"),
+		}, {
+			name: "receiver and methods are defined in different file",
+			args: args{
+				srcPath: "testdata/separate_definition/method.go",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/receiver_and_methods_in_different_file.go"),
 		},
 	}
 	tmp, err := ioutil.TempDir("", "gotests_test")
