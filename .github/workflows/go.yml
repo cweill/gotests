@@ -13,27 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ 1.16.x, 1.15.x, 1.14.x, 1.13.x, 1.12.x, 1.11.x, 1.10.x, 1.9.x ]
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: auto
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/cweill/gotests
+        go: [ 1.16.x, 1.19.x, 1.20.x ]
     steps:
 
+    - name: Check out code
+      uses: actions/checkout@v3
+
     - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go }}
-
-    - name: Check out code
-      uses: actions/checkout@v2
-      with:
-        path: ${{ env.GOPATH }}/src/github.com/cweill/gotests
-
-    - name: Get Dependencies (github.com/golang.org/x/tools/imports)
-      run: go get -v ./...
 
     - name: Test
       run: |
@@ -42,9 +31,7 @@ jobs:
     - name: Coverage Dependencies
       if: matrix.go == '1.16.x'
       run: |
-        go get github.com/mattn/goveralls
-        go get -v ./...
-
+        go install github.com/mattn/goveralls@latest
 
     - name: Coverage Reporting Generation
       if: matrix.go == '1.16.x'
@@ -54,6 +41,6 @@ jobs:
 
     - name: Coverage - Sending Report to Coveral
       if: matrix.go == '1.16.x'
-      run: $GOPATH/bin/goveralls -coverprofile=coverage.cov -service=github
+      run: goveralls -coverprofile=coverage.cov -service=github
       env:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
