@@ -1,5 +1,10 @@
 module github.com/cweill/gotests
 
-require golang.org/x/tools v0.0.0-20191109212701-97ad0ed33101
+require (
+	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/mjibson/esc v0.2.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	golang.org/x/tools v0.11.1
+)
 
 go 1.6

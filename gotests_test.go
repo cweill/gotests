@@ -14,6 +14,7 @@ import (
 	"unicode"
 
 	"golang.org/x/tools/imports"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestGenerateTests(t *testing.T) {
@@ -916,8 +917,8 @@ func TestGenerateTests(t *testing.T) {
 			if tt.wantNoTests || tt.wantMultipleTests {
 				return
 			}
-			if got := string(gts[0].Output); got != tt.want {
-				t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, tt.want)
+			if diff := cmp.Diff(tt.want, string(gts[0].Output)); diff != "" {
+				t.Errorf("%q. GenerateTests(%v) diff (-want +got)\n%s", tt.name, tt.args.srcPath, diff)
 				outputResult(t, tmp, tt.name, gts[0].Output)
 			}
 		})
