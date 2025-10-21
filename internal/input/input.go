@@ -10,7 +10,13 @@ import (
 )
 
 // Files returns all the Golang files for the given path. Ignores hidden files.
+// Supports recursive patterns like "pkg/..." to walk subdirectories.
 func Files(srcPath string) ([]models.Path, error) {
+	// Check if this is a recursive pattern (ends with /...)
+	if filepath.Base(srcPath) == "..." {
+		return recursiveDirFiles(filepath.Dir(srcPath))
+	}
+
 	srcPath, err := filepath.Abs(srcPath)
 	if err != nil {
 		return nil, fmt.Errorf("filepath.Abs: %v\n", err)
@@ -23,6 +29,37 @@ func Files(srcPath string) ([]models.Path, error) {
 		return dirFiles(srcPath)
 	}
 	return file(srcPath)
+}
+
+func recursiveDirFiles(srcPath string) ([]models.Path, error) {
+	srcPath, err := filepath.Abs(srcPath)
+	if err != nil {
+		return nil, fmt.Errorf("filepath.Abs: %v\n", err)
+	}
+
+	var srcPaths []models.Path
+	err = filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// Skip hidden files and directories
+		if isHiddenFile(path) {
+			if info.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		// Skip test files
+		src := models.Path(path)
+		if !info.IsDir() && filepath.Ext(path) == ".go" && !src.IsTestPath() {
+			srcPaths = append(srcPaths, src)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("filepath.Walk: %v\n", err)
+	}
+	return srcPaths, nil
 }
 
 func dirFiles(srcPath string) ([]models.Path, error) {
