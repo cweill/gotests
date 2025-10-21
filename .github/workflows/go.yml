@@ -33,7 +33,7 @@ jobs:
     - name: Coverage
       if: matrix.go == '1.25.x'
       run: |
-        go test -v -covermode=count -coverprofile=coverage.out ./...
+        go test -v -covermode=count -coverprofile=coverage.out -coverpkg=./... ./...
 
     - name: Upload coverage to Coveralls
       if: matrix.go == '1.25.x'
