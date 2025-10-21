@@ -33,11 +33,20 @@ jobs:
     - name: Coverage
       if: matrix.go == '1.25.x'
       run: |
-        go test -v -covermode=count -coverprofile=coverage.out -coverpkg=./... ./...
+        go test -v -covermode=count -coverprofile=coverage.txt -coverpkg=./... ./...
 
     - name: Upload coverage to Coveralls
       if: matrix.go == '1.25.x'
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: coverage.out
+        path-to-lcov: coverage.txt
+
+    - name: Upload coverage to Codecov
+      if: matrix.go == '1.25.x'
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.txt
+        fail_ci_if_error: false
+        verbose: true
