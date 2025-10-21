@@ -951,7 +951,7 @@ func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
 	if err := ioutil.WriteFile(tmpResult, got, 0644); err != nil {
 		t.Errorf("ioutil.WriteFile: %v", err)
 	}
-	t.Logf(tmpResult)
+	t.Logf("%s", tmpResult)
 }
 
 func loadExternalJsonFile(file string) (map[string]interface{}, error) {
