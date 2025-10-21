@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.23.x', '1.22.x' ]
+        go: [ '1.25.x', '1.24.x', '1.23.x', '1.22.x' ]
     steps:
 
     - name: Set up Go
@@ -31,12 +31,12 @@ jobs:
       run: go test -v ./...
 
     - name: Coverage
-      if: matrix.go == '1.23.x'
+      if: matrix.go == '1.25.x'
       run: |
         go test -v -covermode=count -coverprofile=coverage.out ./...
 
     - name: Upload coverage to Coveralls
-      if: matrix.go == '1.23.x'
+      if: matrix.go == '1.25.x'
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
