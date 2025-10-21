@@ -13,7 +13,8 @@
       "WebFetch(domain:github.com)",
       "Bash(go run:*)",
       "Bash(curl:*)",
-      "Bash(1)"
+      "Bash(1)",
+      "Bash(gh pr create:*)"
     ],
     "deny": [],
     "ask": []

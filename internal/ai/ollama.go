@@ -159,11 +159,9 @@ func validateTestCases(cases []TestCase, fn *models.Function) error {
 		}
 
 		// Check return values match
+		// Note: fn.TestResults() already excludes the error (error is indicated by fn.ReturnsError)
+		// so we just need to check that Want has the same number of entries as TestResults
 		expectedReturns := len(fn.TestResults())
-		if fn.ReturnsError {
-			// wantErr bool replaces the error in Want map
-			expectedReturns--
-		}
 		if len(tc.Want) != expectedReturns {
 			return fmt.Errorf("test case %q has %d return values, expected %d", tc.Name, len(tc.Want), expectedReturns)
 		}
