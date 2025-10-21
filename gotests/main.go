@@ -44,7 +44,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/cweill/gotests/gotests/process"
 )
@@ -61,6 +63,7 @@ var (
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 	useGoCmp           = flag.Bool("use_go_cmp", false, "use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual")
+	version            = flag.Bool("version", false, "print version information and exit")
 )
 
 var (
@@ -80,6 +83,11 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
+	if *version {
+		printVersion()
+		return
+	}
+
 	process.Run(os.Stdout, args, &process.Options{
 		OnlyFuncs:          *onlyFuncs,
 		ExclFuncs:          *exclFuncs,
@@ -95,6 +103,32 @@ func main() {
 		TemplateParamsPath: *templateParamsPath,
 		UseGoCmp:           *useGoCmp,
 	})
+}
+
+func printVersion() {
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		fmt.Println("gotests (unknown version)")
+		return
+	}
+
+	version := info.Main.Version
+	if version == "" || version == "(devel)" {
+		version = "development"
+	}
+
+	fmt.Printf("gotests %s\n", version)
+	fmt.Printf("Go version: %s\n", info.GoVersion)
+
+	// Print VCS information if available
+	for _, setting := range info.Settings {
+		if setting.Key == "vcs.revision" {
+			fmt.Printf("Git commit: %s\n", setting.Value)
+		}
+		if setting.Key == "vcs.time" {
+			fmt.Printf("Build time: %s\n", setting.Value)
+		}
+	}
 }
 
 func valOrGetenv(val, key string) string {

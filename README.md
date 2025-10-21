@@ -61,6 +61,8 @@ Available options:
   -template_params      read external parameters to template by json with stdin
 
   -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
+
+  -version              print version information and exit
 ```
 
 ## Contributions
