@@ -30,23 +30,27 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: Coverage
+    - name: Coverage Dependencies
+      if: matrix.go == '1.25.x'
+      run: go install github.com/mattn/goveralls@latest
+
+    - name: Coverage Reporting Generation
       if: matrix.go == '1.25.x'
       run: |
-        go test -v -covermode=count -coverprofile=coverage.txt -coverpkg=./... ./...
+        export PKGS=$(go list ./... | grep -vE "(gotests/gotests|.*data|templates)" | tr -s '\n' ',' | sed 's/.\{1\}$//')
+        go test -v -covermode=count -coverpkg=$PKGS -coverprofile=coverage.out ./...
 
     - name: Upload coverage to Coveralls
       if: matrix.go == '1.25.x'
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: coverage.txt
+      run: goveralls -coverprofile=coverage.out -service=github
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload coverage to Codecov
       if: matrix.go == '1.25.x'
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage.txt
+        files: ./coverage.out
         fail_ci_if_error: false
         verbose: true
