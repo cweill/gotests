@@ -61,8 +61,6 @@ func {{.TestName}}(t *testing.T) {
 	}
 	for {{if (or .Subtests (not .IsNaked))}} {{if .Named}}name{{else}}_{{end}}, tt := {{end}} range tests {
 		{{- if .Subtests}}
-		{{- if .Parallel}}tt := tt;{{end}}
-		{{- if and .Parallel .Named}}name := name;{{ end }}
 		t.Run({{if .Named}}name{{else}}tt.name{{end}}, func(t *testing.T) {
 			{{- if .Parallel}}t.Parallel(){{end}}
 		{{- end}}
