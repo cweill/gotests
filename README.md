@@ -1,6 +1,17 @@
 # gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![godoc](https://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/cweill/gotests) [![Build Status](https://github.com/cweill/gotests/workflows/Go/badge.svg)](https://github.com/cweill/gotests/actions) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master) [![codecov](https://codecov.io/gh/cweill/gotests/branch/master/graph/badge.svg)](https://codecov.io/gh/cweill/gotests) [![Go Report Card](https://goreportcard.com/badge/github.com/cweill/gotests)](https://goreportcard.com/report/github.com/cweill/gotests)
 
-`gotests` makes writing Go tests easy. It's a Golang commandline tool that generates [table driven tests](https://go.dev/wiki/TableDrivenTests) based on its target source files' function and method signatures. Any new dependencies in the test files are automatically imported.
+**gotests** is a powerful Go test generator that automatically creates [table-driven tests](https://go.dev/wiki/TableDrivenTests) from your source code. It analyzes function and method signatures to generate comprehensive test scaffolding, saving you time and ensuring consistency across your test suite.
+
+### Key Features
+
+- 🚀 **Zero-config test generation** - Works out of the box with any Go project
+- 🎯 **Smart test scaffolding** - Generates complete table-driven test structure with proper type handling
+- 🔧 **Flexible filtering** - Generate tests for specific functions, exported functions, or entire packages
+- 📦 **Auto-imports** - Automatically adds required imports to test files
+- 🧬 **Full generics support** - Works seamlessly with Go 1.18+ type parameters
+- 🔄 **Recursive generation** - Process entire directory trees with `./...` pattern
+- 🎨 **Custom templates** - Built-in support for testify and custom test templates
+- ⚡ **Parallel subtests** - Optional parallel test execution support
 
 ## Demo
 
