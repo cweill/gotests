@@ -3,6 +3,7 @@ package testdata
 import "testing"
 
 func Test_main(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 	}{
@@ -18,6 +19,7 @@ func Test_main(t *testing.T) {
 }
 
 func Test_do(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 	}{

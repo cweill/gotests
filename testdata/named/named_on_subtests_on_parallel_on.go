@@ -3,6 +3,7 @@ package testdata
 import "testing"
 
 func TestFoo038(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		want bool
 	}{

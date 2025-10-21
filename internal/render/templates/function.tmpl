@@ -2,6 +2,9 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
+	{{- if .Parallel}}
+	t.Parallel()
+	{{- end}}
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
