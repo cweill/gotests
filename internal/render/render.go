@@ -93,6 +93,7 @@ func (r *Render) TestFunction(
 	subtests bool,
 	named bool,
 	parallel bool,
+	useGoCmp bool,
 	params map[string]interface{}) error {
 	return r.tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
@@ -100,6 +101,7 @@ func (r *Render) TestFunction(
 		Subtests       bool
 		Parallel       bool
 		Named          bool
+		UseGoCmp       bool
 		TemplateParams map[string]interface{}
 	}{
 		Function:       f,
@@ -107,6 +109,7 @@ func (r *Render) TestFunction(
 		Subtests:       subtests,
 		Parallel:       parallel,
 		Named:          named,
+		UseGoCmp:       useGoCmp,
 		TemplateParams: params,
 	})
 }
