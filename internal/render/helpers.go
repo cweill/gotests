@@ -1,14 +1,11 @@
 package render
 
-//go:generate esc -o bindata/esc.go -pkg=bindata templates
 import (
 	"fmt"
 	"strings"
 
 	"github.com/cweill/gotests/internal/models"
 )
-
-const nFile = 7 // Number of files to be read from template (package) template (directory)
 
 func fieldName(f *models.Field) string {
 	var n string
