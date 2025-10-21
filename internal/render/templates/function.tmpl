@@ -67,9 +67,9 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 			{{- if .ReturnsError}}
 				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
-					{{- if .TestResults}}
-						{{if .Subtests }}return{{else}}continue{{end}}
+					t.{{if and .TestResults .Subtests}}Fatalf{{else}}Errorf{{end}}("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
+					{{- if and .TestResults (not .Subtests)}}
+						continue
 					{{- end}}
 				}
 			{{- end}}

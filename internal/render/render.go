@@ -1,16 +1,20 @@
 package render
 
 import (
+	"embed"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"path"
 	"text/template"
 
 	"github.com/cweill/gotests/internal/models"
-	"github.com/cweill/gotests/internal/render/bindata"
 	"github.com/cweill/gotests/templates"
 )
+
+//go:embed templates/*
+var data embed.FS
 
 type Render struct {
 	tmpls *template.Template
@@ -28,9 +32,7 @@ func New() *Render {
 	}
 
 	// default templates first
-	for _, name := range bindata.AssetNames() {
-		r.tmpls = template.Must(r.tmpls.Parse(bindata.FSMustString(false, name)))
-	}
+	r.tmpls = template.Must(r.tmpls.ParseFS(data, "templates/*.tmpl"))
 
 	return &r
 }
@@ -56,27 +58,14 @@ func (r *Render) LoadCustomTemplates(dir string) error {
 
 // LoadCustomTemplatesName allows to load in custom templates of a specified name from the templates directory.
 func (r *Render) LoadCustomTemplatesName(name string) error {
-	f, err := templates.Dir(false, "/").Open(name)
+	fileSystem, err := fs.Sub(templates.FS, name)
 	if err != nil {
-		return fmt.Errorf("templates.Open: %v", err)
+		return fmt.Errorf("templates.Sub: %w", err)
 	}
 
-	files, err := f.Readdir(nFile)
+	r.tmpls, err = r.tmpls.ParseFS(fileSystem, "*.tmpl")
 	if err != nil {
-		return fmt.Errorf("f.Readdir: %v", err)
-	}
-
-	for _, f := range files {
-		text, err := templates.FSString(false, path.Join("/", name, f.Name()))
-		if err != nil {
-			return fmt.Errorf("templates.FSString: %v", err)
-		}
-
-		if tmpls, err := r.tmpls.Parse(text); err != nil {
-			return fmt.Errorf("tmpls.Parse: %v", err)
-		} else {
-			r.tmpls = tmpls
-		}
+		return fmt.Errorf("templates.ParseFS: %w", err)
 	}
 
 	return nil

@@ -14,8 +14,7 @@ func TestSameName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := SameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("SameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("SameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("SameName() = %v, want %v", got, tt.want)
@@ -36,8 +35,7 @@ func Test_sameName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := sameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("sameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("sameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("sameName() = %v, want %v", got, tt.want)
@@ -60,8 +58,7 @@ func TestSameTypeName_SameName(t *testing.T) {
 			tr := &SameTypeName{}
 			got, err := tr.SameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("SameTypeName.SameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("SameTypeName.SameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("SameTypeName.SameName() = %v, want %v", got, tt.want)
@@ -84,8 +81,7 @@ func TestSameTypeName_sameName(t *testing.T) {
 			tr := &SameTypeName{}
 			got, err := tr.sameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("SameTypeName.sameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("SameTypeName.sameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("SameTypeName.sameName() = %v, want %v", got, tt.want)
@@ -108,8 +104,7 @@ func Test_sameTypeName_SameName(t *testing.T) {
 			tr := &sameTypeName{}
 			got, err := tr.SameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("sameTypeName.SameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("sameTypeName.SameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("sameTypeName.SameName() = %v, want %v", got, tt.want)
@@ -132,8 +127,7 @@ func Test_sameTypeName_sameName(t *testing.T) {
 			tr := &sameTypeName{}
 			got, err := tr.sameName()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("sameTypeName.sameName() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("sameTypeName.sameName() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if got != tt.want {
 				t.Errorf("sameTypeName.sameName() = %v, want %v", got, tt.want)
