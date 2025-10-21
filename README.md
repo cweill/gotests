@@ -65,6 +65,91 @@ Available options:
   -version              print version information and exit
 ```
 
+## Quick Start Examples
+
+### Generate tests for a single function
+
+Given a file `math.go`:
+
+```go
+package math
+
+func Add(a, b int) int {
+    return a + b
+}
+```
+
+Generate a test:
+
+```sh
+$ gotests -only Add -w math.go
+```
+
+This creates `math_test.go` with:
+
+```go
+func TestAdd(t *testing.T) {
+    type args struct {
+        a int
+        b int
+    }
+    tests := []struct {
+        name string
+        args args
+        want int
+    }{
+        // TODO: Add test cases.
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if got := Add(tt.args.a, tt.args.b); got != tt.want {
+                t.Errorf("Add() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+}
+```
+
+### Generate tests for all exported functions
+
+```sh
+$ gotests -all -exported -w .
+```
+
+This generates tests for all exported functions in the current directory.
+
+### Generate tests recursively
+
+```sh
+$ gotests -all -w ./...
+```
+
+This generates tests for all functions in the current directory and all subdirectories.
+
+### Generate tests with testify
+
+```sh
+$ gotests -all -template testify -w calculator.go
+```
+
+This generates tests using the [testify](https://github.com/stretchr/testify) assertion library.
+
+### Common workflows
+
+```sh
+# Generate tests for all exported functions in a package
+$ gotests -exported -w pkg/*.go
+
+# Generate only tests for specific functions matching a pattern
+$ gotests -only "^Process" -w handler.go
+
+# Generate tests excluding certain functions
+$ gotests -all -excl "^helper" -w utils.go
+
+# Generate parallel subtests
+$ gotests -all -parallel -w service.go
+```
+
 ## Go Generics Support
 
 `gotests` fully supports Go generics (type parameters) introduced in Go 1.18+. It automatically generates tests for generic functions and methods on generic types.
