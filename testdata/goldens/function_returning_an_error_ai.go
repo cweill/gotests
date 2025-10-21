@@ -9,13 +9,13 @@ func TestFoo5(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "test_case_1",
-			want:    10,
+			name:    "positive_numbers",
+			want:    8,
 			wantErr: false,
 		},
 		{
-			name:    "test_case_2",
-			want:    7,
+			name:    "zero_values",
+			want:    0,
 			wantErr: false,
 		},
 	}

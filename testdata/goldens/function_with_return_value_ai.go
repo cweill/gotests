@@ -8,12 +8,12 @@ func TestFoo4(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "test_case_1",
-			want: 10,
+			name: "positive_numbers",
+			want: 8,
 		},
 		{
-			name: "test_case_2",
-			want: 7,
+			name: "zero_values",
+			want: 0,
 		},
 	}
 	for _, tt := range tests {
