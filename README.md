@@ -65,6 +65,107 @@ Available options:
   -version              print version information and exit
 ```
 
+## Go Generics Support
+
+`gotests` fully supports Go generics (type parameters) introduced in Go 1.18+. It automatically generates tests for generic functions and methods on generic types.
+
+### Example: Generic Function
+
+Given this generic function:
+
+```go
+func FindFirst[T comparable](slice []T, target T) (int, error) {
+    for i, v := range slice {
+        if v == target {
+            return i, nil
+        }
+    }
+    return -1, ErrNotFound
+}
+```
+
+Running `gotests -all -w yourfile.go` generates:
+
+```go
+func TestFindFirst(t *testing.T) {
+    type args struct {
+        slice  []string
+        target string
+    }
+    tests := []struct {
+        name    string
+        args    args
+        want    int
+        wantErr bool
+    }{
+        // TODO: Add test cases.
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got, err := FindFirst[string](tt.args.slice, tt.args.target)
+            if (err != nil) != tt.wantErr {
+                t.Errorf("FindFirst() error = %v, wantErr %v", err, tt.wantErr)
+                return
+            }
+            if got != tt.want {
+                t.Errorf("FindFirst() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+}
+```
+
+### Example: Methods on Generic Types
+
+`gotests` also supports methods on generic types:
+
+```go
+type Set[T comparable] struct {
+    m map[T]struct{}
+}
+
+func (s *Set[T]) Add(v T) {
+    if s.m == nil {
+        s.m = make(map[T]struct{})
+    }
+    s.m[v] = struct{}{}
+}
+```
+
+Generates:
+
+```go
+func TestSet_Add(t *testing.T) {
+    type args struct {
+        v string
+    }
+    tests := []struct {
+        name string
+        s    *Set[string]
+        args args
+    }{
+        // TODO: Add test cases.
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            s := &Set[string]{}
+            s.Add(tt.args.v)
+        })
+    }
+}
+```
+
+### Type Constraint Mapping
+
+`gotests` uses intelligent defaults for type parameter instantiation:
+
+- `any` → `int`
+- `comparable` → `string`
+- Union types (`int64 | float64`) → first option (`int64`)
+- Approximation constraints (`~int`) → underlying type (`int`)
+
+This ensures generated tests use appropriate concrete types for testing generic code.
+
 ## Contributions
 
 Contributing guidelines are in [CONTRIBUTING.md](CONTRIBUTING.md).

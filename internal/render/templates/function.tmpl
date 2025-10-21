@@ -19,7 +19,7 @@ func {{.TestName}}(t *testing.T) {
 	{{- if .TestParameters}}
 	type args struct {
 		{{- range .TestParameters}}
-				{{Param .}} {{.Type}}
+				{{Param .}} {{FieldType $ .}}
 		{{- end}}
 	}
 	{{- end}}
@@ -29,14 +29,14 @@ func {{.TestName}}(t *testing.T) {
 			{{- if and .IsStruct .Fields}}
 				fields fields
 			{{- else}}
-				{{Receiver .}} {{.Type}}
+				{{Receiver .}} {{FieldType $ .Field}}
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}
 			args args
 		{{- end}}
 		{{- range .TestResults}}
-			{{Want .}} {{.Type}}
+			{{Want .}} {{FieldType $ .}}
 		{{- end}}
 		{{- if .ReturnsError}}
 			wantErr bool
@@ -51,7 +51,7 @@ func {{.TestName}}(t *testing.T) {
 		{{- end}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
-					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{ReceiverType $ .}}{
 					{{- range .Fields}}
 						{{.Name}}: tt.fields.{{Field .}},
 					{{- end}}

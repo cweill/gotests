@@ -100,15 +100,52 @@ func (p *Parser) parseFiles(fset *token.FileSet, f *ast.File, files []models.Pat
 
 func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File) []*models.Function {
 	ul, el := p.parseTypes(fset, fs)
+	// Parse type declarations to extract type parameters
+	typeParams := p.parseTypeDecls(f, fs)
 	var funcs []*models.Function
 	for _, d := range f.Decls {
 		fDecl, ok := d.(*ast.FuncDecl)
 		if !ok {
 			continue
 		}
-		funcs = append(funcs, parseFunc(fDecl, ul, el))
+		funcs = append(funcs, parseFunc(fDecl, ul, el, typeParams))
 	}
 	return funcs
+}
+
+// parseTypeDecls extracts type parameters from type declarations
+// Returns a map from type name to its type parameters
+func (p *Parser) parseTypeDecls(f *ast.File, fs []*ast.File) map[string][]*models.TypeParam {
+	typeParams := make(map[string][]*models.TypeParam)
+
+	// Parse the main file and all related files
+	allFiles := append([]*ast.File{f}, fs...)
+
+	for _, file := range allFiles {
+		for _, d := range file.Decls {
+			genDecl, ok := d.(*ast.GenDecl)
+			if !ok {
+				continue
+			}
+
+			for _, spec := range genDecl.Specs {
+				typeSpec, ok := spec.(*ast.TypeSpec)
+				if !ok {
+					continue
+				}
+
+				// Extract type parameters if present
+				if typeSpec.TypeParams != nil {
+					tps := parseTypeParams(typeSpec.TypeParams)
+					if len(tps) > 0 {
+						typeParams[typeSpec.Name.Name] = tps
+					}
+				}
+			}
+		}
+	}
+
+	return typeParams
 }
 
 func (p *Parser) parseTypes(fset *token.FileSet, fs []*ast.File) (map[string]types.Type, map[*types.Struct]ast.Expr) {
@@ -181,13 +218,25 @@ func goCode(b []byte, f *ast.File) []byte {
 	return b[furthestPos:]
 }
 
-func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr) *models.Function {
+func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Struct]ast.Expr, typeParams map[string][]*models.TypeParam) *models.Function {
 	f := &models.Function{
 		Name:       fDecl.Name.String(),
 		IsExported: fDecl.Name.IsExported(),
 		Receiver:   parseReceiver(fDecl.Recv, ul, el),
 		Parameters: parseFieldList(fDecl.Type.Params, ul),
+		TypeParams: parseTypeParams(fDecl.Type.TypeParams),
 	}
+
+	// For methods on generic types, extract type parameters from the receiver type
+	if f.Receiver != nil && f.Receiver.Type != nil {
+		// Extract the base type name from receiver type (e.g., "Set" from "*Set[T]" or "Set[T]")
+		typeName := extractBaseTypeName(f.Receiver.Type.Value)
+		if tps, ok := typeParams[typeName]; ok {
+			// Use the type's type parameters instead of the method's
+			f.TypeParams = tps
+		}
+	}
+
 	fs := parseFieldList(fDecl.Type.Results, ul)
 	i := 0
 	for _, fi := range fs {
@@ -200,6 +249,18 @@ func parseFunc(fDecl *ast.FuncDecl, ul map[string]types.Type, el map[*types.Stru
 		i++
 	}
 	return f
+}
+
+// extractBaseTypeName extracts the base type name from a receiver type string
+// Examples: "*Set[T]" -> "Set", "Set[T]" -> "Set", "Map[K,V]" -> "Map", "*Foo" -> "Foo"
+func extractBaseTypeName(typeStr string) string {
+	// Remove pointer prefix
+	typeStr = strings.TrimPrefix(typeStr, "*")
+	// Find the opening bracket for type parameters
+	if idx := strings.Index(typeStr, "["); idx != -1 {
+		return typeStr[:idx]
+	}
+	return typeStr
 }
 
 func parseImports(imps []*ast.ImportSpec) []*models.Import {
@@ -313,4 +374,23 @@ func underlying(val string, ul map[string]types.Type) string {
 		return ul[val].String()
 	}
 	return ""
+}
+
+func parseTypeParams(fl *ast.FieldList) []*models.TypeParam {
+	if fl == nil {
+		return nil
+	}
+	var tps []*models.TypeParam
+	for _, f := range fl.List {
+		// Extract constraint as string
+		constraint := types.ExprString(f.Type)
+		// Each field can have multiple names (e.g., T, U any)
+		for _, name := range f.Names {
+			tps = append(tps, &models.TypeParam{
+				Name:       name.Name,
+				Constraint: constraint,
+			})
+		}
+	}
+	return tps
 }
