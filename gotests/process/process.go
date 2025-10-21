@@ -35,6 +35,7 @@ type Options struct {
 	Template           string   // Name of custom template set
 	TemplateDir        string   // Path to custom template set
 	TemplateParamsPath string   // Path to custom parameters json file(s).
+	TemplateParams     string   // Custom parameters as JSON string
 	TemplateData       [][]byte // Data slice for templates
 	UseGoCmp           bool     // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 }
@@ -76,6 +77,17 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 	}
 
 	templateParams := map[string]interface{}{}
+
+	// Parse template params from JSON string if provided
+	if opt.TemplateParams != "" {
+		err := json.Unmarshal([]byte(opt.TemplateParams), &templateParams)
+		if err != nil {
+			fmt.Fprintf(out, "Failed to unmarshal template_params JSON: %s", err)
+			return nil
+		}
+	}
+
+	// Parse template params from file if provided (takes precedence)
 	jfile := opt.TemplateParamsPath
 	if jfile != "" {
 		buf, err := ioutil.ReadFile(jfile)

@@ -101,6 +101,7 @@ func main() {
 		Template:           valOrGetenv(*template, "GOTESTS_TEMPLATE"),
 		TemplateDir:        valOrGetenv(*templateDir, "GOTESTS_TEMPLATE_DIR"),
 		TemplateParamsPath: *templateParamsPath,
+		TemplateParams:     *templateParams,
 		UseGoCmp:           *useGoCmp,
 	})
 }
