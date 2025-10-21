@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -69,5 +71,30 @@ func Test_valOrGetenv(t *testing.T) {
 				t.Errorf("valOrGetenv() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_printVersion(t *testing.T) {
+	// Capture stdout
+	oldStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	printVersion()
+
+	w.Close()
+	os.Stdout = oldStdout
+
+	var buf bytes.Buffer
+	buf.ReadFrom(r)
+	output := buf.String()
+
+	// Check that output contains expected strings
+	if !strings.Contains(output, "gotests") {
+		t.Errorf("printVersion() output should contain 'gotests', got: %s", output)
+	}
+
+	if !strings.Contains(output, "Go version:") {
+		t.Errorf("printVersion() output should contain 'Go version:', got: %s", output)
 	}
 }
