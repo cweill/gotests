@@ -159,10 +159,6 @@ func (f *Function) IsNaked() bool {
 	return f.Receiver == nil && len(f.Parameters) == 0 && len(f.Results) == 0
 }
 
-func (f *Function) IsGeneric() bool {
-	return len(f.TypeParams) > 0
-}
-
 type Import struct {
 	Name, Path string
 }
