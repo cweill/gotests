@@ -21,6 +21,9 @@ func TestBar_Write(t *testing.T) {
 			t.Errorf("%q. Bar.Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if gotW := w.String(); gotW != tt.wantW {
 			t.Errorf("%q. Bar.Write() = %v, want %v", tt.name, gotW, tt.wantW)
 		}
@@ -44,6 +47,9 @@ func TestWrite(t *testing.T) {
 		if err := Write(w, tt.args.data); (err != nil) != tt.wantErr {
 			t.Errorf("%q. Write() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
+		}
+		if tt.wantErr {
+			return
 		}
 		if gotW := w.String(); gotW != tt.wantW {
 			t.Errorf("%q. Write() = %v, want %v", tt.name, gotW, tt.wantW)
@@ -73,6 +79,9 @@ func TestMultiWrite(t *testing.T) {
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%q. MultiWrite() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
+		}
+		if tt.wantErr {
+			return
 		}
 		if got != tt.want {
 			t.Errorf("%q. MultiWrite() got = %v, want %v", tt.name, got, tt.want)

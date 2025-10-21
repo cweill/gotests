@@ -22,6 +22,9 @@ func TestBar_Foo7(t *testing.T) {
 			t.Errorf("%q. Bar.Foo7(%v) error = %v, wantErr %v", tt.name, tt.args.i, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if got != tt.want {
 			t.Errorf("%q. Bar.Foo7(%v) = %v, want %v", tt.name, tt.args.i, got, tt.want)
 		}

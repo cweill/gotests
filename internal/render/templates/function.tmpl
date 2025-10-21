@@ -73,6 +73,11 @@ func {{.TestName}}(t *testing.T) {
 						continue
 					{{- end}}
 				}
+				{{- if .TestResults}}
+				if tt.wantErr {
+					return
+				}
+				{{- end}}
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}

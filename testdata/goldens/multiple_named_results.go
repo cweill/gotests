@@ -25,6 +25,9 @@ func TestFoo26(t *testing.T) {
 			t.Errorf("%q. Foo26() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if got != tt.want {
 			t.Errorf("%q. Foo26() got = %v, want %v", tt.name, got, tt.want)
 		}

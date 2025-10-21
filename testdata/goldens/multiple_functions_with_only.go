@@ -23,6 +23,9 @@ func TestFooFilter(t *testing.T) {
 			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
 		}
