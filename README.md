@@ -10,12 +10,11 @@ The following shows `gotests` in action using the [official Sublime Text 3 plugi
 
 ## Installation
 
-__Minimum Go version:__ Go 1.6
+__Minimum Go version:__ Go 1.22
 
-Use [`go get`](https://golang.org/cmd/go/#hdr-Download_and_install_packages_and_dependencies) to install and update:
-
+Use [`go install`](https://pkg.go.dev/cmd/go#hdr-Compile_and_install_packages_and_dependencies) to install and update:
 ```sh
-$ go get -u github.com/cweill/gotests/...
+$ go install github.com/cweill/gotests/gotests@latest
 ```
 
 ## Usage
@@ -38,6 +37,8 @@ Available options:
                          precedence over -only and -all
 
   -i                    print test inputs in error messages
+
+  -named                switch table tests from using slice to map (with test name for the key)
 
   -only                 regexp. generate tests for functions and methods that match only.
                          Takes precedence over -all

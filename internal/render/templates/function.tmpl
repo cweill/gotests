@@ -2,6 +2,9 @@
 {{- $f := .}}
 
 func {{.TestName}}(t *testing.T) {
+	{{- if .Parallel}}
+	t.Parallel()
+	{{- end}}
 	{{- with .Receiver}}
 		{{- if .IsStruct}}
 			{{- if .Fields}}
@@ -43,8 +46,6 @@ func {{.TestName}}(t *testing.T) {
 	}
 	for {{if (or .Subtests (not .IsNaked))}} {{if .Named}}name{{else}}_{{end}}, tt := {{end}} range tests {
 		{{- if .Subtests}}
-		{{- if .Parallel}}tt := tt;{{end}}
-		{{- if and .Parallel .Named}}name := name;{{ end }}
 		t.Run({{if .Named}}name{{else}}tt.name{{end}}, func(t *testing.T) {
 			{{- if .Parallel}}t.Parallel(){{end}}
 		{{- end}}
@@ -67,9 +68,9 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 			{{- if .ReturnsError}}
 				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} (err != nil) != tt.wantErr {
-					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
-					{{- if .TestResults}}
-						{{if .Subtests }}return{{else}}continue{{end}}
+					t.{{if and .TestResults .Subtests}}Fatalf{{else}}Errorf{{end}}("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, tt.wantErr)
+					{{- if and .TestResults (not .Subtests)}}
+						continue
 					{{- end}}
 				}
 			{{- end}}

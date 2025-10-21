@@ -3,7 +3,8 @@ package testdata
 import "testing"
 
 func Test_main(t *testing.T) {
-	tests := []struct {
+	t.Parallel()
+	tests := []struct{
 		name string
 	}{
 		// TODO: Add test cases.
@@ -14,6 +15,7 @@ func Test_main(t *testing.T) {
 }
 
 func Test_do(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 	}{
