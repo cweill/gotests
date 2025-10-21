@@ -18,6 +18,7 @@ type Options struct {
 	Subtests       bool
 	Parallel       bool
 	Named          bool
+	UseGoCmp       bool
 	Template       string
 	TemplateDir    string
 	TemplateParams map[string]interface{}
@@ -83,13 +84,20 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 		})
 	}
 
+	// Add go-cmp import if needed
+	if o.UseGoCmp {
+		head.Imports = append(head.Imports, &models.Import{
+			Path: `"github.com/google/go-cmp/cmp"`,
+		})
+	}
+
 	b := bufio.NewWriter(w)
 	if err := o.render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 
 	for _, fun := range funcs {
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.TemplateParams)
+		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams)
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}

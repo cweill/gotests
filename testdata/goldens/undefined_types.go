@@ -24,6 +24,9 @@ func TestUndefined_Do(t *testing.T) {
 			t.Errorf("%q. Undefined.Do() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Undefined.Do() = %v, want %v", tt.name, got, tt.want)
 		}

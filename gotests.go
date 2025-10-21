@@ -30,6 +30,7 @@ type Options struct {
 	TemplateDir    string                 // Path to custom template set
 	TemplateParams map[string]interface{} // Custom external parameters
 	TemplateData   [][]byte               // Data slice for templates
+	UseGoCmp       bool                   // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -110,7 +111,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	}
 	h := sr.Header
 	h.Code = nil // Code is only needed from parsed test files.
-	testPath := models.Path(src).TestPath()
+	testPath := src.TestPath()
 	h, tf, err := parseTestFile(p, testPath, h)
 	if err != nil {
 		return nil, err
@@ -125,6 +126,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Subtests:       opt.Subtests,
 		Parallel:       opt.Parallel,
 		Named:          opt.Named,
+		UseGoCmp:       opt.UseGoCmp,
 		Template:       opt.Template,
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,

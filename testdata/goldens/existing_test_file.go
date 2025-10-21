@@ -63,6 +63,9 @@ func TestFoo100(t *testing.T) {
 			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			continue
 		}
+		if tt.wantErr {
+			return
+		}
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
 		}
