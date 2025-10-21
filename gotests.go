@@ -31,6 +31,10 @@ type Options struct {
 	TemplateParams map[string]interface{} // Custom external parameters
 	TemplateData   [][]byte               // Data slice for templates
 	UseGoCmp       bool                   // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
+	UseAI          bool                   // Generate test cases using AI
+	AIModel        string                 // AI model to use
+	AIEndpoint     string                 // AI API endpoint
+	AICases        int                    // Number of test cases to generate
 }
 
 // A GeneratedTest contains information about a test file with generated tests.

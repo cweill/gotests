@@ -63,6 +63,10 @@ var (
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 	useGoCmp           = flag.Bool("use_go_cmp", false, "use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual")
+	useAI              = flag.Bool("ai", false, "generate test cases using AI (requires Ollama)")
+	aiModel            = flag.String("ai-model", "qwen2.5-coder:0.5b", "AI model to use for test generation")
+	aiEndpoint         = flag.String("ai-endpoint", "http://localhost:11434", "Ollama API endpoint")
+	aiCases            = flag.Int("ai-cases", 3, "number of test cases to generate with AI")
 	version            = flag.Bool("version", false, "print version information and exit")
 )
 
@@ -103,6 +107,10 @@ func main() {
 		TemplateParamsPath: *templateParamsPath,
 		TemplateParams:     *templateParams,
 		UseGoCmp:           *useGoCmp,
+		UseAI:              *useAI,
+		AIModel:            *aiModel,
+		AIEndpoint:         *aiEndpoint,
+		AICases:            *aiCases,
 	})
 }
 

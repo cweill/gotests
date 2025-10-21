@@ -38,6 +38,10 @@ type Options struct {
 	TemplateParams     string   // Custom parameters as JSON string
 	TemplateData       [][]byte // Data slice for templates
 	UseGoCmp           bool     // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
+	UseAI              bool     // Generate test cases using AI
+	AIModel            string   // AI model to use
+	AIEndpoint         string   // AI API endpoint
+	AICases            int      // Number of test cases to generate
 }
 
 // Generates tests for the Go files defined in args with the given options.
