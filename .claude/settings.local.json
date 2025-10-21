@@ -3,7 +3,10 @@
     "allow": [
       "Read(//private/var/folders/sp/lcxhh3r54wzf6zdmlh03pz5r0000gn/T/**)",
       "Bash(awk:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(go build:*)",
+      "Bash(/tmp/gotests:*)",
+      "Read(//private/tmp/test_recursive/pkg/**)"
     ],
     "deny": [],
     "ask": []
