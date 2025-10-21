@@ -120,6 +120,10 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		TemplateParams: templateParams,
 		TemplateData:   opt.TemplateData,
 		UseGoCmp:       opt.UseGoCmp,
+		UseAI:          opt.UseAI,
+		AIModel:        opt.AIModel,
+		AIEndpoint:     opt.AIEndpoint,
+		AICases:        opt.AICases,
 	}
 }
 

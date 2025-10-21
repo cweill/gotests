@@ -55,7 +55,7 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			Imports:  parseImports(f.Imports),
 			Code:     goCode(b, f),
 		},
-		Funcs: p.parseFunctions(fset, f, fs),
+		Funcs: p.parseFunctions(fset, f, fs, b),
 	}
 	for _, v := range fs {
 		result.Header.Imports = append(result.Header.Imports, parseImports(v.Imports)...)
@@ -98,7 +98,7 @@ func (p *Parser) parseFiles(fset *token.FileSet, f *ast.File, files []models.Pat
 	return fs, nil
 }
 
-func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File) []*models.Function {
+func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File, src []byte) []*models.Function {
 	ul, el := p.parseTypes(fset, fs)
 	// Parse type declarations to extract type parameters
 	typeParams := p.parseTypeDecls(f, fs)
@@ -108,7 +108,12 @@ func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File
 		if !ok {
 			continue
 		}
-		funcs = append(funcs, parseFunc(fDecl, ul, el, typeParams))
+		fn := parseFunc(fDecl, ul, el, typeParams)
+		// Extract function body source code for AI context
+		if fDecl.Body != nil {
+			fn.Body = extractFunctionBody(fset, fDecl, src)
+		}
+		funcs = append(funcs, fn)
 	}
 	return funcs
 }
@@ -171,6 +176,19 @@ func (p *Parser) parseTypes(fset *token.FileSet, fs []*ast.File) (map[string]typ
 		}
 	}
 	return ul, el
+}
+
+// extractFunctionBody extracts the source code of a function body including the braces.
+func extractFunctionBody(fset *token.FileSet, fDecl *ast.FuncDecl, src []byte) string {
+	if fDecl.Body == nil {
+		return ""
+	}
+	start := fset.Position(fDecl.Body.Lbrace).Offset
+	end := fset.Position(fDecl.Body.Rbrace).Offset + 1 // Include the closing brace
+	if start >= 0 && end <= len(src) && start < end {
+		return string(src[start:end])
+	}
+	return ""
 }
 
 func parsePkgComment(f *ast.File, pkgPos token.Pos) []string {

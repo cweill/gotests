@@ -42,7 +42,42 @@ func {{.TestName}}(t *testing.T) {
 			wantErr bool
 		{{- end}}
 	}{
+		{{- if .AIGeneratedCases}}
+		{{- $fn := . -}}
+		{{- range $i, $tc := .AIGeneratedCases}}
+		{{if $fn.Named}}{{printf "%q" $tc.Name}}: {{end}}{
+			{{- if $fn.Named}}{{else}}
+			name: {{printf "%q" $tc.Name}},
+			{{- end}}
+			{{- with $fn.Receiver}}
+				{{- if and .IsStruct .Fields}}
+			fields: fields{
+				{{- range .Fields}}
+				{{Field .}}: nil, // TODO: Initialize from AI case
+				{{- end}}
+			},
+				{{- else}}
+			{{Receiver .}}: nil, // TODO: Initialize receiver from AI case
+				{{- end}}
+			{{- end}}
+			{{- if $fn.TestParameters}}
+			args: args{
+				{{- range $param := $fn.TestParameters}}
+				{{Param $param}}: {{index $tc.Args (Param $param)}},
+				{{- end}}
+			},
+			{{- end}}
+			{{- range $result := $fn.TestResults}}
+			{{Want $result}}: {{index $tc.Want (Want $result)}},
+			{{- end}}
+			{{- if $fn.ReturnsError}}
+			wantErr: {{$tc.WantErr}},
+			{{- end}}
+		},
+		{{- end}}
+		{{- else}}
 		// TODO: Add test cases.
+		{{- end}}
 	}
 	for {{if (or .Subtests (not .IsNaked))}} {{if .Named}}name{{else}}_{{end}}, tt := {{end}} range tests {
 		{{- if .Subtests}}

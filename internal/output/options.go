@@ -3,11 +3,13 @@ package output
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/cweill/gotests/internal/ai"
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/render"
 	"golang.org/x/tools/imports"
@@ -23,6 +25,10 @@ type Options struct {
 	TemplateDir    string
 	TemplateParams map[string]interface{}
 	TemplateData   [][]byte
+	UseAI          bool
+	AIModel        string
+	AIEndpoint     string
+	AICases        int
 
 	render *render.Render
 }
@@ -91,13 +97,48 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 		})
 	}
 
+	// Initialize AI provider if needed
+	var provider ai.Provider
+	if o.UseAI {
+		cfg := &ai.Config{
+			Provider: "ollama",
+			Model:    o.AIModel,
+			Endpoint: o.AIEndpoint,
+			NumCases: o.AICases,
+		}
+		provider = ai.NewOllamaProvider(cfg)
+
+		// Check if Ollama is available
+		if !provider.IsAvailable() {
+			return fmt.Errorf("AI provider %s is not available - ensure Ollama is running at %s", provider.Name(), o.AIEndpoint)
+		}
+	}
+
 	b := bufio.NewWriter(w)
 	if err := o.render.Header(b, head); err != nil {
 		return fmt.Errorf("render.Header: %v", err)
 	}
 
+	ctx := context.Background()
 	for _, fun := range funcs {
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams)
+		var aiCases []interface{}
+
+		// Generate AI test cases if enabled
+		if o.UseAI && provider != nil {
+			cases, err := provider.GenerateTestCases(ctx, fun)
+			if err != nil {
+				// Log warning but continue with empty cases (fallback to TODO)
+				fmt.Fprintf(os.Stderr, "Warning: failed to generate AI test cases for %s: %v\n", fun.Name, err)
+			} else {
+				// Convert []ai.TestCase to []interface{} for template
+				aiCases = make([]interface{}, len(cases))
+				for i, tc := range cases {
+					aiCases[i] = tc
+				}
+			}
+		}
+
+		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams, aiCases)
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}

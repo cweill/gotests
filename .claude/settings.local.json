@@ -6,7 +6,14 @@
       "Bash(cat:*)",
       "Bash(go build:*)",
       "Bash(/tmp/gotests:*)",
-      "Read(//private/tmp/test_recursive/pkg/**)"
+      "Read(//private/tmp/test_recursive/pkg/**)",
+      "Bash(git grep:*)",
+      "Bash(sort:*)",
+      "Bash(PKGS=\"github.com/cweill/gotests,github.com/cweill/gotests/internal/goparser,github.com/cweill/gotests/internal/input,github.com/cweill/gotests/internal/models,github.com/cweill/gotests/internal/output,github.com/cweill/gotests/internal/render\")",
+      "WebFetch(domain:github.com)",
+      "Bash(go run:*)",
+      "Bash(curl:*)",
+      "Bash(1)"
     ],
     "deny": [],
     "ask": []

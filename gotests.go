@@ -135,6 +135,10 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		TemplateDir:    opt.TemplateDir,
 		TemplateParams: opt.TemplateParams,
 		TemplateData:   opt.TemplateData,
+		UseAI:          opt.UseAI,
+		AIModel:        opt.AIModel,
+		AIEndpoint:     opt.AIEndpoint,
+		AICases:        opt.AICases,
 	}
 
 	b, err := options.Process(h, funcs)

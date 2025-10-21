@@ -97,7 +97,7 @@ func (o *OllamaProvider) generate(ctx context.Context, prompt string) ([]TestCas
 		"prompt": prompt,
 		"stream": false,
 		"options": map[string]interface{}{
-			"temperature": 0.7,
+			"temperature": 0.0, // Deterministic generation for test cases
 		},
 	}
 

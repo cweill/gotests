@@ -14,9 +14,13 @@ func buildPrompt(fn *models.Function, numCases int, previousError string) string
 	// System instruction
 	sb.WriteString("You are a Go testing expert. Generate test cases for the following function.\n\n")
 
-	// Function signature
+	// Function signature and body
 	sb.WriteString("Function to test:\n```go\n")
 	sb.WriteString(buildFunctionSignature(fn))
+	if fn.Body != "" {
+		sb.WriteString(" ")
+		sb.WriteString(fn.Body)
+	}
 	sb.WriteString("\n```\n\n")
 
 	// Instructions
@@ -29,8 +33,66 @@ func buildPrompt(fn *models.Function, numCases int, previousError string) string
 	}
 	sb.WriteString("\n")
 
+	// One-shot example
+	sb.WriteString("EXAMPLE 1 (simple function):\n")
+	sb.WriteString("For a function:\n")
+	sb.WriteString("```go\n")
+	sb.WriteString("func Max(a, b int) int {\n")
+	sb.WriteString("    if a > b {\n")
+	sb.WriteString("        return a\n")
+	sb.WriteString("    }\n")
+	sb.WriteString("    return b\n")
+	sb.WriteString("}\n")
+	sb.WriteString("```\n\n")
+	sb.WriteString("You should return:\n")
+	sb.WriteString("[\n")
+	sb.WriteString("  {\n")
+	sb.WriteString("    \"name\": \"a_greater_than_b\",\n")
+	sb.WriteString("    \"description\": \"returns a when a > b\",\n")
+	sb.WriteString("    \"args\": {\"a\": 10, \"b\": 5},\n")
+	sb.WriteString("    \"want\": {\"want\": 10}\n")
+	sb.WriteString("  },\n")
+	sb.WriteString("  {\n")
+	sb.WriteString("    \"name\": \"b_greater_than_a\",\n")
+	sb.WriteString("    \"description\": \"returns b when b > a\",\n")
+	sb.WriteString("    \"args\": {\"a\": 3, \"b\": 7},\n")
+	sb.WriteString("    \"want\": {\"want\": 7}\n")
+	sb.WriteString("  }\n")
+	sb.WriteString("]\n\n")
+
+	if fn.ReturnsError {
+		sb.WriteString("EXAMPLE 2 (function with error):\n")
+		sb.WriteString("For a function:\n")
+		sb.WriteString("```go\n")
+		sb.WriteString("func Divide(a, b float64) (float64, error) {\n")
+		sb.WriteString("    if b == 0 {\n")
+		sb.WriteString("        return 0, errors.New(\"division by zero\")\n")
+		sb.WriteString("    }\n")
+		sb.WriteString("    return a / b, nil\n")
+		sb.WriteString("}\n")
+		sb.WriteString("```\n\n")
+		sb.WriteString("You should return:\n")
+		sb.WriteString("[\n")
+		sb.WriteString("  {\n")
+		sb.WriteString("    \"name\": \"normal_division\",\n")
+		sb.WriteString("    \"description\": \"divides two numbers\",\n")
+		sb.WriteString("    \"args\": {\"a\": 10.0, \"b\": 2.0},\n")
+		sb.WriteString("    \"want\": {\"want\": 5.0},\n")
+		sb.WriteString("    \"wantErr\": false\n")
+		sb.WriteString("  },\n")
+		sb.WriteString("  {\n")
+		sb.WriteString("    \"name\": \"division_by_zero\",\n")
+		sb.WriteString("    \"description\": \"returns error when dividing by zero\",\n")
+		sb.WriteString("    \"args\": {\"a\": 10.0, \"b\": 0.0},\n")
+		sb.WriteString("    \"want\": {\"want\": 0.0},\n")
+		sb.WriteString("    \"wantErr\": true\n")
+		sb.WriteString("  }\n")
+		sb.WriteString("]\n\n")
+		sb.WriteString("NOTE: For functions with errors, DO NOT include the error in 'want'. Only include non-error return values in 'want', and use 'wantErr' for the error.\n\n")
+	}
+
 	// Output format
-	sb.WriteString("Return ONLY a JSON array with this exact structure:\n")
+	sb.WriteString("Now for YOUR function, return ONLY a JSON array with this exact structure:\n")
 	sb.WriteString("[\n")
 	sb.WriteString("  {\n")
 	sb.WriteString("    \"name\": \"test_case_name\",\n")
@@ -52,9 +114,16 @@ func buildPrompt(fn *models.Function, numCases int, previousError string) string
 		if i > 0 {
 			sb.WriteString(",\n")
 		}
+		// Use the same naming convention as wantName() in helpers.go
 		resultName := result.Name
 		if resultName == "" {
-			resultName = "result"
+			if i == 0 {
+				resultName = "want"
+			} else {
+				resultName = fmt.Sprintf("want%d", i)
+			}
+		} else {
+			resultName = "want" + strings.Title(resultName)
 		}
 		sb.WriteString(fmt.Sprintf("      \"%s\": <expected_value>", resultName))
 	}

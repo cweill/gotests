@@ -80,6 +80,7 @@ type Function struct {
 	Results      []*Field
 	ReturnsError bool
 	TypeParams   []*TypeParam // Type parameters for generic functions
+	Body         string       // Source code of the function body for AI context
 }
 
 func (f *Function) TestParameters() []*Field {
