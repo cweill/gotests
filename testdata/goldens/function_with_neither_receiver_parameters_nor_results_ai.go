@@ -6,11 +6,17 @@ func TestFoo1(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return an empty slice when the input is empty",
+		},
+		{
+			name: "should return a non-empty slice with one element when the input contains one element",
+		},
+		{
+			name: "should return a non-empty slice with multiple elements when the input contains multiple elements",
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			Foo1()
-		})
+	for range tests {
+		Foo1()
 	}
 }

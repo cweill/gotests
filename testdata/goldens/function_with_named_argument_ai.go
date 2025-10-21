@@ -10,11 +10,26 @@ func TestFoo3(t *testing.T) {
 		name string
 		args args
 	}{
-		// TODO: Add test cases.
+		{
+			name: "empty_string",
+			args: args{
+				s: "",
+			},
+		},
+		{
+			name: "single_char",
+			args: args{
+				s: "a",
+			},
+		},
+		{
+			name: "longer_string",
+			args: args{
+				s: "hello world",
+			},
+		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			Foo3(tt.args.s)
-		})
+		Foo3(tt.args.s)
 	}
 }

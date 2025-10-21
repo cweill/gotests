@@ -13,20 +13,45 @@ func TestFoo6(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "test_Foo6",
+			args: args{
+				i: 10,
+				b: true,
+			},
+			want:    "true",
+			wantErr: false,
+		},
+		{
+			name: "test_Foo6",
+			args: args{
+				i: -5,
+				b: false,
+			},
+			want:    "-5",
+			wantErr: false,
+		},
+		{
+			name: "test_Foo6",
+			args: args{
+				i: 0,
+				b: true,
+			},
+			want:    "",
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := Foo6(tt.args.i, tt.args.b)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("Foo6() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if tt.wantErr {
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Foo6() = %v, want %v", got, tt.want)
-			}
-		})
+		got, err := Foo6(tt.args.i, tt.args.b)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. Foo6() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if tt.wantErr {
+			return
+		}
+		if got != tt.want {
+			t.Errorf("%q. Foo6() = %v, want %v", tt.name, got, tt.want)
+		}
 	}
 }

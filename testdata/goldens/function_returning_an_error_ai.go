@@ -8,29 +8,19 @@ func TestFoo5(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{
-			name:    "positive_numbers",
-			want:    8,
-			wantErr: false,
-		},
-		{
-			name:    "zero_values",
-			want:    0,
-			wantErr: false,
-		},
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := Foo5()
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("Foo5() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if tt.wantErr {
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Foo5() = %v, want %v", got, tt.want)
-			}
-		})
+		got, err := Foo5()
+		if (err != nil) != tt.wantErr {
+			t.Errorf("%q. Foo5() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			continue
+		}
+		if tt.wantErr {
+			return
+		}
+		if got != tt.want {
+			t.Errorf("%q. Foo5() = %v, want %v", tt.name, got, tt.want)
+		}
 	}
 }

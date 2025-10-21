@@ -50,7 +50,7 @@ func buildTestScaffold(fn *models.Function) string {
 	return sb.String()
 }
 
-// buildGoPrompt creates a prompt asking the LLM to generate Go test cases directly.
+// buildGoPrompt creates a prompt asking the LLM to generate a complete test function.
 func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousError string) string {
 	var sb strings.Builder
 
@@ -66,60 +66,67 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	sb.WriteString("\n```\n\n")
 
 	// Show the test scaffold
-	sb.WriteString("Here is the test scaffold that was generated:\n```go\n")
+	sb.WriteString("Here is the test scaffold:\n```go\n")
 	sb.WriteString(scaffold)
 	sb.WriteString("```\n\n")
 
 	// Instructions
 	sb.WriteString(fmt.Sprintf("Generate %d meaningful test cases.\n", numCases))
-	sb.WriteString("Return ONLY the test cases array in Go syntax, replacing the `// TODO: Add test cases.` line.\n\n")
+	sb.WriteString("Fill in the test cases using the EXACT struct format from the scaffold.\n")
+	sb.WriteString("Use named fields (field: value) not positional values.\n\n")
 
-	// Example
-	sb.WriteString("EXAMPLE:\n")
-	sb.WriteString("If the scaffold contains:\n")
-	sb.WriteString("```go\n")
-	sb.WriteString("tests := []struct {\n")
-	sb.WriteString("    name string\n")
-	sb.WriteString("    args args\n")
-	sb.WriteString("    want int\n")
-	sb.WriteString("} {\n")
-	sb.WriteString("    // TODO: Add test cases.\n")
-	sb.WriteString("}\n")
-	sb.WriteString("```\n\n")
-
-	sb.WriteString("You should return:\n")
+	// Build a concrete example using the actual scaffold
+	sb.WriteString("Fill in test cases like this (using the exact field names from your scaffold):\n")
 	sb.WriteString("```go\n")
 	sb.WriteString("{\n")
-	sb.WriteString("    name: \"positive_numbers\",\n")
-	sb.WriteString("    args: args{a: 5, b: 3},\n")
-	sb.WriteString("    want: 8,\n")
-	sb.WriteString("},\n")
-	sb.WriteString("{\n")
-	sb.WriteString("    name: \"zero_values\",\n")
-	sb.WriteString("    args: args{a: 0, b: 0},\n")
-	sb.WriteString("    want: 0,\n")
-	sb.WriteString("},\n")
-	sb.WriteString("```\n\n")
+	sb.WriteString("    name: \"descriptive_test_name\",\n")
 
-	// Error handling example if needed
-	if fn.ReturnsError {
-		sb.WriteString("For functions returning errors, include wantErr:\n")
-		sb.WriteString("```go\n")
-		sb.WriteString("{\n")
-		sb.WriteString("    name: \"division_by_zero\",\n")
-		sb.WriteString("    args: args{a: 10, b: 0},\n")
-		sb.WriteString("    want: 0,\n")
-		sb.WriteString("    wantErr: true,\n")
-		sb.WriteString("},\n")
-		sb.WriteString("```\n\n")
+	// Show receiver if present
+	if fn.Receiver != nil {
+		receiverName := "c"
+		if fn.Receiver.Type != nil {
+			sb.WriteString(fmt.Sprintf("    %s: &%s{},\n", receiverName, strings.TrimPrefix(fn.Receiver.Type.String(), "*")))
+		}
 	}
 
+	// Show args if present
+	if len(fn.TestParameters()) > 0 {
+		sb.WriteString("    args: args{")
+		for i, param := range fn.TestParameters() {
+			if i > 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(fmt.Sprintf("%s: <value>", param.Name))
+		}
+		sb.WriteString("},\n")
+	}
+
+	// Show want fields
+	for _, result := range fn.TestResults() {
+		wantName := "want"
+		if result.Index > 0 {
+			wantName = fmt.Sprintf("want%d", result.Index)
+		}
+		sb.WriteString(fmt.Sprintf("    %s: <expected_value>,\n", wantName))
+	}
+
+	// Show wantErr if needed
+	if fn.ReturnsError {
+		sb.WriteString("    wantErr: false,\n")
+	}
+
+	sb.WriteString("},\n")
+	sb.WriteString("```\n\n")
+
 	sb.WriteString("IMPORTANT:\n")
-	sb.WriteString("- Return ONLY the test case structs, not the full test function\n")
-	sb.WriteString("- Do NOT include 'tests := []struct{...}{' or the closing '}'\n")
-	sb.WriteString("- Each test case should end with a comma\n")
-	sb.WriteString("- Use the exact field names from the scaffold\n")
-	sb.WriteString("- Use valid Go literal syntax\n\n")
+	sb.WriteString("- Use NAMED FIELDS (field: value) not positional struct literals\n")
+	sb.WriteString("- Use the EXACT field names shown in the scaffold above\n")
+	sb.WriteString("- Generate realistic test values based on the function body\n")
+	sb.WriteString("- Use valid Go literal syntax\n")
+	if fn.ReturnsError {
+		sb.WriteString("- For error returns, set wantErr: true or false appropriately\n")
+	}
+	sb.WriteString("\n")
 
 	// Add error feedback if retrying
 	if previousError != "" {

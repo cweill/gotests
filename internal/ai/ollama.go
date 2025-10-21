@@ -217,7 +217,7 @@ func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestC
 	// Parse the Go code response
 	cases, err := parseGoTestCases(result.Response, o.numCases)
 	if err != nil {
-		return nil, fmt.Errorf("parse Go test cases: %w", err)
+		return nil, fmt.Errorf("parse Go test cases: %w\n\nLLM Response:\n%s", err, result.Response)
 	}
 
 	return cases, nil
