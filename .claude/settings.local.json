@@ -14,7 +14,8 @@
       "Bash(go run:*)",
       "Bash(curl:*)",
       "Bash(1)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(ollama list:*)"
     ],
     "deny": [],
     "ask": []

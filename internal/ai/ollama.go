@@ -61,18 +61,53 @@ func (o *OllamaProvider) IsAvailable() bool {
 }
 
 // GenerateTestCases generates test cases using Ollama.
+// Now uses Go code generation instead of JSON for better small-model compatibility.
 func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Function) ([]TestCase, error) {
-	prompt := buildPrompt(fn, o.numCases, "")
+	// Generate a minimal scaffold to show the LLM the struct format
+	scaffold := buildTestScaffold(fn)
+
+	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
 
 	// Try up to 3 times with validation feedback
 	var lastErr error
 	for attempt := 0; attempt < 3; attempt++ {
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
-			prompt = buildPrompt(fn, o.numCases, lastErr.Error())
+			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
 		}
 
-		cases, err := o.generate(ctx, prompt)
+		cases, err := o.generateGo(ctx, prompt)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+
+		// Basic validation of test cases
+		if err := validateTestCases(cases, fn); err != nil {
+			lastErr = err
+			continue
+		}
+
+		return cases, nil
+	}
+
+	return nil, fmt.Errorf("failed after 3 attempts: %w", lastErr)
+}
+
+// GenerateTestCasesWithScaffold generates test cases using a Go code scaffold.
+// This is more reliable for small models as they generate Go code instead of JSON.
+func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *models.Function, scaffold string) ([]TestCase, error) {
+	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
+
+	// Try up to 3 times with validation feedback
+	var lastErr error
+	for attempt := 0; attempt < 3; attempt++ {
+		if attempt > 0 && lastErr != nil {
+			// Retry with error feedback
+			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
+		}
+
+		cases, err := o.generateGo(ctx, prompt)
 		if err != nil {
 			lastErr = err
 			continue
@@ -134,6 +169,55 @@ func (o *OllamaProvider) generate(ctx context.Context, prompt string) ([]TestCas
 	cases, err := parseTestCases(result.Response, o.numCases)
 	if err != nil {
 		return nil, fmt.Errorf("parse test cases: %w", err)
+	}
+
+	return cases, nil
+}
+
+// generateGo calls Ollama and parses Go code response instead of JSON.
+func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestCase, error) {
+	reqBody := map[string]interface{}{
+		"model":  o.model,
+		"prompt": prompt,
+		"stream": false,
+		"options": map[string]interface{}{
+			"temperature": 0.0, // Deterministic generation for test cases
+		},
+	}
+
+	body, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", o.endpoint+"/api/generate", bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := o.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("ollama returned %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result struct {
+		Response string `json:"response"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	// Parse the Go code response
+	cases, err := parseGoTestCases(result.Response, o.numCases)
+	if err != nil {
+		return nil, fmt.Errorf("parse Go test cases: %w", err)
 	}
 
 	return cases, nil
