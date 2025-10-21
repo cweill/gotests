@@ -10,7 +10,7 @@ The following shows `gotests` in action using the [official Sublime Text 3 plugi
 
 ## Installation
 
-__Minimum Go version:__ Go 1.16
+__Minimum Go version:__ Go 1.22
 
 Use [`go install`](https://pkg.go.dev/cmd/go#hdr-Compile_and_install_packages_and_dependencies) to install and update:
 ```sh
