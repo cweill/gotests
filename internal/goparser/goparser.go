@@ -15,10 +15,10 @@ import (
 	"github.com/cweill/gotests/internal/models"
 )
 
-// ErrEmptyFile represents an empty file error.
+// ErrEmptyFile is returned when attempting to parse an empty Go source file.
 var ErrEmptyFile = errors.New("file is empty")
 
-// Result representats a parsed Go file.
+// Result represents a parsed Go file containing the header information and function signatures.
 type Result struct {
 	// The package name and imports of a Go file.
 	Header *models.Header
@@ -26,7 +26,7 @@ type Result struct {
 	Funcs []*models.Function
 }
 
-// Parser can parse Go files.
+// Parser parses Go source files into domain models for test generation.
 type Parser struct {
 	// The importer to resolve packages from import paths.
 	Importer types.Importer

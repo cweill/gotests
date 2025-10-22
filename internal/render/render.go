@@ -16,10 +16,12 @@ import (
 //go:embed templates/*
 var data embed.FS
 
+// Render manages template rendering for generating test code.
 type Render struct {
 	tmpls *template.Template
 }
 
+// New creates a new Render instance with default templates and helper functions.
 func New() *Render {
 	r := Render{
 		tmpls: template.New("render").Funcs(map[string]interface{}{
@@ -81,6 +83,7 @@ func (r *Render) LoadFromData(templateData [][]byte) {
 	}
 }
 
+// Header renders the file header including package declaration and imports.
 func (r *Render) Header(w io.Writer, h *models.Header) error {
 	if err := r.tmpls.ExecuteTemplate(w, "header", h); err != nil {
 		return err
@@ -89,6 +92,7 @@ func (r *Render) Header(w io.Writer, h *models.Header) error {
 	return err
 }
 
+// TestFunction renders a test function for the given function signature with the specified options.
 func (r *Render) TestFunction(
 	w io.Writer,
 	f *models.Function,
