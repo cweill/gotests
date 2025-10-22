@@ -106,7 +106,11 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 			Endpoint: o.AIEndpoint,
 			NumCases: o.AICases,
 		}
-		provider = ai.NewOllamaProvider(cfg)
+		var err error
+		provider, err = ai.NewOllamaProvider(cfg)
+		if err != nil {
+			return fmt.Errorf("failed to create AI provider: %w", err)
+		}
 
 		// Check if Ollama is available
 		if !provider.IsAvailable() {

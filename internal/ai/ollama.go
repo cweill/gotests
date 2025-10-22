@@ -7,33 +7,79 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
 	"github.com/cweill/gotests/internal/models"
 )
 
+const (
+	// MaxResponseSize is the maximum size of HTTP responses (1MB)
+	MaxResponseSize = 1 * 1024 * 1024
+	// MaxFunctionBodySize is the maximum size of function body in prompts (100KB)
+	MaxFunctionBodySize = 100 * 1024
+)
+
 // OllamaProvider implements the Provider interface for Ollama.
 type OllamaProvider struct {
-	endpoint string
-	model    string
-	numCases int
-	client   *http.Client
+	endpoint       string
+	model          string
+	numCases       int
+	maxRetries     int
+	requestTimeout time.Duration
+	healthTimeout  time.Duration
+	client         *http.Client
 }
 
 // NewOllamaProvider creates a new Ollama provider with the given config.
-func NewOllamaProvider(cfg *Config) *OllamaProvider {
+// Returns an error if the endpoint URL is invalid or unsafe.
+func NewOllamaProvider(cfg *Config) (*OllamaProvider, error) {
 	if cfg == nil {
 		cfg = DefaultConfig()
 	}
-	return &OllamaProvider{
-		endpoint: cfg.Endpoint,
-		model:    cfg.Model,
-		numCases: cfg.NumCases,
-		client: &http.Client{
-			Timeout: 60 * time.Second,
-		},
+
+	// Validate endpoint URL
+	if err := validateEndpointURL(cfg.Endpoint); err != nil {
+		return nil, fmt.Errorf("invalid endpoint: %w", err)
 	}
+
+	return &OllamaProvider{
+		endpoint:       cfg.Endpoint,
+		model:          cfg.Model,
+		numCases:       cfg.NumCases,
+		maxRetries:     cfg.MaxRetries,
+		requestTimeout: time.Duration(cfg.RequestTimeout) * time.Second,
+		healthTimeout:  time.Duration(cfg.HealthTimeout) * time.Second,
+		client: &http.Client{
+			Timeout: time.Duration(cfg.RequestTimeout) * time.Second,
+		},
+	}, nil
+}
+
+// validateEndpointURL checks if the endpoint URL is safe to use.
+// Prevents SSRF attacks by validating the URL scheme and format.
+func validateEndpointURL(endpoint string) error {
+	if endpoint == "" {
+		return fmt.Errorf("endpoint cannot be empty")
+	}
+
+	parsedURL, err := url.Parse(endpoint)
+	if err != nil {
+		return fmt.Errorf("invalid URL format: %w", err)
+	}
+
+	// Only allow http and https schemes
+	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+		return fmt.Errorf("invalid URL scheme %q: only http and https are allowed", parsedURL.Scheme)
+	}
+
+	// Ensure host is present
+	if parsedURL.Host == "" {
+		return fmt.Errorf("URL must include a host")
+	}
+
+	return nil
 }
 
 // Name returns the provider name.
@@ -43,7 +89,7 @@ func (o *OllamaProvider) Name() string {
 
 // IsAvailable checks if Ollama is running and accessible.
 func (o *OllamaProvider) IsAvailable() bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), o.healthTimeout)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, "GET", o.endpoint+"/api/tags", nil)
@@ -68,9 +114,9 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 
 	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
 
-	// Try up to 3 times with validation feedback
+	// Try up to maxRetries times with validation feedback
 	var lastErr error
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < o.maxRetries; attempt++ {
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
 			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
@@ -91,7 +137,7 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 		return cases, nil
 	}
 
-	return nil, fmt.Errorf("failed after 3 attempts: %w", lastErr)
+	return nil, fmt.Errorf("failed after %d attempts: %w", o.maxRetries, lastErr)
 }
 
 // GenerateTestCasesWithScaffold generates test cases using a Go code scaffold.
@@ -99,9 +145,9 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *models.Function, scaffold string) ([]TestCase, error) {
 	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
 
-	// Try up to 3 times with validation feedback
+	// Try up to maxRetries times with validation feedback
 	var lastErr error
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < o.maxRetries; attempt++ {
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
 			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
@@ -122,7 +168,7 @@ func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *
 		return cases, nil
 	}
 
-	return nil, fmt.Errorf("failed after 3 attempts: %w", lastErr)
+	return nil, fmt.Errorf("failed after %d attempts: %w", o.maxRetries, lastErr)
 }
 
 // generate makes the actual API call to Ollama.
@@ -154,14 +200,17 @@ func (o *OllamaProvider) generate(ctx context.Context, prompt string) ([]TestCas
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, MaxResponseSize))
 		return nil, fmt.Errorf("ollama returned %d: %s", resp.StatusCode, string(body))
 	}
+
+	// Limit response size to prevent memory exhaustion
+	limitedReader := io.LimitReader(resp.Body, MaxResponseSize)
 
 	var result struct {
 		Response string `json:"response"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.NewDecoder(limitedReader).Decode(&result); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 
@@ -203,14 +252,17 @@ func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestC
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, MaxResponseSize))
 		return nil, fmt.Errorf("ollama returned %d: %s", resp.StatusCode, string(body))
 	}
+
+	// Limit response size to prevent memory exhaustion
+	limitedReader := io.LimitReader(resp.Body, MaxResponseSize)
 
 	var result struct {
 		Response string `json:"response"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.NewDecoder(limitedReader).Decode(&result); err != nil {
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 

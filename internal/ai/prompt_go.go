@@ -56,12 +56,17 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 
 	sb.WriteString("You are a Go testing expert. Generate test cases for the following function.\n\n")
 
-	// Function with body
+	// Function with body (limit size to prevent memory issues)
 	sb.WriteString("Function to test:\n```go\n")
 	sb.WriteString(buildFunctionSignature(fn))
 	if fn.Body != "" {
+		body := fn.Body
+		// Truncate very large function bodies
+		if len(body) > MaxFunctionBodySize {
+			body = body[:MaxFunctionBodySize] + "\n// ... (truncated)"
+		}
 		sb.WriteString(" ")
-		sb.WriteString(fn.Body)
+		sb.WriteString(body)
 	}
 	sb.WriteString("\n```\n\n")
 
