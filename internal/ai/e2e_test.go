@@ -6,7 +6,6 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -74,31 +73,26 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 	for _, tc := range e2eTestCases {
 		tc := tc // capture range variable
 		t.Run(tc.name, func(t *testing.T) {
-			// Read source file to get full function body
-			sourceCode, err := ioutil.ReadFile(tc.sourceFile)
-			if err != nil {
-				t.Fatalf("Failed to read source file %s: %v", tc.sourceFile, err)
-			}
-
 			// Parse source file to get function metadata
-			funcs, err := goparser.Parse(tc.sourceFile, nil)
+			parser := &goparser.Parser{}
+			result, err := parser.Parse(tc.sourceFile, nil)
 			if err != nil {
 				t.Fatalf("Failed to parse %s: %v", tc.sourceFile, err)
 			}
 
 			// Find the target function
 			var targetFunc *models.Function
-			for _, fn := range funcs {
+			for _, fn := range result.Funcs {
 				if fn.Name == tc.funcName {
 					targetFunc = fn
-					// Set full body for AI context
-					targetFunc.FullBody = string(sourceCode)
 					break
 				}
 			}
 			if targetFunc == nil {
 				t.Fatalf("Function %s not found in %s", tc.funcName, tc.sourceFile)
 			}
+
+			// Note: targetFunc.Body already contains the function body from parser
 
 			// Generate tests with real AI
 			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
