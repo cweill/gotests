@@ -49,9 +49,41 @@ var e2eTestCases = []e2eTestCase{
 		funcName:   "HashPassword",
 		goldenFile: "../../testdata/goldens/user_service_hash_password_ai.go",
 	},
+	// Additional test cases to improve parser_go.go coverage (methods, complex types)
+	{
+		name:       "calculator_multiply",
+		sourceFile: "../../testdata/calculator.go",
+		funcName:   "Multiply",
+		goldenFile: "../../testdata/goldens/calculator_multiply_ai.go",
+	},
+	{
+		name:       "calculator_divide",
+		sourceFile: "../../testdata/calculator.go",
+		funcName:   "Divide",
+		goldenFile: "../../testdata/goldens/calculator_divide_ai.go",
+	},
+	{
+		name:       "string_utils_reverse",
+		sourceFile: "../../testdata/string_utils.go",
+		funcName:   "Reverse",
+		goldenFile: "../../testdata/goldens/string_utils_reverse_ai.go",
+	},
+	{
+		name:       "string_utils_parse_key_value",
+		sourceFile: "../../testdata/string_utils.go",
+		funcName:   "ParseKeyValue",
+		goldenFile: "../../testdata/goldens/string_utils_parse_key_value_ai.go",
+	},
+	{
+		name:       "string_utils_contains_any",
+		sourceFile: "../../testdata/string_utils.go",
+		funcName:   "ContainsAny",
+		goldenFile: "../../testdata/goldens/string_utils_contains_any_ai.go",
+	},
 	// Note: Removed Foo8 test because it's a minimal stub (return nil, nil)
 	// with no implementation, which causes AI to generate explanatory text
-	// instead of valid Go code. The 4 tests above provide sufficient E2E coverage.
+	// instead of valid Go code. The above tests provide comprehensive E2E coverage
+	// including regular functions, methods with receivers, and complex types.
 }
 
 // TestE2E_OllamaGeneration_ValidatesStructure validates that real Ollama+qwen generation
