@@ -73,8 +73,111 @@ Available options:
 
   -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 
+  -ai                   generate test cases using AI (requires Ollama)
+
+  -ai-model             AI model to use (default "qwen2.5-coder:0.5b")
+
+  -ai-endpoint          Ollama API endpoint (default "http://localhost:11434")
+
+  -ai-cases             number of test cases to generate with AI (default 3)
+
   -version              print version information and exit
 ```
+
+## AI-Powered Test Generation
+
+**gotests** can generate intelligent test cases using local LLMs via [Ollama](https://ollama.ai). This feature analyzes your function implementations and generates realistic test values, edge cases, and error conditions.
+
+### Quick Start
+
+1. **Install Ollama** ([https://ollama.ai](https://ollama.ai))
+
+2. **Pull a model:**
+   ```sh
+   ollama pull qwen2.5-coder:0.5b  # Small, fast model (400MB)
+   # or
+   ollama pull llama3.2:latest     # Larger, more capable (2GB)
+   ```
+
+3. **Generate tests with AI:**
+   ```sh
+   gotests -all -ai -w yourfile.go
+   ```
+
+### Example
+
+Given this function:
+```go
+func CalculateDiscount(price float64, percentage int) (float64, error) {
+    if price < 0 {
+        return 0, errors.New("price cannot be negative")
+    }
+    if percentage < 0 || percentage > 100 {
+        return 0, errors.New("percentage must be between 0 and 100")
+    }
+    discount := price * float64(percentage) / 100.0
+    return price - discount, nil
+}
+```
+
+The AI generates:
+```go
+tests := []struct {
+    name       string
+    args       args
+    want       float64
+    wantErr    bool
+}{
+    {
+        name: "valid_discount",
+        args: args{price: 100.0, percentage: 20},
+        want: 80.0,
+        wantErr: false,
+    },
+    {
+        name: "negative_price",
+        args: args{price: -10.0, percentage: 20},
+        want: 0,
+        wantErr: true,
+    },
+    {
+        name: "invalid_percentage",
+        args: args{price: 100.0, percentage: 150},
+        want: 0,
+        wantErr: true,
+    },
+}
+```
+
+### AI Options
+
+```sh
+# Use a different model
+gotests -all -ai -ai-model llama3.2:latest -w yourfile.go
+
+# Generate more test cases
+gotests -all -ai -ai-cases 5 -w yourfile.go
+
+# Combine with other flags
+gotests -exported -ai -parallel -w yourfile.go
+```
+
+### How It Works
+
+- Analyzes function implementation and logic
+- Generates realistic test values based on actual code
+- Creates test cases for edge cases and error conditions
+- Falls back to TODO comments if generation fails
+- Works offline with local models (privacy-first)
+
+### Supported Features
+
+✅ Simple types (int, string, bool, float)
+✅ Complex types (slices, maps, structs, pointers)
+✅ Error returns and validation
+✅ Variadic parameters
+✅ Methods with receivers
+✅ Multiple return values
 
 ## Quick Start Examples
 
