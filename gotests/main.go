@@ -92,6 +92,14 @@ func main() {
 		return
 	}
 
+	// Validate AI parameters
+	if *useAI {
+		if *aiCases < 1 || *aiCases > 100 {
+			fmt.Fprintf(os.Stderr, "Error: -ai-cases must be between 1 and 100, got %d\n", *aiCases)
+			os.Exit(1)
+		}
+	}
+
 	process.Run(os.Stdout, args, &process.Options{
 		OnlyFuncs:          *onlyFuncs,
 		ExclFuncs:          *exclFuncs,

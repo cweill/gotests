@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/cweill/gotests/internal/ai"
 	"github.com/cweill/gotests/internal/models"
@@ -123,7 +124,10 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 		return fmt.Errorf("render.Header: %v", err)
 	}
 
-	ctx := context.Background()
+	// Use context with timeout to prevent AI generation from hanging indefinitely
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
 	for _, fun := range funcs {
 		var aiCases []interface{}
 

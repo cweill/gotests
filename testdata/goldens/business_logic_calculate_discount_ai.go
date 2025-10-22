@@ -48,7 +48,7 @@ func TestCalculateDiscount(t *testing.T) {
 			continue
 		}
 		if tt.wantErr {
-			return
+			continue
 		}
 		if got != tt.want {
 			t.Errorf("%q. CalculateDiscount() = %v, want %v", tt.name, got, tt.want)

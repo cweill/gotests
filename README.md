@@ -179,6 +179,24 @@ gotests -exported -ai -parallel -w yourfile.go
 ✅ Methods with receivers
 ✅ Multiple return values
 
+### Privacy & Security
+
+**What data is sent to the LLM:**
+- Function signatures (name, parameters, return types)
+- Complete function bodies including all code and comments
+- No file paths or project context
+
+**Privacy considerations:**
+- ⚠️ **Function bodies may contain sensitive information** - business logic, algorithms, or credentials/secrets in comments
+- ✅ **Local-first by default** - Using Ollama keeps all data on your machine; nothing is sent to external servers
+- ✅ **Offline operation** - AI generation works completely offline with local models
+- 🔒 **Recommendation**: Avoid using `-ai` on code containing secrets, API keys, or proprietary algorithms in comments
+
+**If using cloud providers in the future:**
+- Function source code will be transmitted to the cloud provider's API
+- Review the provider's data retention and privacy policies
+- Consider using `-ai` only on non-sensitive codebases
+
 ## Quick Start Examples
 
 ### Generate tests for a single function
