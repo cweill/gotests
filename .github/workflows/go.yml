@@ -118,7 +118,17 @@ jobs:
       run: |
         echo "Running E2E tests with real Ollama + qwen2.5-coder:0.5b..."
         echo "These tests validate that AI generation matches golden files"
-        go test -v -tags=e2e -timeout=15m ./internal/ai
+        go test -v -tags=e2e -timeout=15m -coverprofile=e2e-coverage.out -covermode=count ./internal/ai
       env:
         CI: "true"
         GOTESTS_E2E: "true"
+
+    - name: Upload E2E coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./e2e-coverage.out
+        flags: e2e-tests
+        name: e2e-coverage
+        fail_ci_if_error: false
+        verbose: true
