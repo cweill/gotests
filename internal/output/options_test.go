@@ -1,6 +1,9 @@
 package output
 
 import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -378,4 +381,192 @@ func TestOptions_providesTemplateDir(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestOptions_Process_WithAI_Success(t *testing.T) {
+	// Create a mock Ollama server
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/tags" {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]interface{}{"models": []interface{}{}})
+			return
+		}
+		if r.URL.Path == "/api/generate" {
+			response := map[string]interface{}{
+				"response": `tests := []struct {
+					name string
+					args args
+					want int
+					wantErr bool
+				}{
+					{
+						name: "basic addition",
+						args: args{a: 1, b: 2},
+						want: 3,
+						wantErr: false,
+					},
+				}`,
+			}
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	options := &Options{
+		UseAI:      true,
+		AIModel:    "test-model",
+		AIEndpoint: server.URL,
+		AICases:    3,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+				{Name: "b", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with AI error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() with AI returned empty output")
+	}
+}
+
+func TestOptions_Process_WithAI_ProviderCreationError(t *testing.T) {
+	options := &Options{
+		UseAI:      true,
+		AIModel:    "test-model",
+		AIEndpoint: "invalid://endpoint",  // Invalid URL will cause provider creation error
+		AICases:    3,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+		},
+	}
+
+	_, err := options.Process(head, funcs)
+	if err == nil {
+		t.Error("Options.Process() with invalid AI endpoint should return error")
+	}
+}
+
+func TestOptions_Process_WithAI_ProviderUnavailable(t *testing.T) {
+	// Create a server that returns 404 for /api/tags (unavailable)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	options := &Options{
+		UseAI:      true,
+		AIModel:    "test-model",
+		AIEndpoint: server.URL,
+		AICases:    3,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+		},
+	}
+
+	_, err := options.Process(head, funcs)
+	if err == nil {
+		t.Error("Options.Process() with unavailable AI provider should return error")
+	}
+	if err != nil && !contains(err.Error(), "not available") {
+		t.Errorf("Error should mention provider not available, got: %v", err)
+	}
+}
+
+func TestOptions_Process_WithAI_GenerationError(t *testing.T) {
+	// Create a mock server that returns an error for generation
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/tags" {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]interface{}{"models": []interface{}{}})
+			return
+		}
+		if r.URL.Path == "/api/generate" {
+			// Return invalid response to trigger parsing error
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"response": "invalid go code that will fail parsing",
+			})
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	options := &Options{
+		UseAI:      true,
+		AIModel:    "test-model",
+		AIEndpoint: server.URL,
+		AICases:    3,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	// Should not error - it should fall back to TODO comments
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with AI generation error should not fail, should fallback to TODO: %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() should still generate output even with AI error (fallback)")
+	}
+}
+
+// Helper function to check if string contains substring
+func contains(s, substr string) bool {
+	return len(s) > 0 && len(substr) > 0 &&
+		(s == substr || len(s) >= len(substr) && findSubstring(s, substr))
+}
+
+func findSubstring(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }

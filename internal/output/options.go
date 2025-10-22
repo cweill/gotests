@@ -104,10 +104,13 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 	var provider ai.Provider
 	if o.UseAI {
 		cfg := &ai.Config{
-			Provider: "ollama",
-			Model:    o.AIModel,
-			Endpoint: o.AIEndpoint,
-			NumCases: o.AICases,
+			Provider:       "ollama",
+			Model:          o.AIModel,
+			Endpoint:       o.AIEndpoint,
+			NumCases:       o.AICases,
+			MaxRetries:     3,  // Default: 3 retries
+			RequestTimeout: 60, // Default: 60 seconds
+			HealthTimeout:  2,  // Default: 2 seconds
 		}
 		var err error
 		provider, err = ai.NewOllamaProvider(cfg)
