@@ -117,6 +117,11 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 	// Try up to maxRetries times with validation feedback
 	var lastErr error
 	for attempt := 0; attempt < o.maxRetries; attempt++ {
+		// Check if context has been cancelled
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("context cancelled: %w", err)
+		}
+
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
 			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
@@ -148,6 +153,11 @@ func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *
 	// Try up to maxRetries times with validation feedback
 	var lastErr error
 	for attempt := 0; attempt < o.maxRetries; attempt++ {
+		// Check if context has been cancelled
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("context cancelled: %w", err)
+		}
+
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
 			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())

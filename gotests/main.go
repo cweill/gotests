@@ -92,8 +92,13 @@ func main() {
 		return
 	}
 
-	// Validate AI parameters
+	// Validate AI parameters and warn user
 	if *useAI {
+		// Warn about sending code to AI provider
+		fmt.Fprintf(os.Stderr, "⚠️  WARNING: Function source code will be sent to AI provider at %s\n", *aiEndpoint)
+		fmt.Fprintf(os.Stderr, "   Ensure your code does not contain secrets or sensitive information.\n\n")
+
+		// Validate parameters
 		if *aiCases < 1 || *aiCases > 100 {
 			fmt.Fprintf(os.Stderr, "Error: -ai-cases must be between 1 and 100, got %d\n", *aiCases)
 			os.Exit(1)
