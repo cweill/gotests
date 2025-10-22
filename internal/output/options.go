@@ -13,6 +13,7 @@ import (
 	"golang.org/x/tools/imports"
 )
 
+// Options contains configuration for generating and formatting test output.
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
@@ -27,6 +28,7 @@ type Options struct {
 	render *render.Render
 }
 
+// Process generates formatted test code from the header and function signatures.
 func (o *Options) Process(head *models.Header, funcs []*models.Function) ([]byte, error) {
 	o.render = render.New()
 
