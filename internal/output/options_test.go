@@ -1,6 +1,7 @@
 package output
 
 import (
+	"os"
 	"testing"
 
 	"github.com/cweill/gotests/internal/models"
@@ -114,6 +115,207 @@ func TestOptions_Process(t *testing.T) {
 				t.Error("Options.Process() returned empty output")
 			}
 		})
+	}
+}
+
+func TestOptions_Process_WithTemplateDir(t *testing.T) {
+	tmpDir := t.TempDir()
+	// Create a valid template file
+	tmplContent := `{{define "header"}}package {{.Package}}{{end}}`
+	tmplPath := tmpDir + "/header.tmpl"
+	if err := os.WriteFile(tmplPath, []byte(tmplContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	options := &Options{
+		TemplateDir: tmpDir,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with TemplateDir error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() returned empty output")
+	}
+}
+
+func TestOptions_Process_WithTemplate(t *testing.T) {
+	options := &Options{
+		Template: "testify",
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with Template error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() returned empty output")
+	}
+}
+
+func TestOptions_Process_WithTemplateData(t *testing.T) {
+	options := &Options{
+		TemplateData: [][]byte{
+			[]byte(`{{define "header"}}package {{.Package}}{{end}}`),
+		},
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with TemplateData error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() returned empty output")
+	}
+}
+
+func TestOptions_Process_WithInvalidTemplateDir(t *testing.T) {
+	options := &Options{
+		TemplateDir: "/nonexistent/path",
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+		},
+	}
+
+	_, err := options.Process(head, funcs)
+	if err == nil {
+		t.Error("Options.Process() with invalid TemplateDir should return error")
+	}
+}
+
+func TestOptions_Process_WithInvalidTemplate(t *testing.T) {
+	options := &Options{
+		Template: "nonexistent",
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+		},
+	}
+
+	_, err := options.Process(head, funcs)
+	if err == nil {
+		t.Error("Options.Process() with invalid Template should return error")
+	}
+}
+
+func TestOptions_Process_WithNamed(t *testing.T) {
+	options := &Options{
+		Named: true,
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with Named error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() returned empty output")
+	}
+}
+
+func TestOptions_Process_WithParallel(t *testing.T) {
+	options := &Options{
+		Parallel: true,
+		Subtests: true, // Parallel requires subtests
+	}
+	head := &models.Header{
+		Package: "mypackage",
+	}
+	funcs := []*models.Function{
+		{
+			Name:       "Add",
+			IsExported: true,
+			Parameters: []*models.Field{
+				{Name: "a", Type: &models.Expression{Value: "int"}},
+			},
+			Results: []*models.Field{
+				{Type: &models.Expression{Value: "int"}},
+			},
+		},
+	}
+
+	got, err := options.Process(head, funcs)
+	if err != nil {
+		t.Errorf("Options.Process() with Parallel error = %v", err)
+		return
+	}
+	if len(got) == 0 {
+		t.Error("Options.Process() returned empty output")
 	}
 }
 

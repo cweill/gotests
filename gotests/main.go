@@ -99,6 +99,10 @@ func main() {
 		fmt.Fprintf(os.Stderr, "   Ensure your code does not contain secrets or sensitive information.\n\n")
 
 		// Validate parameters
+		if *aiModel == "" {
+			fmt.Fprintf(os.Stderr, "Error: -ai-model cannot be empty when using -ai flag\n")
+			os.Exit(1)
+		}
 		if *aiCases < 1 || *aiCases > 100 {
 			fmt.Fprintf(os.Stderr, "Error: -ai-cases must be between 1 and 100, got %d\n", *aiCases)
 			os.Exit(1)

@@ -1,9 +1,11 @@
 package ai
 
 import (
+	"bytes"
 	"fmt"
 	"go/ast"
 	"go/parser"
+	"go/printer"
 	"go/token"
 	"regexp"
 	"strings"
@@ -255,8 +257,12 @@ func exprToString(expr ast.Expr) string {
 	case *ast.BinaryExpr:
 		return exprToString(e.X) + " " + e.Op.String() + " " + exprToString(e.Y)
 	case *ast.CompositeLit:
-		// For complex types, return a simplified representation
-		return "nil" // Placeholder for structs/maps/slices
+		// For complex types (structs/maps/slices), convert AST back to source code
+		var buf bytes.Buffer
+		if err := printer.Fprint(&buf, token.NewFileSet(), e); err != nil {
+			return "nil" // Fallback on error
+		}
+		return buf.String()
 	default:
 		return "nil"
 	}

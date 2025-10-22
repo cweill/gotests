@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/cweill/gotests/internal/models"
@@ -181,58 +180,6 @@ func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *
 	return nil, fmt.Errorf("failed after %d attempts: %w", o.maxRetries, lastErr)
 }
 
-// generate makes the actual API call to Ollama.
-func (o *OllamaProvider) generate(ctx context.Context, prompt string) ([]TestCase, error) {
-	reqBody := map[string]interface{}{
-		"model":  o.model,
-		"prompt": prompt,
-		"stream": false,
-		"options": map[string]interface{}{
-			"temperature": 0.0, // Deterministic generation for test cases
-		},
-	}
-
-	body, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("marshal request: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "POST", o.endpoint+"/api/generate", bytes.NewReader(body))
-	if err != nil {
-		return nil, fmt.Errorf("create request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := o.client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(io.LimitReader(resp.Body, MaxResponseSize))
-		return nil, fmt.Errorf("ollama returned %d: %s", resp.StatusCode, string(body))
-	}
-
-	// Limit response size to prevent memory exhaustion
-	limitedReader := io.LimitReader(resp.Body, MaxResponseSize)
-
-	var result struct {
-		Response string `json:"response"`
-	}
-	if err := json.NewDecoder(limitedReader).Decode(&result); err != nil {
-		return nil, fmt.Errorf("decode response: %w", err)
-	}
-
-	// Parse the LLM response
-	cases, err := parseTestCases(result.Response, o.numCases)
-	if err != nil {
-		return nil, fmt.Errorf("parse test cases: %w", err)
-	}
-
-	return cases, nil
-}
-
 // generateGo calls Ollama and parses Go code response instead of JSON.
 func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestCase, error) {
 	reqBody := map[string]interface{}{
@@ -314,80 +261,4 @@ func validateTestCases(cases []TestCase, fn *models.Function) error {
 	}
 
 	return nil
-}
-
-// parseTestCases extracts test cases from the LLM response.
-// Expected format: JSON array or multiple JSON objects
-func parseTestCases(response string, maxCases int) ([]TestCase, error) {
-	// Try to find JSON in the response
-	start := strings.Index(response, "[")
-	end := strings.LastIndex(response, "]")
-
-	if start == -1 || end == -1 || start > end {
-		return nil, fmt.Errorf("no JSON array found in response")
-	}
-
-	jsonStr := response[start : end+1]
-
-	var rawCases []map[string]interface{}
-	if err := json.Unmarshal([]byte(jsonStr), &rawCases); err != nil {
-		return nil, fmt.Errorf("unmarshal JSON: %w", err)
-	}
-
-	var cases []TestCase
-	for i, raw := range rawCases {
-		if i >= maxCases {
-			break
-		}
-
-		tc := TestCase{
-			Args: make(map[string]string),
-			Want: make(map[string]string),
-		}
-
-		// Extract name
-		if name, ok := raw["name"].(string); ok {
-			tc.Name = name
-		} else {
-			tc.Name = fmt.Sprintf("test_case_%d", i+1)
-		}
-
-		// Extract description
-		if desc, ok := raw["description"].(string); ok {
-			tc.Description = desc
-		}
-
-		// Extract args
-		if args, ok := raw["args"].(map[string]interface{}); ok {
-			for k, v := range args {
-				tc.Args[k] = fmt.Sprintf("%v", v)
-			}
-		}
-
-		// Extract want/expected
-		if want, ok := raw["want"].(map[string]interface{}); ok {
-			for k, v := range want {
-				tc.Want[k] = fmt.Sprintf("%v", v)
-			}
-		} else if expected, ok := raw["expected"].(map[string]interface{}); ok {
-			for k, v := range expected {
-				tc.Want[k] = fmt.Sprintf("%v", v)
-			}
-		}
-
-		// Extract wantErr
-		if wantErr, ok := raw["wantErr"].(bool); ok {
-			tc.WantErr = wantErr
-		} else if wantErr, ok := raw["want_error"].(bool); ok {
-			tc.WantErr = wantErr
-		}
-
-		cases = append(cases, tc)
-	}
-
-	if len(cases) == 0 {
-		return nil, fmt.Errorf("no valid test cases parsed")
-	}
-
-	return cases, nil
 }
