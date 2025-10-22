@@ -144,42 +144,6 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 	return nil, fmt.Errorf("failed after %d attempts: %w", o.maxRetries, lastErr)
 }
 
-// GenerateTestCasesWithScaffold generates test cases using a Go code scaffold.
-// This is more reliable for small models as they generate Go code instead of JSON.
-func (o *OllamaProvider) GenerateTestCasesWithScaffold(ctx context.Context, fn *models.Function, scaffold string) ([]TestCase, error) {
-	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
-
-	// Try up to maxRetries times with validation feedback
-	var lastErr error
-	for attempt := 0; attempt < o.maxRetries; attempt++ {
-		// Check if context has been cancelled
-		if err := ctx.Err(); err != nil {
-			return nil, fmt.Errorf("context cancelled: %w", err)
-		}
-
-		if attempt > 0 && lastErr != nil {
-			// Retry with error feedback
-			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
-		}
-
-		cases, err := o.generateGo(ctx, prompt)
-		if err != nil {
-			lastErr = err
-			continue
-		}
-
-		// Basic validation of test cases
-		if err := validateTestCases(cases, fn); err != nil {
-			lastErr = err
-			continue
-		}
-
-		return cases, nil
-	}
-
-	return nil, fmt.Errorf("failed after %d attempts: %w", o.maxRetries, lastErr)
-}
-
 // generateGo calls Ollama and parses Go code response instead of JSON.
 func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestCase, error) {
 	reqBody := map[string]interface{}{
