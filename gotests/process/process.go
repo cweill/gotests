@@ -21,7 +21,7 @@ const (
 	specifyFileMessage = "Please specify a file or directory containing the source"
 )
 
-// Set of options to use when generating tests.
+// Options contains command-line configuration for generating tests.
 type Options struct {
 	OnlyFuncs          string   // Regexp string for filter matches.
 	ExclFuncs          string   // Regexp string for excluding matches.
@@ -40,9 +40,9 @@ type Options struct {
 	UseGoCmp           bool     // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 }
 
-// Generates tests for the Go files defined in args with the given options.
-// Logs information and errors to out. By default outputs generated tests to
-// out unless specified by opt.
+// Run generates tests for the Go files defined in args with the given options.
+// It logs information and errors to out. By default, it outputs generated tests to
+// out unless WriteOutput is specified in opts.
 func Run(out io.Writer, args []string, opts *Options) {
 	if opts == nil {
 		opts = &Options{}
