@@ -10,25 +10,25 @@ func TestReverse(t *testing.T) {
 		want string
 	}{
 		{
-			name: "Reverse",
+			name: "valid_input",
 			args: args{
 				s: "hello",
 			},
 			want: "olleh",
 		},
 		{
-			name: "Reverse",
-			args: args{
-				s: "world",
-			},
-			want: "dlrow",
-		},
-		{
-			name: "Reverse",
+			name: "empty_string",
 			args: args{
 				s: "",
 			},
 			want: "",
+		},
+		{
+			name: "negative_value",
+			args: args{
+				s: "-123",
+			},
+			want: "-123",
 		},
 	}
 	for _, tt := range tests {

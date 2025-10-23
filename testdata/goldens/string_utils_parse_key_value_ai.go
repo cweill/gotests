@@ -14,25 +14,25 @@ func TestParseKeyValue(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "ParseKeyValue",
+			name: "valid_input",
 			args: args{
-				input: "key1=value2,key3=value4",
+				input: "hello,world",
 			},
-			want:    map[string]string{"key1": "value2", "key3": "value4"},
+			want:    map[string]string{"hello": "world"},
 			wantErr: false,
 		},
 		{
-			name: "ParseKeyValue",
-			args: args{
-				input: "key1,value2,key3=value4,key5=value6",
-			},
-			want:    map[string]string{"key1": "value2", "key3": "value4", "key5": "value6"},
-			wantErr: false,
-		},
-		{
-			name: "ParseKeyValue",
+			name: "empty_string",
 			args: args{
 				input: "",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "negative_value",
+			args: args{
+				input: "-1,23",
 			},
 			want:    nil,
 			wantErr: true,

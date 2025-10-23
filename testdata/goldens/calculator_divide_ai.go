@@ -13,33 +13,33 @@ func TestCalculator_Divide(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "divide_by_zero",
+			name: "valid_input",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
 				n: 10,
-				d: 0,
+				d: 2,
+			},
+			want:    5,
+			wantErr: false,
+		},
+		{
+			name: "empty_string",
+			c:    nil, // TODO: Initialize receiver from AI case
+			args: args{
+				n: "",
+				d: 2,
 			},
 			want:    0,
 			wantErr: true,
 		},
 		{
-			name: "positive_division",
+			name: "negative_value",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
-				n: 5,
-				d: 3,
+				n: -10,
+				d: 2,
 			},
-			want:    1.67,
-			wantErr: false,
-		},
-		{
-			name: "negative_division",
-			c:    nil, // TODO: Initialize receiver from AI case
-			args: args{
-				n: -5,
-				d: 3,
-			},
-			want:    -1.67,
+			want:    5,
 			wantErr: false,
 		},
 	}

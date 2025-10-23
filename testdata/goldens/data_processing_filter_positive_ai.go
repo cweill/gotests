@@ -13,25 +13,25 @@ func TestFilterPositive(t *testing.T) {
 		want []int
 	}{
 		{
-			name: "FilterPositive",
+			name: "valid_input",
 			args: args{
-				numbers: []int{-1, 2, -3, 4, 5},
+				numbers: []int{1, 2, -3, 4},
 			},
-			want: []int{2, 4, 5},
+			want: []int{1, 2, 4},
 		},
 		{
-			name: "FilterPositive",
+			name: "empty_string",
 			args: args{
 				numbers: []int{},
 			},
 			want: []int{},
 		},
 		{
-			name: "FilterPositive",
+			name: "negative_value",
 			args: args{
-				numbers: []int{-10, -20, -30},
+				numbers: []int{-5, -3, -1},
 			},
-			want: []int{},
+			want: []int{-5, -3, -1},
 		},
 	}
 	for _, tt := range tests {

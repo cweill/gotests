@@ -12,7 +12,7 @@ func TestCalculateDiscount(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_price",
+			name: "valid_input",
 			args: args{
 				price:      10.5,
 				percentage: 20,
@@ -21,22 +21,22 @@ func TestCalculateDiscount(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "invalid_percentage",
+			name: "empty_string",
 			args: args{
-				price:      10.5,
-				percentage: -10,
+				price:      "",
+				percentage: 30,
 			},
 			want:    0,
 			wantErr: true,
 		},
 		{
-			name: "valid_price_and_percentage",
+			name: "negative_value",
 			args: args{
-				price:      10.5,
+				price:      -10,
 				percentage: 20,
 			},
-			want:    8.5,
-			wantErr: false,
+			want:    0,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

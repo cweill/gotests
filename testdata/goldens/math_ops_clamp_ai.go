@@ -12,13 +12,22 @@ func TestClamp(t *testing.T) {
 		want int
 	}{
 		{
-			name: "positive_value",
+			name: "valid_input",
 			args: args{
 				value: 10,
 				min:   5,
 				max:   20,
 			},
-			want: 10,
+			want: 15,
+		},
+		{
+			name: "empty_string",
+			args: args{
+				value: "",
+				min:   5,
+				max:   20,
+			},
+			want: 5,
 		},
 		{
 			name: "negative_value",
@@ -28,15 +37,6 @@ func TestClamp(t *testing.T) {
 				max:   20,
 			},
 			want: -10,
-		},
-		{
-			name: "within_range",
-			args: args{
-				value: 15,
-				min:   5,
-				max:   20,
-			},
-			want: 15,
 		},
 	}
 	for _, tt := range tests {

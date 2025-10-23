@@ -75,16 +75,20 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	sb.WriteString(scaffold)
 	sb.WriteString("```\n\n")
 
-	// Instructions
-	sb.WriteString(fmt.Sprintf("Generate %d meaningful test cases.\n", numCases))
-	sb.WriteString("Fill in the test cases using the EXACT struct format from the scaffold.\n")
-	sb.WriteString("Use named fields (field: value) not positional values.\n\n")
+	// Instructions - keep simple for small models
+	sb.WriteString(fmt.Sprintf("Generate %d test cases. Each test case must have UNIQUE, DIFFERENT input values.\n", numCases))
+	if fn.ReturnsError {
+		sb.WriteString("Include: 1 valid case, 1 edge case, 1 error case.\n")
+	} else {
+		sb.WriteString("Include: valid inputs, edge cases (zero/empty/nil), boundary values.\n")
+	}
+	sb.WriteString("\n")
 
 	// Build a concrete example using the actual scaffold
-	sb.WriteString("Fill in test cases like this (using the exact field names from your scaffold):\n")
+	sb.WriteString("Example format (using the exact field names from your scaffold):\n")
 	sb.WriteString("```go\n")
 	sb.WriteString("{\n")
-	sb.WriteString("    name: \"descriptive_test_name\",\n")
+	sb.WriteString("    name: \"specific_scenario_name\",  // e.g., \"valid_input\", \"empty_string\", \"negative_value\"\n")
 
 	// Show receiver if present
 	if fn.Receiver != nil {
@@ -123,15 +127,15 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	sb.WriteString("},\n")
 	sb.WriteString("```\n\n")
 
-	sb.WriteString("IMPORTANT:\n")
-	sb.WriteString("- Use NAMED FIELDS (field: value) not positional struct literals\n")
-	sb.WriteString("- Use the EXACT field names shown in the scaffold above\n")
-	sb.WriteString("- Generate realistic test values based on the function body\n")
-	sb.WriteString("- Use valid Go literal syntax\n")
+	sb.WriteString("Requirements:\n")
+	sb.WriteString("- DIFFERENT values in each test case (NO duplicates)\n")
+	sb.WriteString("- Use NAMED fields (e.g., field: value)\n")
+	sb.WriteString("- Use exact field names from scaffold\n")
+	sb.WriteString("- Valid Go syntax, realistic values\n")
 	if fn.ReturnsError {
-		sb.WriteString("- For error returns, set wantErr: true or false appropriately\n")
+		sb.WriteString("- Set wantErr based on expected error\n")
 	}
-	sb.WriteString("\n")
+	sb.WriteString("\nOutput ONLY the test case array, no explanations:\n")
 
 	// Add error feedback if retrying
 	if previousError != "" {
@@ -140,7 +144,10 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 		sb.WriteString("\n\nPlease fix the above issue.\n\n")
 	}
 
-	sb.WriteString("Now generate the test cases:\n")
+	sb.WriteString("Now fill in the scaffold above by replacing '// TODO: Add test cases.' with your test cases:\n")
+	sb.WriteString("```go\n")
+	sb.WriteString(scaffold)
+	sb.WriteString("```\n")
 
 	return sb.String()
 }

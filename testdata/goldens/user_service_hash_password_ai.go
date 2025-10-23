@@ -11,28 +11,28 @@ func TestHashPassword(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "short_password",
+			name: "valid_input",
 			args: args{
-				password: "a",
+				password: "secure_password123",
 			},
-			want:    "",
-			wantErr: true,
-		},
-		{
-			name: "long_password",
-			args: args{
-				password: "a1234567890",
-			},
-			want:    "",
-			wantErr: true,
-		},
-		{
-			name: "valid_password",
-			args: args{
-				password: "StrongPassword123!",
-			},
-			want:    "hashed_StrongPassword123!",
+			want:    "hashed_secure_password123",
 			wantErr: false,
+		},
+		{
+			name: "empty_string",
+			args: args{
+				password: "",
+			},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name: "negative_value",
+			args: args{
+				password: "-secure_password123",
+			},
+			want:    "",
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

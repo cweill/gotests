@@ -12,31 +12,31 @@ func TestFormatCurrency(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "descriptive_test_name",
+			name: "valid_input",
 			args: args{
-				amount: 123.456789,
+				amount: 123.456,
 				code:   "USD",
 			},
 			want:    "$123.46",
 			wantErr: false,
 		},
 		{
-			name: "descriptive_test_name",
+			name: "empty_string",
 			args: args{
-				amount: 987.654321,
-				code:   "EUR",
+				amount: -999999999999999999,
+				code:   "",
 			},
-			want:    "€987.66",
-			wantErr: false,
+			want:    "",
+			wantErr: true,
 		},
 		{
-			name: "descriptive_test_name",
+			name: "negative_value",
 			args: args{
-				amount: 0.0001,
-				code:   "JPY",
+				amount: -123.456,
+				code:   "USD",
 			},
-			want:    "¥0.01",
-			wantErr: true,
+			want:    "$-123.46",
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

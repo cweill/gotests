@@ -202,6 +202,11 @@ func validateTestCases(cases []TestCase, fn *models.Function) error {
 		return fmt.Errorf("no test cases generated")
 	}
 
+	// Check for duplicate test cases (same args/want values)
+	if hasDuplicates(cases) {
+		return fmt.Errorf("generated test cases have duplicate values - need more diversity")
+	}
+
 	// Check each test case has required fields
 	for i, tc := range cases {
 		if tc.Name == "" {
@@ -225,4 +230,50 @@ func validateTestCases(cases []TestCase, fn *models.Function) error {
 	}
 
 	return nil
+}
+
+// hasDuplicates checks if test cases have duplicate args+want combinations.
+func hasDuplicates(cases []TestCase) bool {
+	if len(cases) <= 1 {
+		return false
+	}
+
+	// Check if all test cases have identical args+want
+	// (simplified check - if all args match for first case, likely all duplicates)
+	firstCase := cases[0]
+	allIdentical := true
+
+	for i := 1; i < len(cases); i++ {
+		tc := cases[i]
+
+		// Check if args match
+		if len(tc.Args) != len(firstCase.Args) {
+			allIdentical = false
+			break
+		}
+		for key, val := range tc.Args {
+			if firstVal, exists := firstCase.Args[key]; !exists || firstVal != val {
+				allIdentical = false
+				break
+			}
+		}
+
+		// Check if want matches
+		if len(tc.Want) != len(firstCase.Want) {
+			allIdentical = false
+			break
+		}
+		for key, val := range tc.Want {
+			if firstVal, exists := firstCase.Want[key]; !exists || firstVal != val {
+				allIdentical = false
+				break
+			}
+		}
+
+		if !allIdentical {
+			break
+		}
+	}
+
+	return allIdentical
 }

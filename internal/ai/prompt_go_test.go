@@ -146,12 +146,12 @@ func Test_buildGoPrompt(t *testing.T) {
 			numCases: 3,
 			wantContains: []string{
 				"You are a Go testing expert",
-				"Generate 3 meaningful test cases",
+				"Generate 3 test cases. Each test case must have UNIQUE, DIFFERENT input values.",
 				"Function to test:",
 				"return a + b",
 				"test scaffold:",
-				"IMPORTANT:",
-				"Use NAMED FIELDS",
+				"Requirements:",
+				"Use NAMED fields",
 				"a: <value>",
 				"b: <value>",
 			},
@@ -172,9 +172,9 @@ func Test_buildGoPrompt(t *testing.T) {
 			scaffold: "tests := []struct {\n    name string\n    wantErr bool\n}",
 			numCases: 2,
 			wantContains: []string{
-				"Generate 2 meaningful test cases",
+				"Generate 2 test cases. Each test case must have UNIQUE, DIFFERENT input values.",
 				"wantErr: false",
-				"For error returns",
+				"Include: 1 valid case, 1 edge case, 1 error case.",
 			},
 		},
 		{

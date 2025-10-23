@@ -11,28 +11,28 @@ func TestFactorial(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "descriptive_test_name",
+			name: "valid_input",
 			args: args{
-				n: 0,
+				n: 5,
 			},
-			want:    1,
+			want:    120,
 			wantErr: false,
 		},
 		{
-			name: "descriptive_test_name",
+			name: "empty_string",
 			args: args{
-				n: 1,
+				n: "",
 			},
 			want:    1,
-			wantErr: false,
+			wantErr: true,
 		},
 		{
-			name: "descriptive_test_name",
+			name: "negative_value",
 			args: args{
-				n: 2,
+				n: -3,
 			},
-			want:    2,
-			wantErr: false,
+			want:    0,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
