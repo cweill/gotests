@@ -1,10 +1,8 @@
 package testdata
-
 import (
 	"reflect"
 	"testing"
 )
-
 func TestParseKeyValue(t *testing.T) {
 	type args struct {
 		input string
@@ -20,7 +18,7 @@ func TestParseKeyValue(t *testing.T) {
 			args: args{
 				input: "key1=value2,key3=value4",
 			},
-			want:    nil,
+			want:    map[string]string{"key1": "value2", "key3": "value4"},
 			wantErr: false,
 		},
 		{
@@ -28,7 +26,7 @@ func TestParseKeyValue(t *testing.T) {
 			args: args{
 				input: "key1,value2,key3=value4,key5=value6",
 			},
-			want:    nil,
+			want:    map[string]string{"key1": "value2", "key3": "value4", "key5": "value6"},
 			wantErr: false,
 		},
 		{
@@ -41,16 +39,17 @@ func TestParseKeyValue(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		got, err := ParseKeyValue(tt.args.input)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. ParseKeyValue() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if tt.wantErr {
-			return
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. ParseKeyValue() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseKeyValue(tt.args.input)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("ParseKeyValue() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ParseKeyValue() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

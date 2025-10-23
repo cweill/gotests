@@ -1,7 +1,5 @@
 package testdata
-
 import "testing"
-
 func TestFormatCurrency(t *testing.T) {
 	type args struct {
 		amount float64
@@ -42,16 +40,17 @@ func TestFormatCurrency(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		got, err := FormatCurrency(tt.args.amount, tt.args.code)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FormatCurrency() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if tt.wantErr {
-			return
-		}
-		if got != tt.want {
-			t.Errorf("%q. FormatCurrency() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FormatCurrency(tt.args.amount, tt.args.code)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("FormatCurrency() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if got != tt.want {
+				t.Errorf("FormatCurrency() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

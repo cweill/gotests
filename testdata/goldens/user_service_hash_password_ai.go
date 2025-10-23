@@ -1,7 +1,5 @@
 package testdata
-
 import "testing"
-
 func TestHashPassword(t *testing.T) {
 	type args struct {
 		password string
@@ -38,16 +36,17 @@ func TestHashPassword(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		got, err := HashPassword(tt.args.password)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. HashPassword() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if tt.wantErr {
-			return
-		}
-		if got != tt.want {
-			t.Errorf("%q. HashPassword() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := HashPassword(tt.args.password)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("HashPassword() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if got != tt.want {
+				t.Errorf("HashPassword() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

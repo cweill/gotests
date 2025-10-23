@@ -1,7 +1,5 @@
 package testdata
-
 import "testing"
-
 func TestCalculateDiscount(t *testing.T) {
 	type args struct {
 		price      float64
@@ -42,16 +40,17 @@ func TestCalculateDiscount(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		got, err := CalculateDiscount(tt.args.price, tt.args.percentage)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. CalculateDiscount() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if tt.wantErr {
-			continue
-		}
-		if got != tt.want {
-			t.Errorf("%q. CalculateDiscount() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := CalculateDiscount(tt.args.price, tt.args.percentage)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("CalculateDiscount() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if got != tt.want {
+				t.Errorf("CalculateDiscount() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

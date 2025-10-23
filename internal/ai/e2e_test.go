@@ -6,7 +6,6 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -138,53 +137,67 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 
 			t.Logf("✓ Generated %d test cases for %s", len(cases), tc.funcName)
 
-			// Validate each test case has correct structure
-			for i, testCase := range cases {
-				// Check test case has a name
-				if testCase.Name == "" {
-					t.Errorf("Test case %d missing name", i)
-				}
-
-				// Check all function parameters are present in Args
-				for _, param := range targetFunc.TestParameters() {
-					if _, exists := testCase.Args[param.Name]; !exists {
-						t.Errorf("Test case %q missing argument %q", testCase.Name, param.Name)
-					}
-				}
-
-				// Check return values are present in Want
-				expectedReturns := len(targetFunc.TestResults())
-				if len(testCase.Want) != expectedReturns {
-					t.Errorf("Test case %q has %d return values, expected %d",
-						testCase.Name, len(testCase.Want), expectedReturns)
-				}
-
-				// Log test case for debugging
-				t.Logf("  Test case %d: %s", i+1, testCase.Name)
-				t.Logf("    Args: %v", testCase.Args)
-				t.Logf("    Want: %v", testCase.Want)
-				t.Logf("    WantErr: %v", testCase.WantErr)
+			// Validate against golden file (exact match required)
+			goldenContent, err := ioutil.ReadFile(tc.goldenFile)
+			if err != nil {
+				t.Fatalf("Failed to read golden file %s: %v", tc.goldenFile, err)
 			}
 
-			// Optional: Validate against golden file expectations
-			// Read golden file and check if it contains similar test case patterns
-			if goldenContent, err := ioutil.ReadFile(tc.goldenFile); err == nil {
-				goldenStr := string(goldenContent)
+			// Parse golden file to extract expected test cases
+			goldenCases, err := parseGoTestCases(string(goldenContent), 100)
+			if err != nil {
+				t.Fatalf("Failed to parse golden file %s: %v", tc.goldenFile, err)
+			}
 
-				// Check that at least one generated test case name appears in golden
-				foundMatch := false
-				for _, testCase := range cases {
-					// Normalize test case name to match golden format (snake_case or similar)
-					if strings.Contains(goldenStr, testCase.Name) ||
-					   strings.Contains(goldenStr, strings.ReplaceAll(testCase.Name, " ", "_")) {
-						foundMatch = true
-						break
+			// Compare generated vs golden: must match exactly
+			if len(cases) != len(goldenCases) {
+				t.Errorf("Generated %d test cases, golden has %d", len(cases), len(goldenCases))
+			}
+
+			for i := 0; i < len(cases) && i < len(goldenCases); i++ {
+				generated := cases[i]
+				golden := goldenCases[i]
+
+				t.Logf("  Test case %d:", i+1)
+				t.Logf("    Generated name: %q", generated.Name)
+				t.Logf("    Golden name:    %q", golden.Name)
+
+				// Compare test case names
+				if generated.Name != golden.Name {
+					t.Errorf("Test case %d name mismatch: generated=%q, golden=%q",
+						i+1, generated.Name, golden.Name)
+				}
+
+				// Compare wantErr flag
+				if generated.WantErr != golden.WantErr {
+					t.Errorf("Test case %q wantErr mismatch: generated=%v, golden=%v",
+						generated.Name, generated.WantErr, golden.WantErr)
+				}
+
+				// Compare args (note: string comparison of Go code)
+				for argName, generatedVal := range generated.Args {
+					goldenVal, exists := golden.Args[argName]
+					if !exists {
+						t.Errorf("Test case %q missing arg %q in golden", generated.Name, argName)
+						continue
+					}
+					if generatedVal != goldenVal {
+						t.Errorf("Test case %q arg %q mismatch:\n  generated: %s\n  golden:    %s",
+							generated.Name, argName, generatedVal, goldenVal)
 					}
 				}
 
-				if !foundMatch {
-					t.Logf("Warning: None of the generated test case names found in golden file %s", tc.goldenFile)
-					t.Logf("This might indicate model output has changed - review manually")
+				// Compare want values
+				for wantName, generatedVal := range generated.Want {
+					goldenVal, exists := golden.Want[wantName]
+					if !exists {
+						t.Errorf("Test case %q missing want %q in golden", generated.Name, wantName)
+						continue
+					}
+					if generatedVal != goldenVal {
+						t.Errorf("Test case %q want %q mismatch:\n  generated: %s\n  golden:    %s",
+							generated.Name, wantName, generatedVal, goldenVal)
+					}
 				}
 			}
 		})

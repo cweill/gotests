@@ -1,7 +1,5 @@
 package testdata
-
 import "testing"
-
 func TestClamp(t *testing.T) {
 	type args struct {
 		value int
@@ -42,8 +40,10 @@ func TestClamp(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		if got := Clamp(tt.args.value, tt.args.min, tt.args.max); got != tt.want {
-			t.Errorf("%q. Clamp() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Clamp(tt.args.value, tt.args.min, tt.args.max); got != tt.want {
+				t.Errorf("Clamp() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
