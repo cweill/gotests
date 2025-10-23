@@ -79,6 +79,18 @@ var e2eTestCases = []e2eTestCase{
 		funcName:   "ContainsAny",
 		goldenFile: "../../testdata/goldens/string_utils_contains_any_ai.go",
 	},
+	{
+		name:       "business_logic_format_currency",
+		sourceFile: "../../testdata/business_logic.go",
+		funcName:   "FormatCurrency",
+		goldenFile: "../../testdata/goldens/business_logic_format_currency_ai.go",
+	},
+	{
+		name:       "math_ops_factorial",
+		sourceFile: "../../testdata/math_ops.go",
+		funcName:   "Factorial",
+		goldenFile: "../../testdata/goldens/math_ops_factorial_ai.go",
+	},
 	// Note: Removed Foo8 test because it's a minimal stub (return nil, nil)
 	// with no implementation, which causes AI to generate explanatory text
 	// instead of valid Go code. The above tests provide comprehensive E2E coverage

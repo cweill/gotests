@@ -13,7 +13,7 @@ func TestCalculator_Divide(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_input",
+			name: "valid_case",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
 				n: 10,
@@ -23,23 +23,23 @@ func TestCalculator_Divide(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "empty_string",
+			name: "edge_case",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
-				n: "",
-				d: 2,
+				n: 10,
+				d: 0,
 			},
 			want:    0,
 			wantErr: true,
 		},
 		{
-			name: "negative_value",
+			name: "error_case",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
-				n: -10,
-				d: 2,
+				n: 10,
+				d: 5,
 			},
-			want:    5,
+			want:    2,
 			wantErr: false,
 		},
 	}

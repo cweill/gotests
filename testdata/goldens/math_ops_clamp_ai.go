@@ -18,25 +18,25 @@ func TestClamp(t *testing.T) {
 				min:   5,
 				max:   20,
 			},
-			want: 15,
+			want: 10,
 		},
 		{
-			name: "empty_string",
+			name: "edge_case_1",
 			args: args{
-				value: "",
+				value: -10,
 				min:   5,
 				max:   20,
 			},
 			want: 5,
 		},
 		{
-			name: "negative_value",
+			name: "boundary_value",
 			args: args{
-				value: -10,
+				value: 20,
 				min:   5,
 				max:   20,
 			},
-			want: -10,
+			want: 20,
 		},
 	}
 	for _, tt := range tests {

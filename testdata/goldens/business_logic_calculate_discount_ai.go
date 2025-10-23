@@ -12,28 +12,28 @@ func TestCalculateDiscount(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_input",
+			name: "valid_case",
 			args: args{
 				price:      10.5,
 				percentage: 20,
 			},
-			want:    8.5,
+			want:    8.0,
 			wantErr: false,
 		},
 		{
-			name: "empty_string",
+			name: "edge_case",
 			args: args{
-				price:      "",
-				percentage: 30,
+				price:      -10.5,
+				percentage: 20,
 			},
 			want:    0,
 			wantErr: true,
 		},
 		{
-			name: "negative_value",
+			name: "error_case",
 			args: args{
-				price:      -10,
-				percentage: 20,
+				price:      10.5,
+				percentage: 101,
 			},
 			want:    0,
 			wantErr: true,

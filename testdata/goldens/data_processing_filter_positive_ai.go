@@ -20,14 +20,14 @@ func TestFilterPositive(t *testing.T) {
 			want: []int{1, 2, 4},
 		},
 		{
-			name: "empty_string",
+			name: "edge_case_1",
 			args: args{
 				numbers: []int{},
 			},
 			want: []int{},
 		},
 		{
-			name: "negative_value",
+			name: "boundary_value_1",
 			args: args{
 				numbers: []int{-5, -3, -1},
 			},

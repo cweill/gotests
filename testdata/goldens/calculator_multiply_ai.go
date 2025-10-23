@@ -21,16 +21,16 @@ func TestCalculator_Multiply(t *testing.T) {
 			want: 15,
 		},
 		{
-			name: "empty_string",
+			name: "edge_case_1",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
-				n: "",
+				n: 0,
 				d: 3,
 			},
 			want: 0,
 		},
 		{
-			name: "negative_value",
+			name: "edge_case_2",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
 				n: -5,

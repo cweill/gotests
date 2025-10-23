@@ -17,18 +17,18 @@ func TestReverse(t *testing.T) {
 			want: "olleh",
 		},
 		{
-			name: "empty_string",
+			name: "edge_case_1",
 			args: args{
 				s: "",
 			},
 			want: "",
 		},
 		{
-			name: "negative_value",
+			name: "boundary_value",
 			args: args{
-				s: "-123",
+				s: "a",
 			},
-			want: "-123",
+			want: "a",
 		},
 	}
 	for _, tt := range tests {
