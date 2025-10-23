@@ -34,7 +34,8 @@ type Config struct {
 	Model          string // Model name (e.g., "qwen2.5-coder:0.5b")
 	Endpoint       string // API endpoint URL
 	APIKey         string // API key (for cloud providers)
-	NumCases       int    // Number of test cases to generate (default: 3)
+	MinCases       int    // Minimum number of test cases to generate (default: 3)
+	MaxCases       int    // Maximum number of test cases to generate (default: 10)
 	MaxRetries     int    // Maximum number of retry attempts (default: 3)
 	RequestTimeout int    // HTTP request timeout in seconds (default: 60)
 	HealthTimeout  int    // Health check timeout in seconds (default: 2)
@@ -46,7 +47,8 @@ func DefaultConfig() *Config {
 		Provider:       "ollama",
 		Model:          "qwen2.5-coder:0.5b",
 		Endpoint:       "http://localhost:11434",
-		NumCases:       3,
+		MinCases:       3,
+		MaxCases:       10,
 		MaxRetries:     3,
 		RequestTimeout: 60,
 		HealthTimeout:  2,

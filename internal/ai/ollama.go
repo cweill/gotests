@@ -24,7 +24,8 @@ const (
 type OllamaProvider struct {
 	endpoint       string
 	model          string
-	numCases       int
+	minCases       int
+	maxCases       int
 	maxRetries     int
 	requestTimeout time.Duration
 	healthTimeout  time.Duration
@@ -46,7 +47,8 @@ func NewOllamaProvider(cfg *Config) (*OllamaProvider, error) {
 	return &OllamaProvider{
 		endpoint:       cfg.Endpoint,
 		model:          cfg.Model,
-		numCases:       cfg.NumCases,
+		minCases:       cfg.MinCases,
+		maxCases:       cfg.MaxCases,
 		maxRetries:     cfg.MaxRetries,
 		requestTimeout: time.Duration(cfg.RequestTimeout) * time.Second,
 		healthTimeout:  time.Duration(cfg.HealthTimeout) * time.Second,
@@ -111,7 +113,7 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 	// Generate a minimal scaffold to show the LLM the struct format
 	scaffold := buildTestScaffold(fn)
 
-	prompt := buildGoPrompt(fn, scaffold, o.numCases, "")
+	prompt := buildGoPrompt(fn, scaffold, o.minCases, o.maxCases, "")
 
 	// Try up to maxRetries times with validation feedback
 	var lastErr error
@@ -123,7 +125,7 @@ func (o *OllamaProvider) GenerateTestCases(ctx context.Context, fn *models.Funct
 
 		if attempt > 0 && lastErr != nil {
 			// Retry with error feedback
-			prompt = buildGoPrompt(fn, scaffold, o.numCases, lastErr.Error())
+			prompt = buildGoPrompt(fn, scaffold, o.minCases, o.maxCases, lastErr.Error())
 		}
 
 		cases, err := o.generateGo(ctx, prompt)
@@ -189,7 +191,7 @@ func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestC
 	}
 
 	// Parse the Go code response
-	cases, err := parseGoTestCases(result.Response, o.numCases)
+	cases, err := parseGoTestCases(result.Response, o.maxCases)
 	if err != nil {
 		return nil, fmt.Errorf("parse Go test cases: %w\n\nLLM Response:\n%s", err, result.Response)
 	}

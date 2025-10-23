@@ -51,7 +51,7 @@ func buildTestScaffold(fn *models.Function) string {
 }
 
 // buildGoPrompt creates a prompt asking the LLM to generate a complete test function.
-func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousError string) string {
+func buildGoPrompt(fn *models.Function, scaffold string, minCases, maxCases int, previousError string) string {
 	var sb strings.Builder
 
 	sb.WriteString("You are a Go testing expert. Generate test cases for the following function.\n\n")
@@ -76,7 +76,11 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	sb.WriteString("```\n\n")
 
 	// Instructions - keep simple for small models
-	sb.WriteString(fmt.Sprintf("Generate %d test cases. Each test case must have UNIQUE, DIFFERENT input values.\n", numCases))
+	if minCases == maxCases {
+		sb.WriteString(fmt.Sprintf("Generate %d test cases. Each test case must have UNIQUE, DIFFERENT input values.\n", minCases))
+	} else {
+		sb.WriteString(fmt.Sprintf("Generate between %d and %d test cases. Each test case must have UNIQUE, DIFFERENT input values.\n", minCases, maxCases))
+	}
 
 	if fn.ReturnsError {
 		sb.WriteString("Include: 1 valid case, 1 edge case, 1 error case.\n")

@@ -419,7 +419,8 @@ func TestOptions_Process_WithAI_Success(t *testing.T) {
 		UseAI:      true,
 		AIModel:    "test-model",
 		AIEndpoint: server.URL,
-		AICases:    3,
+		AIMinCases: 3,
+		AIMaxCases: 3,
 	}
 	head := &models.Header{
 		Package: "mypackage",
@@ -453,7 +454,8 @@ func TestOptions_Process_WithAI_ProviderCreationError(t *testing.T) {
 		UseAI:      true,
 		AIModel:    "test-model",
 		AIEndpoint: "invalid://endpoint",  // Invalid URL will cause provider creation error
-		AICases:    3,
+		AIMinCases: 3,
+		AIMaxCases: 3,
 	}
 	head := &models.Header{
 		Package: "mypackage",
@@ -482,7 +484,8 @@ func TestOptions_Process_WithAI_ProviderUnavailable(t *testing.T) {
 		UseAI:      true,
 		AIModel:    "test-model",
 		AIEndpoint: server.URL,
-		AICases:    3,
+		AIMinCases: 3,
+		AIMaxCases: 3,
 	}
 	head := &models.Header{
 		Package: "mypackage",
@@ -527,7 +530,8 @@ func TestOptions_Process_WithAI_GenerationError(t *testing.T) {
 		UseAI:      true,
 		AIModel:    "test-model",
 		AIEndpoint: server.URL,
-		AICases:    3,
+		AIMinCases: 3,
+		AIMaxCases: 3,
 	}
 	head := &models.Header{
 		Package: "mypackage",

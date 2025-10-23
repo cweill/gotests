@@ -41,7 +41,8 @@ type Options struct {
 	UseAI              bool     // Generate test cases using AI
 	AIModel            string   // AI model to use
 	AIEndpoint         string   // AI API endpoint
-	AICases            int      // Number of test cases to generate
+	AIMinCases         int      // Minimum number of test cases to generate
+	AIMaxCases         int      // Maximum number of test cases to generate
 }
 
 // Run generates tests for the Go files defined in args with the given options.
@@ -123,7 +124,8 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		UseAI:          opt.UseAI,
 		AIModel:        opt.AIModel,
 		AIEndpoint:     opt.AIEndpoint,
-		AICases:        opt.AICases,
+		AIMinCases:     opt.AIMinCases,
+		AIMaxCases:     opt.AIMaxCases,
 	}
 }
 

@@ -30,7 +30,8 @@ type Options struct {
 	UseAI          bool
 	AIModel        string
 	AIEndpoint     string
-	AICases        int
+	AIMinCases     int
+	AIMaxCases     int
 
 	render *render.Render
 }
@@ -107,7 +108,8 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 			Provider:       "ollama",
 			Model:          o.AIModel,
 			Endpoint:       o.AIEndpoint,
-			NumCases:       o.AICases,
+			MinCases:       o.AIMinCases,
+			MaxCases:       o.AIMaxCases,
 			MaxRetries:     3,  // Default: 3 retries
 			RequestTimeout: 60, // Default: 60 seconds
 			HealthTimeout:  2,  // Default: 2 seconds

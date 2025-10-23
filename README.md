@@ -79,7 +79,9 @@ Available options:
 
   -ai-endpoint          Ollama API endpoint (default "http://localhost:11434")
 
-  -ai-cases             number of test cases to generate with AI (default 3)
+  -ai-min-cases         minimum number of test cases to generate with AI (default 3)
+
+  -ai-max-cases         maximum number of test cases to generate with AI (default 10)
 
   -version              print version information and exit
 ```
@@ -120,32 +122,50 @@ func CalculateDiscount(price float64, percentage int) (float64, error) {
 }
 ```
 
-The AI generates:
+The AI generates (showing 3 cases; by default, the AI generates between 3-10 cases):
 ```go
-tests := []struct {
-    name       string
-    args       args
-    want       float64
-    wantErr    bool
-}{
-    {
-        name: "valid_discount",
-        args: args{price: 100.0, percentage: 20},
-        want: 80.0,
-        wantErr: false,
-    },
-    {
-        name: "negative_price",
-        args: args{price: -10.0, percentage: 20},
-        want: 0,
-        wantErr: true,
-    },
-    {
-        name: "invalid_percentage",
-        args: args{price: 100.0, percentage: 150},
-        want: 0,
-        wantErr: true,
-    },
+func TestCalculateDiscount(t *testing.T) {
+    type args struct {
+        price      float64
+        percentage int
+    }
+    tests := []struct {
+        name    string
+        args    args
+        want    float64
+        wantErr bool
+    }{
+        {
+            name: "valid discount",
+            args: args{price: 100.0, percentage: 20},
+            want: 80.0,
+            wantErr: false,
+        },
+        {
+            name: "negative price",
+            args: args{price: -10.0, percentage: 20},
+            want: 0,
+            wantErr: true,
+        },
+        {
+            name: "invalid percentage",
+            args: args{price: 100.0, percentage: 150},
+            want: 0,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got, err := CalculateDiscount(tt.args.price, tt.args.percentage)
+            if (err != nil) != tt.wantErr {
+                t.Errorf("CalculateDiscount() error = %v, wantErr %v", err, tt.wantErr)
+                return
+            }
+            if got != tt.want {
+                t.Errorf("CalculateDiscount() = %v, want %v", got, tt.want)
+            }
+        })
+    }
 }
 ```
 
@@ -155,8 +175,11 @@ tests := []struct {
 # Use a different model
 gotests -all -ai -ai-model llama3.2:latest -w yourfile.go
 
-# Generate more test cases
-gotests -all -ai -ai-cases 5 -w yourfile.go
+# Generate a specific number of test cases (min = max)
+gotests -all -ai -ai-min-cases 5 -ai-max-cases 5 -w yourfile.go
+
+# Generate a range of test cases (AI chooses between 3-7)
+gotests -all -ai -ai-min-cases 3 -ai-max-cases 7 -w yourfile.go
 
 # Combine with other flags
 gotests -exported -ai -parallel -w yourfile.go

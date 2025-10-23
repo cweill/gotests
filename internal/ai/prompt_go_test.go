@@ -125,7 +125,8 @@ func Test_buildGoPrompt(t *testing.T) {
 		name          string
 		fn            *models.Function
 		scaffold      string
-		numCases      int
+		minCases      int
+		maxCases      int
 		previousError string
 		wantContains  []string
 	}{
@@ -143,7 +144,8 @@ func Test_buildGoPrompt(t *testing.T) {
 				Body: "{\n    return a + b\n}",
 			},
 			scaffold: "tests := []struct {\n    name string\n}",
-			numCases: 3,
+			minCases: 3,
+			maxCases: 3,
 			wantContains: []string{
 				"You are a Go testing expert",
 				"Generate 3 test cases. Each test case must have UNIQUE, DIFFERENT input values.",
@@ -170,7 +172,8 @@ func Test_buildGoPrompt(t *testing.T) {
 				Body:         "{\n    if email == \"\" {\n        return errors.New(\"empty\")\n    }\n    return nil\n}",
 			},
 			scaffold: "tests := []struct {\n    name string\n    wantErr bool\n}",
-			numCases: 2,
+			minCases: 2,
+			maxCases: 2,
 			wantContains: []string{
 				"Generate 2 test cases. Each test case must have UNIQUE, DIFFERENT input values.",
 				"wantErr: false",
@@ -185,7 +188,8 @@ func Test_buildGoPrompt(t *testing.T) {
 				Results:    []*models.Field{},
 			},
 			scaffold:      "tests := []struct {}",
-			numCases:      3,
+			minCases:      3,
+			maxCases:      3,
 			previousError: "missing field: name",
 			wantContains: []string{
 				"PREVIOUS ATTEMPT FAILED:",
@@ -213,7 +217,8 @@ func Test_buildGoPrompt(t *testing.T) {
 				Body: "{\n    return n * d\n}",
 			},
 			scaffold: "tests := []struct {\n    name string\n    c *Calculator\n}",
-			numCases: 3,
+			minCases: 3,
+			maxCases: 3,
 			wantContains: []string{
 				"return n * d",
 				"c: &Calculator{}",
@@ -225,7 +230,7 @@ func Test_buildGoPrompt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := buildGoPrompt(tt.fn, tt.scaffold, tt.numCases, tt.previousError)
+			got := buildGoPrompt(tt.fn, tt.scaffold, tt.minCases, tt.maxCases, tt.previousError)
 
 			for _, want := range tt.wantContains {
 				if !strings.Contains(got, want) {

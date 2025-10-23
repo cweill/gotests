@@ -66,7 +66,8 @@ var (
 	useAI              = flag.Bool("ai", false, "generate test cases using AI (requires Ollama)")
 	aiModel            = flag.String("ai-model", "qwen2.5-coder:0.5b", "AI model to use for test generation")
 	aiEndpoint         = flag.String("ai-endpoint", "http://localhost:11434", "Ollama API endpoint")
-	aiCases            = flag.Int("ai-cases", 3, "number of test cases to generate with AI")
+	aiMinCases         = flag.Int("ai-min-cases", 3, "minimum number of test cases to generate with AI")
+	aiMaxCases         = flag.Int("ai-max-cases", 10, "maximum number of test cases to generate with AI")
 	version            = flag.Bool("version", false, "print version information and exit")
 )
 
@@ -103,8 +104,16 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: -ai-model cannot be empty when using -ai flag\n")
 			os.Exit(1)
 		}
-		if *aiCases < 1 || *aiCases > 100 {
-			fmt.Fprintf(os.Stderr, "Error: -ai-cases must be between 1 and 100, got %d\n", *aiCases)
+		if *aiMinCases < 1 {
+			fmt.Fprintf(os.Stderr, "Error: -ai-min-cases must be at least 1, got %d\n", *aiMinCases)
+			os.Exit(1)
+		}
+		if *aiMaxCases > 100 {
+			fmt.Fprintf(os.Stderr, "Error: -ai-max-cases must be at most 100, got %d\n", *aiMaxCases)
+			os.Exit(1)
+		}
+		if *aiMinCases > *aiMaxCases {
+			fmt.Fprintf(os.Stderr, "Error: -ai-min-cases (%d) cannot be greater than -ai-max-cases (%d)\n", *aiMinCases, *aiMaxCases)
 			os.Exit(1)
 		}
 	}
@@ -127,7 +136,8 @@ func main() {
 		UseAI:              *useAI,
 		AIModel:            *aiModel,
 		AIEndpoint:         *aiEndpoint,
-		AICases:            *aiCases,
+		AIMinCases:         *aiMinCases,
+		AIMaxCases:         *aiMaxCases,
 	})
 }
 

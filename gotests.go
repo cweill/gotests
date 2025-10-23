@@ -34,7 +34,8 @@ type Options struct {
 	UseAI          bool                   // Generate test cases using AI
 	AIModel        string                 // AI model to use
 	AIEndpoint     string                 // AI API endpoint
-	AICases        int                    // Number of test cases to generate
+	AIMinCases     int                    // Minimum number of test cases to generate
+	AIMaxCases     int                    // Maximum number of test cases to generate
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
@@ -138,7 +139,8 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		UseAI:          opt.UseAI,
 		AIModel:        opt.AIModel,
 		AIEndpoint:     opt.AIEndpoint,
-		AICases:        opt.AICases,
+		AIMinCases:     opt.AIMinCases,
+		AIMaxCases:     opt.AIMaxCases,
 	}
 
 	b, err := options.Process(h, funcs)
