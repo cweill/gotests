@@ -54,3 +54,81 @@ jobs:
         files: ./coverage.out
         fail_ci_if_error: false
         verbose: true
+
+  e2e-ai-test:
+    name: E2E AI Tests with Real Ollama
+    runs-on: ubuntu-latest
+    needs: test  # Run after unit tests pass
+    steps:
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.25.x'
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Install Ollama
+      run: |
+        echo "Installing Ollama..."
+        curl -fsSL https://ollama.com/install.sh | sh
+        echo "Ollama installed successfully"
+
+    - name: Start Ollama service in background
+      run: |
+        echo "Starting Ollama service..."
+        ollama serve > /tmp/ollama.log 2>&1 &
+        OLLAMA_PID=$!
+        echo "Ollama PID: $OLLAMA_PID"
+        echo "Waiting for Ollama to start..."
+        sleep 5
+
+        # Verify Ollama is running
+        if curl -f http://localhost:11434/api/tags; then
+          echo "✓ Ollama is running"
+        else
+          echo "✗ Ollama failed to start"
+          cat /tmp/ollama.log
+          exit 1
+        fi
+
+    - name: Pull qwen2.5-coder:0.5b model
+      run: |
+        echo "Pulling qwen2.5-coder:0.5b model (400MB, ~2-3 minutes)..."
+        ollama pull qwen2.5-coder:0.5b
+        echo "✓ Model downloaded successfully"
+
+    - name: Verify model is available
+      run: |
+        echo "Verifying qwen2.5-coder:0.5b model..."
+        if ollama list | grep -q "qwen2.5-coder:0.5b"; then
+          echo "✓ Model is available"
+          ollama list
+        else
+          echo "✗ Model not found"
+          ollama list
+          exit 1
+        fi
+
+    - name: Get Go dependencies
+      run: go mod download
+
+    - name: Run E2E AI Tests
+      run: |
+        echo "Running E2E tests with real Ollama + qwen2.5-coder:0.5b..."
+        echo "These tests validate that AI generation matches golden files"
+        go test -v -tags=e2e -timeout=15m -coverprofile=e2e-coverage.out -covermode=count ./internal/ai
+      env:
+        CI: "true"
+        GOTESTS_E2E: "true"
+
+    - name: Upload E2E coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./e2e-coverage.out
+        flags: e2e-tests
+        name: e2e-coverage
+        fail_ci_if_error: false
+        verbose: true

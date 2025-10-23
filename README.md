@@ -73,8 +73,152 @@ Available options:
 
   -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 
+  -ai                   generate test cases using AI (requires Ollama)
+
+  -ai-model             AI model to use (default "qwen2.5-coder:0.5b")
+
+  -ai-endpoint          Ollama API endpoint (default "http://localhost:11434")
+
+  -ai-min-cases         minimum number of test cases to generate with AI (default 3)
+
+  -ai-max-cases         maximum number of test cases to generate with AI (default 10)
+
   -version              print version information and exit
 ```
+
+## AI-Powered Test Generation
+
+**gotests** can generate intelligent test cases using local LLMs via [Ollama](https://ollama.ai). This feature analyzes your function implementations and generates realistic test values, edge cases, and error conditions.
+
+### Quick Start
+
+1. **Install Ollama** ([https://ollama.ai](https://ollama.ai))
+
+2. **Pull a model:**
+   ```sh
+   ollama pull qwen2.5-coder:0.5b  # Small, fast model (400MB)
+   # or
+   ollama pull llama3.2:latest     # Larger, more capable (2GB)
+   ```
+
+3. **Generate tests with AI:**
+   ```sh
+   gotests -all -ai -w yourfile.go
+   ```
+
+### Example
+
+Given this function:
+```go
+func CalculateDiscount(price float64, percentage int) (float64, error) {
+    if price < 0 {
+        return 0, errors.New("price cannot be negative")
+    }
+    if percentage < 0 || percentage > 100 {
+        return 0, errors.New("percentage must be between 0 and 100")
+    }
+    discount := price * float64(percentage) / 100.0
+    return price - discount, nil
+}
+```
+
+The AI generates (showing 3 cases; by default, the AI generates between 3-10 cases):
+```go
+func TestCalculateDiscount(t *testing.T) {
+    type args struct {
+        price      float64
+        percentage int
+    }
+    tests := []struct {
+        name    string
+        args    args
+        want    float64
+        wantErr bool
+    }{
+        {
+            name: "valid discount",
+            args: args{price: 100.0, percentage: 20},
+            want: 80.0,
+            wantErr: false,
+        },
+        {
+            name: "negative price",
+            args: args{price: -10.0, percentage: 20},
+            want: 0,
+            wantErr: true,
+        },
+        {
+            name: "invalid percentage",
+            args: args{price: 100.0, percentage: 150},
+            want: 0,
+            wantErr: true,
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got, err := CalculateDiscount(tt.args.price, tt.args.percentage)
+            if (err != nil) != tt.wantErr {
+                t.Errorf("CalculateDiscount() error = %v, wantErr %v", err, tt.wantErr)
+                return
+            }
+            if got != tt.want {
+                t.Errorf("CalculateDiscount() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+}
+```
+
+### AI Options
+
+```sh
+# Use a different model
+gotests -all -ai -ai-model llama3.2:latest -w yourfile.go
+
+# Generate a specific number of test cases (min = max)
+gotests -all -ai -ai-min-cases 5 -ai-max-cases 5 -w yourfile.go
+
+# Generate a range of test cases (AI chooses between 3-7)
+gotests -all -ai -ai-min-cases 3 -ai-max-cases 7 -w yourfile.go
+
+# Combine with other flags
+gotests -exported -ai -parallel -w yourfile.go
+```
+
+### How It Works
+
+- Analyzes function implementation and logic
+- Generates realistic test values based on actual code
+- Creates test cases for edge cases and error conditions
+- Falls back to TODO comments if generation fails
+- Works offline with local models (privacy-first)
+
+### Supported Features
+
+✅ Simple types (int, string, bool, float)
+✅ Complex types (slices, maps, structs, pointers)
+✅ Error returns and validation
+✅ Variadic parameters
+✅ Methods with receivers
+✅ Multiple return values
+
+### Privacy & Security
+
+**What data is sent to the LLM:**
+- Function signatures (name, parameters, return types)
+- Complete function bodies including all code and comments
+- No file paths or project context
+
+**Privacy considerations:**
+- ⚠️ **Function bodies may contain sensitive information** - business logic, algorithms, or credentials/secrets in comments
+- ✅ **Local-first by default** - Using Ollama keeps all data on your machine; nothing is sent to external servers
+- ✅ **Offline operation** - AI generation works completely offline with local models
+- 🔒 **Recommendation**: Avoid using `-ai` on code containing secrets, API keys, or proprietary algorithms in comments
+
+**If using cloud providers in the future:**
+- Function source code will be transmitted to the cloud provider's API
+- Review the provider's data retention and privacy policies
+- Consider using `-ai` only on non-sensitive codebases
 
 ## Quick Start Examples
 

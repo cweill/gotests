@@ -99,3 +99,4 @@ Existing test functions are automatically excluded to avoid duplication.
 - Tests are in `testdata/` directories with golden file comparisons in `testdata/goldens/`
 - The `templates/` directory contains built-in template sets
 - Bindata is used to embed templates in the binary (via `internal/render/bindata/`)
+- Always use scripts/regenerate-goldens.sh to generate the goldens for tests.

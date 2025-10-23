@@ -63,6 +63,11 @@ var (
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 	useGoCmp           = flag.Bool("use_go_cmp", false, "use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual")
+	useAI              = flag.Bool("ai", false, "generate test cases using AI (requires Ollama)")
+	aiModel            = flag.String("ai-model", "qwen2.5-coder:0.5b", "AI model to use for test generation")
+	aiEndpoint         = flag.String("ai-endpoint", "http://localhost:11434", "Ollama API endpoint")
+	aiMinCases         = flag.Int("ai-min-cases", 3, "minimum number of test cases to generate with AI")
+	aiMaxCases         = flag.Int("ai-max-cases", 10, "maximum number of test cases to generate with AI")
 	version            = flag.Bool("version", false, "print version information and exit")
 )
 
@@ -88,6 +93,31 @@ func main() {
 		return
 	}
 
+	// Validate AI parameters and warn user
+	if *useAI {
+		// Warn about sending code to AI provider
+		fmt.Fprintf(os.Stderr, "⚠️  WARNING: Function source code will be sent to AI provider at %s\n", *aiEndpoint)
+		fmt.Fprintf(os.Stderr, "   Ensure your code does not contain secrets or sensitive information.\n\n")
+
+		// Validate parameters
+		if *aiModel == "" {
+			fmt.Fprintf(os.Stderr, "Error: -ai-model cannot be empty when using -ai flag\n")
+			os.Exit(1)
+		}
+		if *aiMinCases < 1 {
+			fmt.Fprintf(os.Stderr, "Error: -ai-min-cases must be at least 1, got %d\n", *aiMinCases)
+			os.Exit(1)
+		}
+		if *aiMaxCases > 100 {
+			fmt.Fprintf(os.Stderr, "Error: -ai-max-cases must be at most 100, got %d\n", *aiMaxCases)
+			os.Exit(1)
+		}
+		if *aiMinCases > *aiMaxCases {
+			fmt.Fprintf(os.Stderr, "Error: -ai-min-cases (%d) cannot be greater than -ai-max-cases (%d)\n", *aiMinCases, *aiMaxCases)
+			os.Exit(1)
+		}
+	}
+
 	process.Run(os.Stdout, args, &process.Options{
 		OnlyFuncs:          *onlyFuncs,
 		ExclFuncs:          *exclFuncs,
@@ -103,6 +133,11 @@ func main() {
 		TemplateParamsPath: *templateParamsPath,
 		TemplateParams:     *templateParams,
 		UseGoCmp:           *useGoCmp,
+		UseAI:              *useAI,
+		AIModel:            *aiModel,
+		AIEndpoint:         *aiEndpoint,
+		AIMinCases:         *aiMinCases,
+		AIMaxCases:         *aiMaxCases,
 	})
 }
 

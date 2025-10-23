@@ -90,6 +90,7 @@ type Function struct {
 	Results      []*Field
 	ReturnsError bool
 	TypeParams   []*TypeParam // Type parameters for generic functions
+	Body         string       // Source code of the function body for AI context
 }
 
 // TestParameters returns the function's parameters excluding io.Writer parameters.

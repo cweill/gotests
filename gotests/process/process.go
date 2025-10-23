@@ -38,6 +38,11 @@ type Options struct {
 	TemplateParams     string   // Custom parameters as JSON string
 	TemplateData       [][]byte // Data slice for templates
 	UseGoCmp           bool     // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
+	UseAI              bool     // Generate test cases using AI
+	AIModel            string   // AI model to use
+	AIEndpoint         string   // AI API endpoint
+	AIMinCases         int      // Minimum number of test cases to generate
+	AIMaxCases         int      // Maximum number of test cases to generate
 }
 
 // Run generates tests for the Go files defined in args with the given options.
@@ -116,6 +121,11 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		TemplateParams: templateParams,
 		TemplateData:   opt.TemplateData,
 		UseGoCmp:       opt.UseGoCmp,
+		UseAI:          opt.UseAI,
+		AIModel:        opt.AIModel,
+		AIEndpoint:     opt.AIEndpoint,
+		AIMinCases:     opt.AIMinCases,
+		AIMaxCases:     opt.AIMaxCases,
 	}
 }
 

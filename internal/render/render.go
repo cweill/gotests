@@ -101,22 +101,25 @@ func (r *Render) TestFunction(
 	named bool,
 	parallel bool,
 	useGoCmp bool,
-	params map[string]interface{}) error {
+	params map[string]interface{},
+	aiCases []interface{}) error {
 	return r.tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
-		PrintInputs    bool
-		Subtests       bool
-		Parallel       bool
-		Named          bool
-		UseGoCmp       bool
-		TemplateParams map[string]interface{}
+		PrintInputs      bool
+		Subtests         bool
+		Parallel         bool
+		Named            bool
+		UseGoCmp         bool
+		TemplateParams   map[string]interface{}
+		AIGeneratedCases []interface{}
 	}{
-		Function:       f,
-		PrintInputs:    printInputs,
-		Subtests:       subtests,
-		Parallel:       parallel,
-		Named:          named,
-		UseGoCmp:       useGoCmp,
-		TemplateParams: params,
+		Function:         f,
+		PrintInputs:      printInputs,
+		Subtests:         subtests,
+		Parallel:         parallel,
+		Named:            named,
+		UseGoCmp:         useGoCmp,
+		TemplateParams:   params,
+		AIGeneratedCases: aiCases,
 	})
 }

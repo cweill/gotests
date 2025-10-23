@@ -1,2 +1,4 @@
 .DS_Store
-.claude/
+.claude/settings.local.json
+coverage*
+gotests_bin
