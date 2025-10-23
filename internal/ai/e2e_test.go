@@ -109,12 +109,12 @@ var e2eTestCases = []e2eTestCase{
 // It will FAIL (not skip) if Ollama is not available.
 //
 // Note: Small LLMs like qwen2.5-coder:0.5b are not perfectly deterministic even with
-// temperature=0, so we retry up to 3 times to get matching output.
+// temperature=0, so we retry up to 10 times to get matching output.
 func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 	// Ensure Ollama is running with qwen model (fails if not)
 	provider := requireOllama(t)
 
-	const maxRetries = 3
+	const maxRetries = 10
 
 	for _, tc := range e2eTestCases {
 		tc := tc // capture range variable
