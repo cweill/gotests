@@ -14,7 +14,7 @@ func TestParseKeyValue(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_case",
+			name: "valid input",
 			args: args{
 				input: "key1=value1,key2=value2",
 			},
@@ -22,7 +22,7 @@ func TestParseKeyValue(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "edge_case",
+			name: "empty input",
 			args: args{
 				input: "",
 			},
@@ -30,9 +30,9 @@ func TestParseKeyValue(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "error_case",
+			name: "invalid format",
 			args: args{
-				input: "key1=value1,key2=value2,invalid",
+				input: "key=value,key3=value4",
 			},
 			want:    nil,
 			wantErr: true,

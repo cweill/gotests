@@ -11,7 +11,7 @@ func TestFactorial(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_case",
+			name: "valid input",
 			args: args{
 				n: 5,
 			},
@@ -19,15 +19,15 @@ func TestFactorial(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "edge_case_1",
+			name: "edge case 1",
 			args: args{
-				n: -3,
+				n: -1,
 			},
 			want:    0,
 			wantErr: true,
 		},
 		{
-			name: "error_case_2",
+			name: "error case 1",
 			args: args{
 				n: 21,
 			},

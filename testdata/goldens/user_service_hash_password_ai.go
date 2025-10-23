@@ -11,7 +11,7 @@ func TestHashPassword(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "valid_case",
+			name: "valid input",
 			args: args{
 				password: "secure_password123",
 			},
@@ -19,17 +19,17 @@ func TestHashPassword(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "edge_case",
+			name: "short password",
 			args: args{
-				password: "short_password",
+				password: "shortPassword",
 			},
 			want:    "",
 			wantErr: true,
 		},
 		{
-			name: "error_case",
+			name: "long password",
 			args: args{
-				password: "too_long_password",
+				password: "a" * 73,
 			},
 			want:    "",
 			wantErr: true,

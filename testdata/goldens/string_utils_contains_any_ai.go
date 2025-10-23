@@ -11,7 +11,7 @@ func TestContainsAny(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "valid_input",
+			name: "valid input",
 			args: args{
 				s:          "hello",
 				substrings: []string{"world"},
@@ -19,7 +19,7 @@ func TestContainsAny(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "edge_case_1",
+			name: "empty string",
 			args: args{
 				s:          "",
 				substrings: []string{},
@@ -27,12 +27,12 @@ func TestContainsAny(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "boundary_value",
+			name: "nil slice",
 			args: args{
-				s:          "abcdefg",
-				substrings: []string{"a", "b", "c"},
+				s:          nil,
+				substrings: []string{},
 			},
-			want: true,
+			want: false,
 		},
 	}
 	for _, tt := range tests {

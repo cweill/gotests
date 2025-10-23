@@ -12,7 +12,7 @@ func TestCalculator_Multiply(t *testing.T) {
 		want int
 	}{
 		{
-			name: "valid_input",
+			name: "valid input",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
 				n: 5,
@@ -21,7 +21,7 @@ func TestCalculator_Multiply(t *testing.T) {
 			want: 15,
 		},
 		{
-			name: "edge_case_1",
+			name: "edge case zero",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
 				n: 0,
@@ -30,13 +30,13 @@ func TestCalculator_Multiply(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "edge_case_2",
+			name: "edge case empty",
 			c:    nil, // TODO: Initialize receiver from AI case
 			args: args{
-				n: -5,
-				d: 3,
+				n: 0,
+				d: "",
 			},
-			want: -15,
+			want: 0,
 		},
 	}
 	for _, tt := range tests {

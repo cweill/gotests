@@ -152,6 +152,7 @@ func (o *OllamaProvider) generateGo(ctx context.Context, prompt string) ([]TestC
 		"stream": false,
 		"options": map[string]interface{}{
 			"temperature": 0.0, // Deterministic generation for test cases
+			"seed":        42,  // Fixed seed for deterministic output
 		},
 	}
 

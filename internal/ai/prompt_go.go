@@ -78,21 +78,18 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	// Instructions - keep simple for small models
 	sb.WriteString(fmt.Sprintf("Generate %d test cases. Each test case must have UNIQUE, DIFFERENT input values.\n", numCases))
 
-	var exampleNames string
 	if fn.ReturnsError {
 		sb.WriteString("Include: 1 valid case, 1 edge case, 1 error case.\n")
-		exampleNames = "valid_case / edge_case / error_case"
 	} else {
 		sb.WriteString("Include: valid inputs, edge cases (zero/empty/nil), boundary values.\n")
-		exampleNames = "valid_input / edge_case / boundary_value"
 	}
 	sb.WriteString("\n")
 
 	// Build a concrete example using the actual scaffold
-	sb.WriteString(fmt.Sprintf("Example format (use test names like: %s):\n", exampleNames))
+	sb.WriteString("Example format:\n")
 	sb.WriteString("```go\n")
 	sb.WriteString("{\n")
-	sb.WriteString("    name: \"descriptive_test_name\",\n")
+	sb.WriteString("    name: \"descriptive test name\",\n")
 
 	// Show receiver if present
 	if fn.Receiver != nil {
@@ -135,6 +132,7 @@ func buildGoPrompt(fn *models.Function, scaffold string, numCases int, previousE
 	sb.WriteString("- DIFFERENT values in each test case (NO duplicates)\n")
 	sb.WriteString("- Use NAMED fields (e.g., field: value)\n")
 	sb.WriteString("- Use exact field names from scaffold\n")
+	sb.WriteString("- Use natural language test names with spaces (e.g., \"valid input\", not \"valid_input\")\n")
 	sb.WriteString("- Valid Go syntax, realistic values\n")
 	if fn.ReturnsError {
 		sb.WriteString("- Set wantErr based on expected error\n")

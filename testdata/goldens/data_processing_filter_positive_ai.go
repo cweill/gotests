@@ -13,25 +13,25 @@ func TestFilterPositive(t *testing.T) {
 		want []int
 	}{
 		{
-			name: "valid_input",
+			name: "valid input",
 			args: args{
 				numbers: []int{1, 2, -3, 4},
 			},
 			want: []int{1, 2, 4},
 		},
 		{
-			name: "edge_case_1",
+			name: "edge case zero",
 			args: args{
 				numbers: []int{},
 			},
 			want: []int{},
 		},
 		{
-			name: "boundary_value_1",
+			name: "edge case empty",
 			args: args{
-				numbers: []int{-5, -3, -1},
+				numbers: []int{0},
 			},
-			want: []int{-5, -3, -1},
+			want: []int{},
 		},
 	}
 	for _, tt := range tests {

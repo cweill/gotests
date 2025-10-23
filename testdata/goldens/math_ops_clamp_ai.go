@@ -12,7 +12,7 @@ func TestClamp(t *testing.T) {
 		want int
 	}{
 		{
-			name: "valid_input",
+			name: "valid input",
 			args: args{
 				value: 10,
 				min:   5,
@@ -21,22 +21,22 @@ func TestClamp(t *testing.T) {
 			want: 10,
 		},
 		{
-			name: "edge_case_1",
+			name: "edge case zero",
 			args: args{
-				value: -10,
+				value: 0,
 				min:   5,
 				max:   20,
 			},
 			want: 5,
 		},
 		{
-			name: "boundary_value",
+			name: "edge case empty",
 			args: args{
-				value: 20,
+				value: "",
 				min:   5,
 				max:   20,
 			},
-			want: 20,
+			want: 5,
 		},
 	}
 	for _, tt := range tests {

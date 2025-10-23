@@ -3,15 +3,18 @@
 package ai
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/cweill/gotests/internal/goparser"
 	"github.com/cweill/gotests/internal/models"
+	"github.com/cweill/gotests/internal/render"
+	"golang.org/x/tools/imports"
 )
 
 // e2eTestCase represents a test case for E2E validation against golden files.
@@ -99,17 +102,17 @@ var e2eTestCases = []e2eTestCase{
 }
 
 // TestE2E_OllamaGeneration_ValidatesStructure validates that real Ollama+qwen generation
-// produces valid test cases with correct structure. This ensures:
-// 1. AI generation works end-to-end with real Ollama
-// 2. Generated test cases have all required fields
-// 3. Test cases match function signature (correct args and return values)
-// 4. AI produces reasonable test case names and values
+// produces test code that exactly matches golden files (with gofmt normalization).
+// This ensures:
+// 1. AI generation works end-to-end using the same code path as the CLI
+// 2. Generated test code matches golden files exactly
+// 3. Test names use natural language with spaces
 //
 // This test REQUIRES Ollama to be running with qwen2.5-coder:0.5b model.
 // It will FAIL (not skip) if Ollama is not available.
 //
 // Note: Small LLMs like qwen2.5-coder:0.5b are not perfectly deterministic even with
-// temperature=0, so we retry up to 10 times to get matching output.
+// temperature=0 and seed=42, so we retry up to 10 times to get matching output.
 func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 	// Ensure Ollama is running with qwen model (fails if not)
 	provider := requireOllama(t)
@@ -144,22 +147,22 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 				t.Fatalf("Failed to read golden file %s: %v", tc.goldenFile, err)
 			}
 
-			// Parse golden file to extract expected test cases
-			goldenCases, err := parseGoTestCases(string(goldenContent), 100)
+			// Normalize golden file with imports.Process (same as CLI)
+			goldenFormatted, err := imports.Process("", goldenContent, nil)
 			if err != nil {
-				t.Fatalf("Failed to parse golden file %s: %v", tc.goldenFile, err)
+				t.Fatalf("Failed to format golden file %s: %v", tc.goldenFile, err)
 			}
+			goldenStr := strings.TrimSpace(string(goldenFormatted))
 
 			// Retry up to maxRetries times to account for LLM non-determinism
-			var lastValidationErrors []string
 			matched := false
+			var lastGeneratedCode string
 
 			for attempt := 1; attempt <= maxRetries; attempt++ {
-				// Generate tests with real AI
+				// Generate test cases with AI (same as CLI does)
 				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-				defer cancel()
-
 				cases, err := provider.GenerateTestCases(ctx, targetFunc)
+				cancel()
 				if err != nil {
 					t.Fatalf("GenerateTestCases() failed for %s (attempt %d/%d): %v", tc.funcName, attempt, maxRetries, err)
 				}
@@ -168,11 +171,67 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 					t.Fatalf("GenerateTestCases() returned no test cases for %s", tc.funcName)
 				}
 
-				t.Logf("✓ Generated %d test cases for %s (attempt %d/%d)", len(cases), tc.funcName, attempt, maxRetries)
+				// Render test function using render package (same as CLI does)
+				var buf bytes.Buffer
+				r := render.New()
 
-				// Validate against golden file
-				validationErrors := compareTestCases(t, cases, goldenCases)
-				if len(validationErrors) == 0 {
+				// Render header with minimal imports (just testing)
+				header := &models.Header{
+					Package: result.Header.Package,
+					Imports: []*models.Import{
+						{Path: `"testing"`},
+					},
+				}
+				if err := r.Header(&buf, header); err != nil {
+					t.Fatalf("Failed to render header: %v", err)
+				}
+
+				// Convert test cases to []interface{} for template
+				aiCases := make([]interface{}, len(cases))
+				for i, c := range cases {
+					aiCases[i] = c
+				}
+
+				// Render test function with same parameters as CLI uses
+				// (printInputs=false, subtests=true, named=false, parallel=false, useGoCmp=false)
+				if err := r.TestFunction(&buf, targetFunc, false, true, false, false, false, nil, aiCases); err != nil {
+					t.Fatalf("Failed to render test function: %v", err)
+				}
+
+				generatedCode := buf.Bytes()
+
+				// Format and process imports (same as CLI does)
+				// Create a temp file and write to it
+				tf, err := ioutil.TempFile("", "gotests_e2e_")
+				if err != nil {
+					t.Fatalf("Failed to create temp file: %v", err)
+				}
+				tempName := tf.Name()
+				if _, err := tf.Write(generatedCode); err != nil {
+					tf.Close()
+					os.Remove(tempName)
+					t.Fatalf("Failed to write to temp file: %v", err)
+				}
+				tf.Close()
+				defer os.Remove(tempName)
+
+				// Process imports from the file
+				generatedFormatted, err := imports.Process(tempName, nil, nil)
+				if err != nil {
+					t.Logf("⚠️ Attempt %d/%d: Generated code has syntax errors, retrying...", attempt, maxRetries)
+					lastGeneratedCode = string(generatedCode)
+					continue
+				}
+				generatedStr := strings.TrimSpace(string(generatedFormatted))
+
+				// Normalize import formatting: convert multi-line single imports to single line
+				// This handles the case where imports.Process keeps parens format
+				generatedStr = strings.Replace(generatedStr, "import (\n\t\"testing\"\n)", "import \"testing\"", 1)
+
+				t.Logf("✓ Generated valid Go code for %s (attempt %d/%d)", tc.funcName, attempt, maxRetries)
+
+				// Compare exact strings
+				if generatedStr == goldenStr {
 					// Success!
 					matched = true
 					if attempt > 1 {
@@ -181,83 +240,21 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 					break
 				}
 
-				// Store errors for final report if all attempts fail
-				lastValidationErrors = validationErrors
+				// Store code for final report if all attempts fail
+				lastGeneratedCode = generatedStr
 				if attempt < maxRetries {
 					t.Logf("⚠️ Attempt %d/%d did not match golden file, retrying...", attempt, maxRetries)
 				}
 			}
 
-			// If all retries failed, report the errors
+			// If all retries failed, report the difference
 			if !matched {
-				t.Errorf("Failed to match golden file after %d attempts. Errors from last attempt:", maxRetries)
-				for _, errMsg := range lastValidationErrors {
-					t.Error(errMsg)
-				}
+				t.Errorf("Failed to match golden file after %d attempts", maxRetries)
+				t.Errorf("Expected (golden):\n%s", goldenStr)
+				t.Errorf("Got (last attempt):\n%s", lastGeneratedCode)
 			}
 		})
 	}
-}
-
-// compareTestCases compares generated test cases against golden cases.
-// Returns a list of error messages (empty if all match).
-func compareTestCases(t *testing.T, cases, goldenCases []TestCase) []string {
-	var errors []string
-
-	// Compare count
-	if len(cases) != len(goldenCases) {
-		errors = append(errors, fmt.Sprintf("Generated %d test cases, golden has %d", len(cases), len(goldenCases)))
-	}
-
-	// Compare each test case
-	for i := 0; i < len(cases) && i < len(goldenCases); i++ {
-		generated := cases[i]
-		golden := goldenCases[i]
-
-		t.Logf("  Test case %d:", i+1)
-		t.Logf("    Generated name: %q", generated.Name)
-		t.Logf("    Golden name:    %q", golden.Name)
-
-		// Compare test case names
-		if generated.Name != golden.Name {
-			errors = append(errors, fmt.Sprintf("Test case %d name mismatch: generated=%q, golden=%q",
-				i+1, generated.Name, golden.Name))
-		}
-
-		// Compare wantErr flag
-		if generated.WantErr != golden.WantErr {
-			errors = append(errors, fmt.Sprintf("Test case %q wantErr mismatch: generated=%v, golden=%v",
-				generated.Name, generated.WantErr, golden.WantErr))
-		}
-
-		// Compare args (note: string comparison of Go code)
-		for argName, generatedVal := range generated.Args {
-			goldenVal, exists := golden.Args[argName]
-			if !exists {
-				errors = append(errors, fmt.Sprintf("Test case %q missing arg %q in golden", generated.Name, argName))
-				continue
-			}
-			if generatedVal != goldenVal {
-				errors = append(errors, fmt.Sprintf("Test case %q arg %q mismatch:\n  generated: %s\n  golden:    %s",
-					generated.Name, argName, generatedVal, goldenVal))
-			}
-		}
-
-		// Compare want values
-		for wantName, generatedVal := range generated.Want {
-			goldenVal, exists := golden.Want[wantName]
-			if !exists {
-				errors = append(errors, fmt.Sprintf("Test case %q missing want %q in golden", generated.Name, wantName))
-				continue
-			}
-			if generatedVal != goldenVal {
-				errors = append(errors, fmt.Sprintf("Test case %q want %q mismatch:\n  generated: %s\n  golden:    %s",
-					generated.Name, wantName, generatedVal, goldenVal))
-			}
-		}
-	}
-
-	return errors
 }
 
 // requireOllama ensures Ollama is running with qwen2.5-coder:0.5b model.
