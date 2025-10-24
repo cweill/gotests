@@ -119,8 +119,8 @@ func TestNewOllamaProvider_InvalidEndpoints(t *testing.T) {
 			cfg := &Config{
 				Endpoint:       tt.endpoint,
 				Model:          "test-model",
-				MinCases: 3,
-			MaxCases: 3,
+				MinCases:       3,
+				MaxCases:       3,
 				MaxRetries:     3,
 				RequestTimeout: 60,
 				HealthTimeout:  2,
@@ -192,8 +192,8 @@ func TestOllamaProvider_IsAvailable(t *testing.T) {
 			provider, err := NewOllamaProvider(&Config{
 				Endpoint:       server.URL,
 				Model:          "test-model",
-				MinCases: 3,
-			MaxCases: 3,
+				MinCases:       3,
+				MaxCases:       3,
 				MaxRetries:     3,
 				RequestTimeout: 60,
 				HealthTimeout:  2,
@@ -214,8 +214,8 @@ func TestOllamaProvider_IsAvailable(t *testing.T) {
 		provider, err := NewOllamaProvider(&Config{
 			Endpoint:       "http://invalid-host-that-does-not-exist:9999",
 			Model:          "test-model",
-			MinCases: 3,
-			MaxCases: 3,
+			MinCases:       3,
+			MaxCases:       3,
 			MaxRetries:     3,
 			RequestTimeout: 60,
 			HealthTimeout:  2,
@@ -236,7 +236,7 @@ func TestOllamaProvider_generateGo(t *testing.T) {
 		responseBody   map[string]interface{}
 		statusCode     int
 		wantErr        bool
-		wantCases   int
+		wantCases      int
 		validateResult func(*testing.T, []TestCase)
 	}{
 		{
@@ -270,9 +270,9 @@ func TestAdd(t *testing.T) {
 	}
 }`,
 			},
-			statusCode:   http.StatusOK,
-			wantErr:      false,
-			wantCases: 2,
+			statusCode: http.StatusOK,
+			wantErr:    false,
+			wantCases:  2,
 			validateResult: func(t *testing.T, cases []TestCase) {
 				if len(cases) != 2 {
 					t.Errorf("got %d cases, want 2", len(cases))
@@ -307,9 +307,9 @@ func TestAdd(t *testing.T) {
 			responseBody: map[string]interface{}{
 				"response": "```go\npackage testdata\n\nimport \"testing\"\n\ntype args struct { x int }\n\nfunc Test(t *testing.T) {\n\ttests := []struct {\n\t\tname string\n\t\targs args\n\t\twant int\n\t}{\n\t\t{name: \"test1\", args: args{x: 10}, want: 20},\n\t}\n}\n```",
 			},
-			statusCode:   http.StatusOK,
-			wantErr:      false,
-			wantCases: 1,
+			statusCode: http.StatusOK,
+			wantErr:    false,
+			wantCases:  1,
 			validateResult: func(t *testing.T, cases []TestCase) {
 				if len(cases) != 1 {
 					t.Errorf("got %d cases, want 1", len(cases))
@@ -337,8 +337,8 @@ func TestAdd(t *testing.T) {
 			provider, err := NewOllamaProvider(&Config{
 				Endpoint:       server.URL,
 				Model:          "test-model",
-				MinCases: 3,
-			MaxCases: 3,
+				MinCases:       3,
+				MaxCases:       3,
 				MaxRetries:     3,
 				RequestTimeout: 60,
 				HealthTimeout:  2,
@@ -407,8 +407,8 @@ func TestAdd(t *testing.T) {
 		provider, err := NewOllamaProvider(&Config{
 			Endpoint:       server.URL,
 			Model:          "test-model",
-			MinCases: 3,
-			MaxCases: 3,
+			MinCases:       3,
+			MaxCases:       3,
 			MaxRetries:     3,
 			RequestTimeout: 60,
 			HealthTimeout:  2,
@@ -430,7 +430,6 @@ func TestAdd(t *testing.T) {
 
 		ctx := context.Background()
 		cases, err := provider.GenerateTestCases(ctx, fn)
-
 		if err != nil {
 			t.Fatalf("GenerateTestCases() error = %v", err)
 		}
@@ -484,8 +483,8 @@ func Test(t *testing.T) {
 		provider, err := NewOllamaProvider(&Config{
 			Endpoint:       server.URL,
 			Model:          "test-model",
-			MinCases: 3,
-			MaxCases: 3,
+			MinCases:       3,
+			MaxCases:       3,
 			MaxRetries:     3,
 			RequestTimeout: 60,
 			HealthTimeout:  2,
@@ -506,7 +505,6 @@ func Test(t *testing.T) {
 
 		ctx := context.Background()
 		cases, err := provider.GenerateTestCases(ctx, fn)
-
 		if err != nil {
 			t.Fatalf("GenerateTestCases() error = %v", err)
 		}
@@ -534,8 +532,8 @@ func Test(t *testing.T) {
 		provider, err := NewOllamaProvider(&Config{
 			Endpoint:       server.URL,
 			Model:          "test-model",
-			MinCases: 3,
-			MaxCases: 3,
+			MinCases:       3,
+			MaxCases:       3,
 			MaxRetries:     3,
 			RequestTimeout: 60,
 			HealthTimeout:  2,

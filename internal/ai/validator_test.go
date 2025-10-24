@@ -157,7 +157,7 @@ func TestTypeError(t *testing.T) {
 			errMsg:  "type check error",
 		},
 		{
-			name: "empty_test_code",
+			name:     "empty_test_code",
 			testCode: ``,
 			pkgName:  "testpkg",
 			wantErr:  true,
