@@ -69,13 +69,10 @@ func (o *Options) Process(head *models.Header, funcs []*models.Function) ([]byte
 	}
 
 	// format file
-	newVar := b.Bytes()
-	fmt.Println(string(newVar))
-	out, err := imports.Process(tf.Name(), newVar, nil)
+	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
-	fmt.Println(string(out))
 	return out, nil
 }
 
