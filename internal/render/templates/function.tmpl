@@ -29,7 +29,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- if and .IsStruct .Fields}}
 				fields fields
 			{{- else}}
-				{{Receiver .}} {{FieldType $ .Field}}
+				{{Receiver .}} {{if $.PackageTest}}*{{$.PackageName}}.{{ReceiverType $ .}}{{else}}{{FieldType $ .Field}}{{end}}
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}
@@ -84,14 +84,12 @@ func {{.TestName}}(t *testing.T) {
 		t.Run({{if .Named}}name{{else}}tt.name{{end}}, func(t *testing.T) {
 			{{- if .Parallel}}t.Parallel(){{end}}
 		{{- end}}
-			{{- with .Receiver}}
-				{{- if .IsStruct}}
-					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{ReceiverType $ .}}{
-					{{- range .Fields}}
-						{{.Name}}: tt.fields.{{Field .}},
-					{{- end}}
-					}
+			{{- if and .Receiver .Receiver.IsStruct}}
+				{{Receiver .Receiver}} := {{if .Receiver.Type.IsStar}}&{{if .PackageTest}}{{.PackageName}}.{{end}}{{end}}{{ReceiverType $ .Receiver}}{
+				{{- range .Receiver.Fields}}
+					{{.Name}}: tt.fields.{{Field .}},
 				{{- end}}
+				}
 			{{- end}}
 			{{- range .Parameters}}
 				{{- if .IsWriter}}

@@ -148,7 +148,7 @@ func TestRender_TestFunction(t *testing.T) {
 		},
 	}
 
-	err := r.TestFunction(buf, fn, false, false, false, false, false, nil, nil)
+	err := r.TestFunction(buf, fn, false, false, false, false, false, nil, nil, false, "")
 	if err != nil {
 		t.Errorf("Render.TestFunction() error = %v", err)
 	}
@@ -203,7 +203,7 @@ func TestRender_TestFunction_WithOptions(t *testing.T) {
 				},
 			}
 
-			err := r.TestFunction(buf, fn, tt.printInputs, tt.subtests, tt.named, tt.parallel, tt.useGoCmp, nil, nil)
+			err := r.TestFunction(buf, fn, tt.printInputs, tt.subtests, tt.named, tt.parallel, tt.useGoCmp, nil, nil, false, "")
 			if err != nil {
 				t.Errorf("Render.TestFunction() error = %v", err)
 			}

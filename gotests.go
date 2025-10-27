@@ -10,6 +10,7 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/cweill/gotests/internal/gomod"
 	"github.com/cweill/gotests/internal/goparser"
 	"github.com/cweill/gotests/internal/input"
 	"github.com/cweill/gotests/internal/models"
@@ -21,6 +22,7 @@ type Options struct {
 	Only           *regexp.Regexp         // Includes only functions that match.
 	Exclude        *regexp.Regexp         // Excludes functions that match.
 	Exported       bool                   // Include only exported methods
+	PackageTest    bool                   // Adds _test package suffix for tests
 	PrintInputs    bool                   // Print function parameters in error messages
 	Subtests       bool                   // Print tests using Go 1.7 subtests
 	Parallel       bool                   // Print tests that runs the subtests in parallel.
@@ -121,6 +123,16 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	if err != nil {
 		return nil, err
 	}
+	if opt.PackageTest && opt.Exported {
+		fullImportPath, fullImportPathErr := gomod.GetFullImportPath(string(src))
+		if fullImportPathErr != nil {
+			return nil, fullImportPathErr
+		}
+		h.Imports = append(h.Imports, &models.Import{
+			Name: h.Package,
+			Path: fmt.Sprintf("%q", fullImportPath),
+		})
+	}
 	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported, tf)
 	if len(funcs) == 0 {
 		return nil, nil
@@ -129,6 +141,7 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	options := output.Options{
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
+		PackageTest:    opt.PackageTest,
 		Parallel:       opt.Parallel,
 		Named:          opt.Named,
 		UseGoCmp:       opt.UseGoCmp,
@@ -141,6 +154,9 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		AIEndpoint:     opt.AIEndpoint,
 		AIMinCases:     opt.AIMinCases,
 		AIMaxCases:     opt.AIMaxCases,
+	}
+	if opt.PackageTest {
+		h.PackageTest = true
 	}
 
 	b, err := options.Process(h, funcs)

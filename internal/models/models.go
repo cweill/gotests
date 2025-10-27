@@ -185,10 +185,11 @@ type Import struct {
 
 // Header represents the header of a Go file, including package name, imports, and any code between imports and declarations.
 type Header struct {
-	Comments []string
-	Package  string
-	Imports  []*Import
-	Code     []byte
+	Comments    []string
+	Package     string
+	Imports     []*Import
+	Code        []byte
+	PackageTest bool
 }
 
 // Path represents a file system path.

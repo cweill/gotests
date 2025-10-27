@@ -20,6 +20,7 @@ import (
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
+	PackageTest    bool
 	Parallel       bool
 	Named          bool
 	UseGoCmp       bool
@@ -68,10 +69,13 @@ func (o *Options) Process(head *models.Header, funcs []*models.Function) ([]byte
 	}
 
 	// format file
-	out, err := imports.Process(tf.Name(), b.Bytes(), nil)
+	newVar := b.Bytes()
+	fmt.Println(string(newVar))
+	out, err := imports.Process(tf.Name(), newVar, nil)
 	if err != nil {
 		return nil, fmt.Errorf("imports.Process: %v", err)
 	}
+	fmt.Println(string(out))
 	return out, nil
 }
 
@@ -153,7 +157,7 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 			}
 		}
 
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams, aiCases)
+		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams, aiCases, o.PackageTest, head.Package)
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}
