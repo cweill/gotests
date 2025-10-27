@@ -1,1 +1,1 @@
-{{define "call"}}{{with .Receiver}}{{if not .IsStruct}}tt.{{end}}{{Receiver .}}.{{end}}{{.Name}}{{TypeArgs .}}({{range $i, $el := .Parameters}}{{if $i}}, {{end}}{{if not .IsWriter}}tt.args.{{end}}{{Param .}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{end}}
+{{define "call"}}{{with .Receiver}}{{if not .IsStruct}}tt.{{end}}{{Receiver .}}.{{end}}{{if and .PackageTest (not .Receiver)}}{{.PackageName}}.{{end}}{{.Name}}{{TypeArgs .}}({{range $i, $el := .Parameters}}{{if $i}}, {{end}}{{if not .IsWriter}}tt.args.{{end}}{{Param .}}{{if .Type.IsVariadic}}...{{end}}{{end}}){{end}}
