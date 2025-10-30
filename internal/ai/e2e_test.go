@@ -28,15 +28,12 @@ type e2eTestCase struct {
 // E2E test cases that validate AI generation against golden files.
 // These use real Ollama + qwen2.5-coder:0.5b to ensure deterministic generation.
 var e2eTestCases = []e2eTestCase{
-	// TODO(#197): Re-enable once qwen2.5-coder:0.5b non-determinism is resolved.
-	// This test fails in CI (Ubuntu) but passes locally (macOS), suggesting
-	// environment-dependent non-determinism even with temperature=0 and seed=42.
-	// {
-	// 	name:       "business_logic_calculate_discount",
-	// 	sourceFile: "../../testdata/business_logic.go",
-	// 	funcName:   "CalculateDiscount",
-	// 	goldenFile: "../../testdata/goldens/business_logic_calculate_discount_ai.go",
-	// },
+	{
+		name:       "business_logic_calculate_discount",
+		sourceFile: "../../testdata/business_logic.go",
+		funcName:   "CalculateDiscount",
+		goldenFile: "../../testdata/goldens/business_logic_calculate_discount_ai.go",
+	},
 	{
 		name:       "math_ops_clamp",
 		sourceFile: "../../testdata/math_ops.go",
@@ -56,33 +53,24 @@ var e2eTestCases = []e2eTestCase{
 		goldenFile: "../../testdata/goldens/user_service_hash_password_ai.go",
 	},
 	// Additional test cases to improve parser_go.go coverage (methods, complex types)
-	// TODO(#197): Re-enable these tests once qwen2.5-coder:0.5b non-determinism is resolved.
-	// These receiver method tests fail deterministically because the LLM randomly chooses
-	// between two valid receiver instantiation patterns even with temperature=0 and seed=42:
-	//   Pattern 1 (golden): c := &Calculator{}; if got := c.Multiply(...)
-	//   Pattern 2 (sometimes): if got := tt.c.Multiply(...)
-	// See GitHub issue #197 for details.
-	// {
-	// 	name:       "calculator_multiply",
-	// 	sourceFile: "../../testdata/calculator.go",
-	// 	funcName:   "Multiply",
-	// 	goldenFile: "../../testdata/goldens/calculator_multiply_ai.go",
-	// },
-	// {
-	// 	name:       "calculator_divide",
-	// 	sourceFile: "../../testdata/calculator.go",
-	// 	funcName:   "Divide",
-	// 	goldenFile: "../../testdata/goldens/calculator_divide_ai.go",
-	// },
-	// TODO(#197): Re-enable once qwen2.5-coder:0.5b non-determinism is resolved.
-	// This test fails in CI (Ubuntu) but passes locally (macOS), suggesting
-	// environment-dependent non-determinism even with temperature=0 and seed=42.
-	// {
-	// 	name:       "string_utils_reverse",
-	// 	sourceFile: "../../testdata/string_utils.go",
-	// 	funcName:   "Reverse",
-	// 	goldenFile: "../../testdata/goldens/string_utils_reverse_ai.go",
-	// },
+	{
+		name:       "calculator_multiply",
+		sourceFile: "../../testdata/calculator.go",
+		funcName:   "Multiply",
+		goldenFile: "../../testdata/goldens/calculator_multiply_ai.go",
+	},
+	{
+		name:       "calculator_divide",
+		sourceFile: "../../testdata/calculator.go",
+		funcName:   "Divide",
+		goldenFile: "../../testdata/goldens/calculator_divide_ai.go",
+	},
+	{
+		name:       "string_utils_reverse",
+		sourceFile: "../../testdata/string_utils.go",
+		funcName:   "Reverse",
+		goldenFile: "../../testdata/goldens/string_utils_reverse_ai.go",
+	},
 	{
 		name:       "string_utils_parse_key_value",
 		sourceFile: "../../testdata/string_utils.go",

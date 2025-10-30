@@ -1,5 +1,7 @@
 package testdata
+
 import "testing"
+
 func TestCalculator_Multiply(t *testing.T) {
 	type args struct {
 		n int
@@ -41,8 +43,7 @@ func TestCalculator_Multiply(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &Calculator{}
-			if got := c.Multiply(tt.args.n, tt.args.d); got != tt.want {
+			if got := tt.c.Multiply(tt.args.n, tt.args.d); got != tt.want {
 				t.Errorf("Calculator.Multiply() = %v, want %v", got, tt.want)
 			}
 		})

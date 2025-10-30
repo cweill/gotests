@@ -1,5 +1,7 @@
 package testdata
+
 import "testing"
+
 func TestCalculator_Divide(t *testing.T) {
 	type args struct {
 		n int
@@ -45,8 +47,7 @@ func TestCalculator_Divide(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &Calculator{}
-			got, err := c.Divide(tt.args.n, tt.args.d)
+			got, err := tt.c.Divide(tt.args.n, tt.args.d)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("Calculator.Divide() error = %v, wantErr %v", err, tt.wantErr)
 			}
