@@ -5,41 +5,41 @@
 //
 // Usage:
 //
-//   $ gotests [options] PATH ...
+//	$ gotests [options] PATH ...
 //
 // Available options:
 //
-//   -all                  generate tests for all functions and methods
+//	-all                  generate tests for all functions and methods
 //
-//   -excl                 regexp. generate tests for functions and methods that don't
-//                         match. Takes precedence over -only, -exported, and -all
+//	-excl                 regexp. generate tests for functions and methods that don't
+//	                      match. Takes precedence over -only, -exported, and -all
 //
-//   -exported             generate tests for exported functions and methods. Takes
-//                         precedence over -only and -all
+//	-exported             generate tests for exported functions and methods. Takes
+//	                      precedence over -only and -all
 //
-//   -i                    print test inputs in error messages
+//	-i                    print test inputs in error messages
 //
-//   -named                switch table tests from using slice to map (with test name for the key)
+//	-named                switch table tests from using slice to map (with test name for the key)
 //
-//   -only                 regexp. generate tests for functions and methods that match only.
-//                         Takes precedence over -all
+//	-only                 regexp. generate tests for functions and methods that match only.
+//	                      Takes precedence over -all
 //
-//   -nosubtests           disable generating tests using the Go 1.7 subtests feature
+//	-nosubtests           disable generating tests using the Go 1.7 subtests feature
 //
-//   -parallel             enable generating parallel subtests using the Go 1.7 feature
+//	-parallel             enable generating parallel subtests using the Go 1.7 feature
 //
-//   -w                    write output to (test) files instead of stdout
+//	-w                    write output to (test) files instead of stdout
 //
-//   -template_dir         Path to a directory containing custom test code templates. Takes
-//                         precedence over -template. This can also be set via environment
-//                         variable GOTESTS_TEMPLATE_DIR
+//	-template_dir         Path to a directory containing custom test code templates. Takes
+//	                      precedence over -template. This can also be set via environment
+//	                      variable GOTESTS_TEMPLATE_DIR
 //
-//   -template             Specify custom test code templates, e.g. testify. This can also
-//                         be set via environment variable GOTESTS_TEMPLATE
+//	-template             Specify custom test code templates, e.g. testify. This can also
+//	                      be set via environment variable GOTESTS_TEMPLATE
 //
-//   -template_params_file read external parameters to template by json with file
+//	-template_params_file read external parameters to template by json with file
 //
-//   -template_params      read external parameters to template by json with stdin
+//	-template_params      read external parameters to template by json with stdin
 package main
 
 import (
@@ -63,9 +63,11 @@ var (
 	templateParamsPath = flag.String("template_params_file", "", "read external parameters to template by json with file")
 	templateParams     = flag.String("template_params", "", "read external parameters to template by json with stdin")
 	useGoCmp           = flag.Bool("use_go_cmp", false, "use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual")
-	useAI              = flag.Bool("ai", false, "generate test cases using AI (requires Ollama)")
-	aiModel            = flag.String("ai-model", "qwen2.5-coder:0.5b", "AI model to use for test generation")
-	aiEndpoint         = flag.String("ai-endpoint", "http://localhost:11434", "Ollama API endpoint")
+	useAI              = flag.Bool("ai", false, "generate test cases using AI")
+	aiProvider         = flag.String("ai-provider", "ollama", "AI provider: ollama, openai, claude, gemini")
+	aiModel            = flag.String("ai-model", "", "AI model to use (default depends on provider)")
+	aiEndpoint         = flag.String("ai-endpoint", "", "AI API endpoint (default depends on provider)")
+	aiAPIKey           = flag.String("ai-api-key", "", "API key for cloud AI providers (openai, claude, gemini)")
 	aiMinCases         = flag.Int("ai-min-cases", 3, "minimum number of test cases to generate with AI")
 	aiMaxCases         = flag.Int("ai-max-cases", 10, "maximum number of test cases to generate with AI")
 	version            = flag.Bool("version", false, "print version information and exit")
@@ -95,15 +97,40 @@ func main() {
 
 	// Validate AI parameters and warn user
 	if *useAI {
-		// Warn about sending code to AI provider
-		fmt.Fprintf(os.Stderr, "⚠️  WARNING: Function source code will be sent to AI provider at %s\n", *aiEndpoint)
-		fmt.Fprintf(os.Stderr, "   Ensure your code does not contain secrets or sensitive information.\n\n")
+		// Get API key from flag or environment variable
+		apiKey := valOrGetenv(*aiAPIKey, "GOTESTS_AI_API_KEY")
 
-		// Validate parameters
-		if *aiModel == "" {
-			fmt.Fprintf(os.Stderr, "Error: -ai-model cannot be empty when using -ai flag\n")
+		// Validate provider
+		validProviders := map[string]bool{"ollama": true, "openai": true, "claude": true, "gemini": true}
+		if !validProviders[*aiProvider] {
+			fmt.Fprintf(os.Stderr, "Error: invalid AI provider %q (supported: ollama, openai, claude, gemini)\n", *aiProvider)
 			os.Exit(1)
 		}
+
+		// Cloud providers require API key
+		if *aiProvider != "ollama" && apiKey == "" {
+			fmt.Fprintf(os.Stderr, "Error: -ai-api-key or GOTESTS_AI_API_KEY environment variable is required for %s provider\n", *aiProvider)
+			os.Exit(1)
+		}
+
+		// Warn about sending code to AI provider
+		endpoint := *aiEndpoint
+		if endpoint == "" {
+			switch *aiProvider {
+			case "ollama":
+				endpoint = "http://localhost:11434"
+			case "openai":
+				endpoint = "https://api.openai.com/v1"
+			case "claude":
+				endpoint = "https://api.anthropic.com/v1"
+			case "gemini":
+				endpoint = "https://generativelanguage.googleapis.com/v1beta"
+			}
+		}
+		fmt.Fprintf(os.Stderr, "⚠️  WARNING: Function source code will be sent to %s provider at %s\n", *aiProvider, endpoint)
+		fmt.Fprintf(os.Stderr, "   Ensure your code does not contain secrets or sensitive information.\n\n")
+
+		// Validate case count parameters
 		if *aiMinCases < 1 {
 			fmt.Fprintf(os.Stderr, "Error: -ai-min-cases must be at least 1, got %d\n", *aiMinCases)
 			os.Exit(1)
@@ -134,8 +161,10 @@ func main() {
 		TemplateParams:     *templateParams,
 		UseGoCmp:           *useGoCmp,
 		UseAI:              *useAI,
+		AIProvider:         *aiProvider,
 		AIModel:            *aiModel,
 		AIEndpoint:         *aiEndpoint,
+		AIAPIKey:           valOrGetenv(*aiAPIKey, "GOTESTS_AI_API_KEY"),
 		AIMinCases:         *aiMinCases,
 		AIMaxCases:         *aiMaxCases,
 	})

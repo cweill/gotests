@@ -73,11 +73,16 @@ Available options:
 
   -use_go_cmp           use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 
-  -ai                   generate test cases using AI (requires Ollama)
+  -ai                   generate test cases using AI
 
-  -ai-model             AI model to use (default "qwen2.5-coder:0.5b")
+  -ai-provider          AI provider: ollama, openai, claude, gemini (default "ollama")
 
-  -ai-endpoint          Ollama API endpoint (default "http://localhost:11434")
+  -ai-model             AI model to use (default depends on provider)
+
+  -ai-endpoint          AI API endpoint (default depends on provider)
+
+  -ai-api-key           API key for cloud AI providers (openai, claude, gemini).
+                        Can also be set via GOTESTS_AI_API_KEY environment variable
 
   -ai-min-cases         minimum number of test cases to generate with AI (default 3)
 
@@ -88,9 +93,37 @@ Available options:
 
 ## AI-Powered Test Generation
 
-**gotests** can generate intelligent test cases using local LLMs via [Ollama](https://ollama.ai). This feature analyzes your function implementations and generates realistic test values, edge cases, and error conditions.
+**gotests** can generate intelligent test cases using AI. This feature analyzes your function implementations and generates realistic test values, edge cases, and error conditions.
 
-### Quick Start
+### Supported AI Providers
+
+| Provider | Type | Models | Pricing |
+|----------|------|--------|---------|
+| **Ollama** | Local | qwen2.5-coder, llama3.2, codellama | Free (runs locally) |
+| **OpenAI** | Cloud | gpt-4o, gpt-4o-mini, gpt-4-turbo | Pay-per-token |
+| **Claude** | Cloud | claude-3-opus, claude-3-sonnet, claude-3-haiku | Pay-per-token |
+| **Gemini** | Cloud | gemini-1.5-pro, gemini-1.5-flash | Pay-per-token |
+| **Any OpenAI-compatible** | Cloud/Local | Various | Varies |
+
+### OpenAI-Compatible API Support
+
+The `openai` provider works with **any service** that implements the OpenAI Chat Completions API format. This includes:
+
+| Service | Endpoint | Notes |
+|---------|----------|-------|
+| OpenAI | `https://api.openai.com/v1` | Default |
+| Azure OpenAI | `https://{resource}.openai.azure.com/...` | Enterprise |
+| Together AI | `https://api.together.xyz/v1` | Open-source models |
+| Groq | `https://api.groq.com/openai/v1` | Ultra-fast inference |
+| Anyscale | `https://api.endpoints.anyscale.com/v1` | Open-source models |
+| Fireworks AI | `https://api.fireworks.ai/inference/v1` | Fast inference |
+| DeepSeek | `https://api.deepseek.com/v1` | Coding models |
+| Mistral AI | `https://api.mistral.ai/v1` | European provider |
+| Perplexity | `https://api.perplexity.ai` | Search-augmented |
+| OpenRouter | `https://openrouter.ai/api/v1` | Multi-provider gateway |
+| LM Studio | `http://localhost:1234/v1` | Local GUI app |
+
+### Quick Start with Ollama (Local, Free)
 
 1. **Install Ollama** ([https://ollama.ai](https://ollama.ai))
 
@@ -105,6 +138,70 @@ Available options:
    ```sh
    gotests -all -ai -w yourfile.go
    ```
+
+### Quick Start with Cloud Providers
+
+#### OpenAI
+
+```sh
+# Set your API key
+export GOTESTS_AI_API_KEY="sk-..."
+
+# Generate tests with GPT-4o-mini (fast and cheap)
+gotests -all -ai -ai-provider openai -w yourfile.go
+
+# Use a specific model
+gotests -all -ai -ai-provider openai -ai-model gpt-4o -w yourfile.go
+```
+
+#### Any OpenAI-Compatible Provider
+
+```sh
+# Together AI
+export GOTESTS_AI_API_KEY="your-together-key"
+gotests -all -ai -ai-provider openai -ai-endpoint https://api.together.xyz/v1 -ai-model meta-llama/Llama-3-70b-chat-hf -w yourfile.go
+
+# Groq (ultra-fast)
+export GOTESTS_AI_API_KEY="your-groq-key"
+gotests -all -ai -ai-provider openai -ai-endpoint https://api.groq.com/openai/v1 -ai-model llama-3.1-70b-versatile -w yourfile.go
+
+# DeepSeek (coding specialist)
+export GOTESTS_AI_API_KEY="your-deepseek-key"
+gotests -all -ai -ai-provider openai -ai-endpoint https://api.deepseek.com/v1 -ai-model deepseek-coder -w yourfile.go
+
+# LM Studio (local, no API key needed)
+gotests -all -ai -ai-provider openai -ai-endpoint http://localhost:1234/v1 -ai-model local-model -w yourfile.go
+
+# OpenRouter (access multiple providers)
+export GOTESTS_AI_API_KEY="your-openrouter-key"
+gotests -all -ai -ai-provider openai -ai-endpoint https://openrouter.ai/api/v1 -ai-model anthropic/claude-3-sonnet -w yourfile.go
+```
+
+#### Claude (Anthropic Native API)
+
+```sh
+# Set your API key
+export GOTESTS_AI_API_KEY="sk-ant-..."
+
+# Generate tests with Claude
+gotests -all -ai -ai-provider claude -w yourfile.go
+
+# Use a specific model
+gotests -all -ai -ai-provider claude -ai-model claude-3-sonnet-20240229 -w yourfile.go
+```
+
+#### Gemini (Google Native API)
+
+```sh
+# Set your API key
+export GOTESTS_AI_API_KEY="AIza..."
+
+# Generate tests with Gemini
+gotests -all -ai -ai-provider gemini -w yourfile.go
+
+# Use a specific model
+gotests -all -ai -ai-provider gemini -ai-model gemini-1.5-pro -w yourfile.go
+```
 
 ### Example
 
@@ -172,8 +269,18 @@ func TestCalculateDiscount(t *testing.T) {
 ### AI Options
 
 ```sh
-# Use a different model
+# Use Ollama with a different model
 gotests -all -ai -ai-model llama3.2:latest -w yourfile.go
+
+# Use OpenAI with API key from environment
+export GOTESTS_AI_API_KEY="sk-..."
+gotests -all -ai -ai-provider openai -ai-model gpt-4o -w yourfile.go
+
+# Use Claude with API key as flag
+gotests -all -ai -ai-provider claude -ai-api-key "sk-ant-..." -w yourfile.go
+
+# Use Gemini
+gotests -all -ai -ai-provider gemini -ai-api-key "AIza..." -w yourfile.go
 
 # Generate a specific number of test cases (min = max)
 gotests -all -ai -ai-min-cases 5 -ai-max-cases 5 -w yourfile.go
@@ -184,6 +291,17 @@ gotests -all -ai -ai-min-cases 3 -ai-max-cases 7 -w yourfile.go
 # Combine with other flags
 gotests -exported -ai -parallel -w yourfile.go
 ```
+
+### Default Models by Provider
+
+| Provider | Default Model | Default Endpoint |
+|----------|---------------|------------------|
+| Ollama | `qwen2.5-coder:0.5b` | `http://localhost:11434` |
+| OpenAI | `gpt-4o-mini` | `https://api.openai.com/v1` |
+| Claude | `claude-3-haiku-20240307` | `https://api.anthropic.com/v1` |
+| Gemini | `gemini-1.5-flash` | `https://generativelanguage.googleapis.com/v1beta` |
+
+**Note:** When using `-ai-provider openai` with a custom `-ai-endpoint`, you must also specify `-ai-model` as different providers support different models.
 
 ### How It Works
 

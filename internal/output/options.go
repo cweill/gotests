@@ -28,8 +28,10 @@ type Options struct {
 	TemplateParams map[string]interface{}
 	TemplateData   [][]byte
 	UseAI          bool
+	AIProvider     string
 	AIModel        string
 	AIEndpoint     string
+	AIAPIKey       string
 	AIMinCases     int
 	AIMaxCases     int
 
@@ -104,10 +106,17 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 	// Initialize AI provider if needed
 	var provider ai.Provider
 	if o.UseAI {
+		// Set default provider if not specified
+		providerName := o.AIProvider
+		if providerName == "" {
+			providerName = ai.ProviderOllama
+		}
+
 		cfg := &ai.Config{
-			Provider:       "ollama",
+			Provider:       providerName,
 			Model:          o.AIModel,
 			Endpoint:       o.AIEndpoint,
+			APIKey:         o.AIAPIKey,
 			MinCases:       o.AIMinCases,
 			MaxCases:       o.AIMaxCases,
 			MaxRetries:     3,  // Default: 3 retries
@@ -115,14 +124,14 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 			HealthTimeout:  2,  // Default: 2 seconds
 		}
 		var err error
-		provider, err = ai.NewOllamaProvider(cfg)
+		provider, err = ai.NewProvider(cfg)
 		if err != nil {
 			return fmt.Errorf("failed to create AI provider: %w", err)
 		}
 
-		// Check if Ollama is available
+		// Check if provider is available
 		if !provider.IsAvailable() {
-			return fmt.Errorf("AI provider %s is not available - ensure Ollama is running at %s", provider.Name(), o.AIEndpoint)
+			return fmt.Errorf("AI provider %s is not available", provider.Name())
 		}
 	}
 

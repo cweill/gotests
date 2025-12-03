@@ -39,8 +39,10 @@ type Options struct {
 	TemplateData       [][]byte // Data slice for templates
 	UseGoCmp           bool     // Use cmp.Equal (google/go-cmp) instead of reflect.DeepEqual
 	UseAI              bool     // Generate test cases using AI
+	AIProvider         string   // AI provider: ollama, openai, claude, gemini
 	AIModel            string   // AI model to use
 	AIEndpoint         string   // AI API endpoint
+	AIAPIKey           string   // API key for cloud AI providers
 	AIMinCases         int      // Minimum number of test cases to generate
 	AIMaxCases         int      // Maximum number of test cases to generate
 }
@@ -122,8 +124,10 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		TemplateData:   opt.TemplateData,
 		UseGoCmp:       opt.UseGoCmp,
 		UseAI:          opt.UseAI,
+		AIProvider:     opt.AIProvider,
 		AIModel:        opt.AIModel,
 		AIEndpoint:     opt.AIEndpoint,
+		AIAPIKey:       opt.AIAPIKey,
 		AIMinCases:     opt.AIMinCases,
 		AIMaxCases:     opt.AIMaxCases,
 	}

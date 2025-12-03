@@ -13,73 +13,135 @@ import (
 
 // extractCodeFromMarkdown removes markdown code blocks and cleans up the code.
 func extractCodeFromMarkdown(text string) string {
-	// Remove ```go and ``` markers
-	re := regexp.MustCompile("(?s)```go\\s*(.*)```")
+	// Remove ```go and ``` markers (non-greedy to handle multiple blocks)
+	re := regexp.MustCompile("(?s)```go\\s*(.*?)```")
 	matches := re.FindStringSubmatch(text)
 	if len(matches) > 1 {
 		code := strings.TrimSpace(matches[1])
-		return ensureTrailingComma(code)
+		code = ensureTrailingComma(code)
+		code = fixCommonSyntaxIssues(code)
+		return code
 	}
 
-	// Try without the 'go' language specifier
-	re = regexp.MustCompile("(?s)```\\s*(.*)```")
+	// Try without the 'go' language specifier (non-greedy)
+	re = regexp.MustCompile("(?s)```\\s*(.*?)```")
 	matches = re.FindStringSubmatch(text)
 	if len(matches) > 1 {
 		code := strings.TrimSpace(matches[1])
-		return ensureTrailingComma(code)
+		code = ensureTrailingComma(code)
+		code = fixCommonSyntaxIssues(code)
+		return code
 	}
 
 	// No markdown blocks, return as-is
 	code := strings.TrimSpace(text)
-	return ensureTrailingComma(code)
+	code = ensureTrailingComma(code)
+	code = fixCommonSyntaxIssues(code)
+	return code
+}
+
+// fixCommonSyntaxIssues fixes common syntax mistakes LLMs make.
+func fixCommonSyntaxIssues(code string) string {
+	// Fix "} {" -> "}{" (space between closing brace and opening brace in struct literals)
+	// This is a common LLM mistake: []struct { ... } { ... } should be []struct { ... }{ ... }
+	re := regexp.MustCompile(`\}\s+\{`)
+	code = re.ReplaceAllString(code, "}{")
+
+	return code
 }
 
 // ensureTrailingComma adds a trailing comma to the last struct if missing.
-// Only applies when parsing test case arrays, not complete functions.
+// Only applies when parsing standalone test case arrays, not variable declarations or functions.
 func ensureTrailingComma(code string) string {
 	code = strings.TrimSpace(code)
 
-	// Don't modify complete functions
-	if strings.Contains(code, "func Test") {
+	// Don't modify complete functions or variable declarations
+	if strings.Contains(code, "func Test") || strings.Contains(code, "tests :=") || strings.Contains(code, "tests=") {
 		return code
 	}
 
-	// If code ends with }, add a comma (for test case arrays)
+	// If code ends with }, add a comma (for test case arrays only)
+	// This is only for the old parseTestCaseArray format
 	if strings.HasSuffix(code, "}") && !strings.HasSuffix(code, "},") {
 		return code + ","
 	}
 	return code
 }
 
-// parseGoTestCases extracts test cases from a complete Go test function.
-// The LLM returns a complete test function like:
-//
-//	func TestAdd(t *testing.T) {
-//	    tests := []struct {
-//	        name string
-//	        args args
-//	        want int
-//	    }{
-//	        {
-//	            name: "test1",
-//	            args: args{a: 5, b: 3},
-//	            want: 8,
-//	        },
-//	    }
-//	    ...
-//	}
+// parseGoTestCases extracts test cases from various LLM output formats:
+// 1. Complete test function: func TestAdd(t *testing.T) { ... }
+// 2. Variable declaration: tests := []struct{...}{...}
+// 3. Just test cases: { name: "...", ... }, ...
 func parseGoTestCases(goCode string, maxCases int) ([]TestCase, error) {
 	// Extract code from markdown code blocks if present
 	cleaned := extractCodeFromMarkdown(goCode)
 
-	// Check if this is a complete function or just test cases
+	// Check if this is a complete function
 	if strings.Contains(cleaned, "func Test") {
-		// Parse as complete function
 		return parseCompleteTestFunction(cleaned, maxCases)
+	}
+
+	// Check if this is a variable declaration (tests := []struct{...}{...})
+	if strings.Contains(cleaned, "tests :=") || strings.Contains(cleaned, "tests=") {
+		return parseTestsVariableDeclaration(cleaned, maxCases)
 	}
 
 	// Fallback: parse as just test case array (old approach)
 	return parseTestCaseArray(cleaned, maxCases)
+}
+
+// parseTestsVariableDeclaration handles LLM output like:
+// tests := []struct { name string; args args; want int }{
+//     { name: "test1", args: args{a: 5}, want: 8 },
+// }
+func parseTestsVariableDeclaration(code string, maxCases int) ([]TestCase, error) {
+	// Debug: uncomment to see the code being parsed
+	// fmt.Printf("DEBUG parseTestsVariableDeclaration input:\n%s\n---\n", code)
+	
+	// Wrap in a package with type definitions to make it valid Go
+	// We define 'args' as an empty struct since we only care about extracting values
+	wrapped := fmt.Sprintf(`package main
+
+// Dummy type definitions to satisfy the parser
+type args struct{}
+type fields struct{}
+
+func init() {
+	%s
+}`, code)
+	
+	// Debug: print wrapped code
+	// fmt.Printf("DEBUG wrapped code:\n%s\n---\n", wrapped)
+
+	fset := token.NewFileSet()
+	file, err := parser.ParseFile(fset, "test.go", wrapped, parser.AllErrors)
+	if err != nil {
+		return nil, fmt.Errorf("parse Go code: %w", err)
+	}
+
+	var cases []TestCase
+	ast.Inspect(file, func(n ast.Node) bool {
+		// Look for composite literals (the test case structs)
+		if cl, ok := n.(*ast.CompositeLit); ok {
+			// Skip if this has a type (it's the outer []struct{...}{} or args{})
+			if cl.Type != nil {
+				return true
+			}
+
+			// This is a test case struct literal (no type, just {})
+			tc := parseTestCase(cl)
+			if tc != nil && len(cases) < maxCases {
+				cases = append(cases, *tc)
+			}
+		}
+		return true
+	})
+
+	if len(cases) == 0 {
+		return nil, fmt.Errorf("no test cases found in response")
+	}
+
+	return cases, nil
 }
 
 // parseCompleteTestFunction extracts test cases from a complete test function.
