@@ -35,12 +35,14 @@ func extractCodeFromMarkdown(text string) string {
 }
 
 // ensureTrailingComma adds a trailing comma to the last struct if missing.
-// Only applies when parsing test case arrays, not complete functions.
+// Only applies when parsing test case arrays, not complete functions or declarations.
 func ensureTrailingComma(code string) string {
 	code = strings.TrimSpace(code)
 
-	// Don't modify complete functions
-	if strings.Contains(code, "func Test") {
+	// Don't modify complete functions or variable declarations
+	if strings.Contains(code, "func Test") ||
+		strings.Contains(code, "tests :") ||
+		strings.Contains(code, "var tests") {
 		return code
 	}
 
@@ -76,6 +78,17 @@ func parseGoTestCases(goCode string, maxCases int) ([]TestCase, error) {
 	if strings.Contains(cleaned, "func Test") {
 		// Parse as complete function
 		return parseCompleteTestFunction(cleaned, maxCases)
+	}
+
+	// Some models output a declaration like:
+	//   tests := []struct{...}{...}
+	// Wrap it so it becomes valid Go and parse as a complete function.
+	if strings.Contains(cleaned, "tests :=") || strings.Contains(cleaned, "tests=") {
+		wrapped := fmt.Sprintf("package main\nfunc init() {\n%s\n}\n", cleaned)
+		cases, err := parseCompleteTestFunction(wrapped, maxCases)
+		if err == nil && len(cases) > 0 {
+			return cases, nil
+		}
 	}
 
 	// Fallback: parse as just test case array (old approach)
