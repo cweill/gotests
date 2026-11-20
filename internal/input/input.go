@@ -73,6 +73,13 @@ func dirFiles(srcPath string) ([]models.Path, error) {
 		if isHiddenFile(p) || src.IsTestPath() {
 			continue
 		}
+		fi, err := os.Stat(p)
+		if err != nil {
+			return nil, fmt.Errorf("os.Stat: %v\n", err)
+		}
+		if fi.IsDir() {
+			continue
+		}
 		srcPaths = append(srcPaths, src)
 	}
 	return srcPaths, nil
