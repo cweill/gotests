@@ -10,6 +10,7 @@ import (
 	"go/token"
 	"go/types"
 	"io/ioutil"
+	"strconv"
 	"strings"
 
 	"github.com/cweill/gotests/internal/models"
@@ -109,6 +110,7 @@ func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File
 			continue
 		}
 		fn := parseFunc(fDecl, ul, el, typeParams)
+		fn.IsBenchmark = hasBenchmarkParameter(fn, f.Imports)
 		// Extract function body source code for AI context
 		if fDecl.Body != nil {
 			fn.Body = extractFunctionBody(fset, fDecl, src)
@@ -116,6 +118,33 @@ func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File
 		funcs = append(funcs, fn)
 	}
 	return funcs
+}
+
+// hasBenchmarkParameter resolves the testing import in the function's own file.
+// Imports from other files cannot determine the meaning of a local qualifier.
+func hasBenchmarkParameter(fn *models.Function, imports []*ast.ImportSpec) bool {
+	if len(fn.Parameters) == 0 || fn.Parameters[0].Type == nil {
+		return false
+	}
+	for _, imp := range imports {
+		importPath, err := strconv.Unquote(imp.Path.Value)
+		if err != nil || importPath != "testing" {
+			continue
+		}
+		name := "testing"
+		if imp.Name != nil {
+			name = imp.Name.Name
+		}
+		switch name {
+		case "_":
+			continue
+		case ".":
+			return fn.Parameters[0].Type.String() == "*B"
+		default:
+			return fn.Parameters[0].Type.String() == "*"+name+".B"
+		}
+	}
+	return false
 }
 
 // parseTypeDecls extracts type parameters from type declarations

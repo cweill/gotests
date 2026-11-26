@@ -191,6 +191,12 @@ func isInvalid(f *models.Function) bool {
 	if f.Name == "init" && f.IsNaked() {
 		return true
 	}
+	// Benchmark functions are not test candidates. Detect them by their
+	// signature rather than their name so that helper functions taking a
+	// *testing.B are also skipped.
+	if f.IsBenchmark {
+		return true
+	}
 	return false
 }
 
