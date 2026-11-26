@@ -1,4 +1,4 @@
-# gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![godoc](https://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/cweill/gotests) [![Build Status](https://github.com/cweill/gotests/workflows/Go/badge.svg)](https://github.com/cweill/gotests/actions) [![Coverage Status](https://coveralls.io/repos/github/cweill/gotests/badge.svg?branch=master)](https://coveralls.io/github/cweill/gotests?branch=master) [![codecov](https://codecov.io/gh/cweill/gotests/branch/master/graph/badge.svg)](https://codecov.io/gh/cweill/gotests) [![Go Report Card](https://goreportcard.com/badge/github.com/cweill/gotests)](https://goreportcard.com/report/github.com/cweill/gotests)
+# gotests [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/cweill/gotests/blob/master/LICENSE) [![godoc](https://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/cweill/gotests) [![Build Status](https://github.com/cweill/gotests/workflows/Go/badge.svg)](https://github.com/cweill/gotests/actions) [![codecov](https://codecov.io/gh/cweill/gotests/branch/develop/graph/badge.svg)](https://codecov.io/gh/cweill/gotests) [![Go Report Card](https://goreportcard.com/badge/github.com/cweill/gotests)](https://goreportcard.com/report/github.com/cweill/gotests)
 
 **gotests** is a powerful Go test generator that automatically creates [table-driven tests](https://go.dev/wiki/TableDrivenTests) from your source code. It analyzes function and method signatures to generate comprehensive test scaffolding, saving you time and ensuring consistency across your test suite.
 
@@ -21,7 +21,7 @@ The following shows `gotests` in action using the [official Sublime Text 3 plugi
 
 ## Installation
 
-__Minimum Go version:__ Go 1.22
+__Minimum Go version:__ Go 1.24.0
 
 Use [`go install`](https://pkg.go.dev/cmd/go#hdr-Compile_and_install_packages_and_dependencies) to install and update:
 ```sh
@@ -53,6 +53,9 @@ Available options:
 
   -only                 regexp. generate tests for functions and methods that match only.
                          Takes precedence over -all
+
+  -package_test         generate black-box tests in the external <pkg>_test package.
+                         Implies -exported
 
   -nosubtests           disable subtest generation when >= Go 1.7
 
@@ -272,6 +275,14 @@ $ gotests -all -exported -w .
 ```
 
 This generates tests for all exported functions in the current directory.
+
+### Generate black-box tests in a `_test` package
+
+```sh
+$ gotests -package_test -w .
+```
+
+This writes tests in the external `<pkg>_test` package, so they exercise only the package's exported API. Calls and types from the package under test are qualified (`shapes.NewRect`, `*shapes.Rect`), unexported struct fields are left out of receiver setup, and functions whose signatures use unexported types are skipped and listed as `Skipped <func>: <reason>`. If an existing test file is already in the `_test` package, new tests are added there automatically, even without the flag.
 
 ### Generate tests recursively
 

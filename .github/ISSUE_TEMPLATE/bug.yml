@@ -1,0 +1,42 @@
+name: Bug report
+description: Report incorrect generated tests or a CLI failure.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: gotests and Go versions
+      description: Paste the output of gotests -version and go version.
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Exact command or editor integration
+      placeholder: gotests -all example.go
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Minimal Go source that reproduces the problem
+      render: go
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual generated output or error
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Additional context
+      description: OS, editor, custom templates, and (for AI mode) Ollama/model versions.

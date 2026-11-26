@@ -1,0 +1,65 @@
+name: Dependabot patch auto-merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  enable:
+    if: >-
+      github.repository == 'cweill/gotests' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Clear any previous auto-merge decision before rechecking
+        if: github.event.pull_request.auto_merge != null
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --disable-auto "$PR_URL"
+      # This privileged workflow only executes code from the trusted base commit.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - if: github.actor == 'dependabot[bot]'
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        id: metadata
+      - name: Check update scope and toolchain compatibility
+        if: steps.metadata.outcome == 'success'
+        id: policy
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          ECOSYSTEM: ${{ steps.metadata.outputs.package-ecosystem }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+        with:
+          script: |
+            const {eligible} = require('./.github/scripts/dependabot-policy.cjs');
+            const pr = context.payload.pull_request;
+            const files = await github.paginate(github.rest.pulls.listFiles, {...context.repo, pull_number: pr.number});
+            async function moduleAt(ref) {
+              const {data} = await github.rest.repos.getContent({...context.repo, path: 'go.mod', ref});
+              return Buffer.from(data.content, 'base64').toString('utf8');
+            }
+            const allowed = eligible({ecosystem: process.env.ECOSYSTEM, updateType: process.env.UPDATE_TYPE,
+              files: files.map(f => f.filename), before: await moduleAt(pr.base.sha), after: await moduleAt(pr.head.sha)});
+            core.setOutput('eligible', allowed);
+      - name: Queue merge after required CI passes
+        if: steps.policy.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge --auto --squash --match-head-commit "$HEAD_SHA" "$PR_URL"

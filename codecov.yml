@@ -1,18 +1,17 @@
+# Coverage is visible for review; deterministic CI is the merge gate.
 coverage:
   status:
     project:
       default:
         target: auto
         threshold: 1%
+        informational: true
     patch:
       default:
         target: auto
         threshold: 1%
-
-comment:
-  layout: "reach,diff,flags,files,footer"
-  behavior: default
-  require_changes: false
+        informational: true
+comment: false
 
 ignore:
   - "testdata"

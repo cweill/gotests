@@ -1,0 +1,43 @@
+name: Release Please
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'cweill/gotests' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
+        with:
+          target-branch: develop
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      # GITHUB_TOKEN-created PRs don't trigger pull_request workflows. Explicit
+      # dispatches do, avoiding a long-lived PAT solely to trigger validation.
+      - name: Validate release PRs
+        if: steps.release.outputs.prs != '' && steps.release.outputs.prs != '[]'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+        with:
+          script: |
+            for (const pr of JSON.parse(process.env.RELEASE_PRS)) {
+              const {data} = await github.rest.pulls.get({...context.repo, pull_number: pr.number});
+              if (data.head.repo.full_name !== context.payload.repository.full_name) throw new Error('Unexpected release repository');
+              await github.rest.actions.createWorkflowDispatch({...context.repo, workflow_id: 'go.yml', ref: data.head.ref});
+            }

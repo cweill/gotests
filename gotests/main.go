@@ -5,41 +5,44 @@
 //
 // Usage:
 //
-//   $ gotests [options] PATH ...
+//	$ gotests [options] PATH ...
 //
 // Available options:
 //
-//   -all                  generate tests for all functions and methods
+//		-all                  generate tests for all functions and methods
 //
-//   -excl                 regexp. generate tests for functions and methods that don't
-//                         match. Takes precedence over -only, -exported, and -all
+//		-excl                 regexp. generate tests for functions and methods that don't
+//		                      match. Takes precedence over -only, -exported, and -all
 //
-//   -exported             generate tests for exported functions and methods. Takes
-//                         precedence over -only and -all
+//		-exported             generate tests for exported functions and methods. Takes
+//		                      precedence over -only and -all
 //
-//   -i                    print test inputs in error messages
+//		-i                    print test inputs in error messages
 //
-//   -named                switch table tests from using slice to map (with test name for the key)
+//		-named                switch table tests from using slice to map (with test name for the key)
 //
-//   -only                 regexp. generate tests for functions and methods that match only.
-//                         Takes precedence over -all
+//		-only                 regexp. generate tests for functions and methods that match only.
+//		                      Takes precedence over -all
 //
-//   -nosubtests           disable generating tests using the Go 1.7 subtests feature
+//	  -package_test         generate black-box tests in the external <pkg>_test package.
+//	                        Implies -exported
 //
-//   -parallel             enable generating parallel subtests using the Go 1.7 feature
+//	  -nosubtests           disable generating tests using the Go 1.7 subtests feature
 //
-//   -w                    write output to (test) files instead of stdout
+//		-parallel             enable generating parallel subtests using the Go 1.7 feature
 //
-//   -template_dir         Path to a directory containing custom test code templates. Takes
-//                         precedence over -template. This can also be set via environment
-//                         variable GOTESTS_TEMPLATE_DIR
+//		-w                    write output to (test) files instead of stdout
 //
-//   -template             Specify custom test code templates, e.g. testify. This can also
-//                         be set via environment variable GOTESTS_TEMPLATE
+//		-template_dir         Path to a directory containing custom test code templates. Takes
+//		                      precedence over -template. This can also be set via environment
+//		                      variable GOTESTS_TEMPLATE_DIR
 //
-//   -template_params_file read external parameters to template by json with file
+//		-template             Specify custom test code templates, e.g. testify. This can also
+//		                      be set via environment variable GOTESTS_TEMPLATE
 //
-//   -template_params      read external parameters to template by json with stdin
+//		-template_params_file read external parameters to template by json with file
+//
+//		-template_params      read external parameters to template by json with stdin
 package main
 
 import (
@@ -56,6 +59,7 @@ var (
 	exclFuncs          = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
 	exportedFuncs      = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
 	allFuncs           = flag.Bool("all", false, "generate tests for all functions and methods")
+	packageTest        = flag.Bool("package_test", false, "generate black-box tests in the external <pkg>_test package. Implies -exported")
 	printInputs        = flag.Bool("i", false, "print test inputs in error messages")
 	writeOutput        = flag.Bool("w", false, "write output to (test) files instead of stdout")
 	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates. Takes precedence over -template. This can also be set via environment variable GOTESTS_TEMPLATE_DIR`)
@@ -123,6 +127,7 @@ func main() {
 		ExclFuncs:          *exclFuncs,
 		ExportedFuncs:      *exportedFuncs,
 		AllFuncs:           *allFuncs,
+		PackageTest:        *packageTest,
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
 		Parallel:           parallel,

@@ -8,9 +8,9 @@ import (
 
 func TestIsFileExist(t *testing.T) {
 	tests := []struct {
-		name     string
-		setupFn  func(t *testing.T) string
-		want     bool
+		name    string
+		setupFn func(t *testing.T) string
+		want    bool
 	}{
 		{
 			name: "existing file",

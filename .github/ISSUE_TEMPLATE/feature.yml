@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a change with concrete input and expected output.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example input and desired generated output
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds

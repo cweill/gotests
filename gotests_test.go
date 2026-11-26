@@ -14,6 +14,7 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/cweill/gotests/internal/models"
 	"golang.org/x/tools/imports"
 )
 
@@ -47,12 +48,65 @@ func TestGenerateTests_GoDirectory(t *testing.T) {
 	}
 }
 
+func TestIsInvalidSkipsBenchmarks(t *testing.T) {
+	benchmark := &models.Function{
+		Name:        "BenchmarkGetState",
+		IsBenchmark: true,
+		Parameters: []*models.Field{
+			{Name: "b", Type: &models.Expression{Value: "testing.B", IsStar: true}},
+		},
+	}
+	if !isInvalid(benchmark) {
+		t.Error("expected benchmark function to be skipped")
+	}
+
+	regular := &models.Function{
+		Name: "GetState",
+		Parameters: []*models.Field{
+			{Name: "name", Type: &models.Expression{Value: "string"}},
+		},
+	}
+	if isInvalid(regular) {
+		t.Error("expected regular function not to be skipped")
+	}
+}
+
+func TestGenerateTestsBenchmarkImports(t *testing.T) {
+	for _, tt := range []struct {
+		name, source string
+		wantTests    bool
+	}{
+		{"default", `import "testing"; func BenchmarkExample(b *testing.B) {}`, false},
+		{"alias", `import bench "testing"; func BenchmarkExample(b *bench.B) {}`, false},
+		{"dot", `import . "testing"; func BenchmarkExample(b *B) {}`, false},
+		{"helper", `import bench "testing"; func helper(b *bench.B) {}`, false},
+		{"other package", `import testing "example.com/testing"; func Example(b *testing.B) {}`, true},
+		{"local type", `type B struct{}; func Example(b *B) {}`, true},
+		{"regular function", `func Example(s string) {}`, true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			srcPath := filepath.Join(t.TempDir(), "bench.go")
+			if err := ioutil.WriteFile(srcPath, []byte("package example\n\n"+tt.source+"\n"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			generated, err := GenerateTests(srcPath, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := len(generated) > 0; got != tt.wantTests {
+				t.Fatalf("generated tests = %v, want %v", got, tt.wantTests)
+			}
+		})
+	}
+}
+
 func TestGenerateTests(t *testing.T) {
 	type args struct {
 		srcPath            string
 		only               *regexp.Regexp
 		excl               *regexp.Regexp
 		exported           bool
+		packageTest        bool
 		printInputs        bool
 		subtests           bool
 		parallel           bool
@@ -468,6 +522,54 @@ func TestGenerateTests(t *testing.T) {
 				exported: true,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported.go"),
+		},
+		{
+			name: "Multiple functions filtering exported and _test package",
+			args: args{
+				srcPath:     `testdata/test_filter.go`,
+				exported:    true,
+				packageTest: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_packagetest.go"),
+		},
+		{
+			name: "_test package qualifies local types and skips untestable functions",
+			args: args{
+				srcPath:     `testdata/packagetest/shapes/shapes.go`,
+				packageTest: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_shapes.go"),
+		},
+		{
+			name: "_test package with testify template",
+			args: args{
+				srcPath:     `testdata/packagetest/shapes/shapes.go`,
+				excl:        regexp.MustCompile(`^Max$`), // testify templates do not support generics.
+				packageTest: true,
+				subtests:    true,
+				template:    "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_shapes_testify.go"),
+		},
+		{
+			name: "Existing _test package test file is extended in the same package",
+			args: args{
+				srcPath:  `testdata/packagetest/external/external.go`,
+				exported: true,
+				subtests: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_extends_external.go"),
+		},
+		{
+			name: "_test package refuses to convert an existing internal test file",
+			args: args{
+				srcPath:     `testdata/packagetest/internal/internal.go`,
+				packageTest: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
 		},
 		{
 			name: "Multiple functions filtering exported with only",
@@ -922,6 +1024,7 @@ func TestGenerateTests(t *testing.T) {
 				Only:           tt.args.only,
 				Exclude:        tt.args.excl,
 				Exported:       tt.args.exported,
+				PackageTest:    tt.args.packageTest,
 				PrintInputs:    tt.args.printInputs,
 				Subtests:       tt.args.subtests,
 				Parallel:       tt.args.parallel,
@@ -979,7 +1082,7 @@ func mustReadAndFormatGoFile(t *testing.T, filename string) string {
 
 func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
 	tmpResult := path.Join(tmpDir, toSnakeCase(testName)+".go")
-	if err := ioutil.WriteFile(tmpResult, got, 0644); err != nil {
+	if err := ioutil.WriteFile(tmpResult, got, 0o644); err != nil {
 		t.Errorf("ioutil.WriteFile: %v", err)
 	}
 	t.Logf("%s", tmpResult)

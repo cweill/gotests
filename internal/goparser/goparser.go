@@ -10,6 +10,7 @@ import (
 	"go/token"
 	"go/types"
 	"io/ioutil"
+	"strconv"
 	"strings"
 
 	"github.com/cweill/gotests/internal/models"
@@ -24,6 +25,8 @@ type Result struct {
 	Header *models.Header
 	// All the functions and methods in a Go file.
 	Funcs []*models.Function
+	// Names of the types declared in the file's package.
+	TypeNames map[string]bool
 }
 
 // Parser parses Go source files into domain models for test generation.
@@ -55,7 +58,8 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			Imports:  parseImports(f.Imports),
 			Code:     goCode(b, f),
 		},
-		Funcs: p.parseFunctions(fset, f, fs, b),
+		Funcs:     p.parseFunctions(fset, f, fs, b),
+		TypeNames: typeNames(append([]*ast.File{f}, fs...)),
 	}
 	for _, v := range fs {
 		result.Header.Imports = append(result.Header.Imports, parseImports(v.Imports)...)
@@ -109,6 +113,7 @@ func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File
 			continue
 		}
 		fn := parseFunc(fDecl, ul, el, typeParams)
+		fn.IsBenchmark = hasBenchmarkParameter(fn, f.Imports)
 		// Extract function body source code for AI context
 		if fDecl.Body != nil {
 			fn.Body = extractFunctionBody(fset, fDecl, src)
@@ -116,6 +121,50 @@ func (p *Parser) parseFunctions(fset *token.FileSet, f *ast.File, fs []*ast.File
 		funcs = append(funcs, fn)
 	}
 	return funcs
+}
+
+// hasBenchmarkParameter resolves the testing import in the function's own file.
+// Imports from other files cannot determine the meaning of a local qualifier.
+func hasBenchmarkParameter(fn *models.Function, imports []*ast.ImportSpec) bool {
+	if len(fn.Parameters) == 0 || fn.Parameters[0].Type == nil {
+		return false
+	}
+	for _, imp := range imports {
+		importPath, err := strconv.Unquote(imp.Path.Value)
+		if err != nil || importPath != "testing" {
+			continue
+		}
+		name := "testing"
+		if imp.Name != nil {
+			name = imp.Name.Name
+		}
+		switch name {
+		case "_":
+			continue
+		case ".":
+			return fn.Parameters[0].Type.String() == "*B"
+		default:
+			return fn.Parameters[0].Type.String() == "*"+name+".B"
+		}
+	}
+	return false
+}
+
+// typeNames returns the names of the package-level types declared in files.
+func typeNames(files []*ast.File) map[string]bool {
+	names := make(map[string]bool)
+	for _, file := range files {
+		for _, d := range file.Decls {
+			genDecl, ok := d.(*ast.GenDecl)
+			if !ok || genDecl.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range genDecl.Specs {
+				names[spec.(*ast.TypeSpec).Name.Name] = true
+			}
+		}
+	}
+	return names
 }
 
 // parseTypeDecls extracts type parameters from type declarations

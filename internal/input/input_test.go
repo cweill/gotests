@@ -21,11 +21,11 @@ func TestFiles_RecursivePattern(t *testing.T) {
 
 	// Create test files
 	files := map[string]string{
-		filepath.Join(pkgDir, "main.go"):        "package pkg\nfunc Foo() {}",
-		filepath.Join(pkgDir, "main_test.go"):   "package pkg\nfunc TestFoo(t *testing.T) {}",
-		filepath.Join(subDir, "sub.go"):         "package subpkg\nfunc Bar() {}",
-		filepath.Join(subDir, "sub_test.go"):    "package subpkg\nfunc TestBar(t *testing.T) {}",
-		filepath.Join(subDir, ".hidden.go"):     "package subpkg\nfunc Hidden() {}",
+		filepath.Join(pkgDir, "main.go"):      "package pkg\nfunc Foo() {}",
+		filepath.Join(pkgDir, "main_test.go"): "package pkg\nfunc TestFoo(t *testing.T) {}",
+		filepath.Join(subDir, "sub.go"):       "package subpkg\nfunc Bar() {}",
+		filepath.Join(subDir, "sub_test.go"):  "package subpkg\nfunc TestBar(t *testing.T) {}",
+		filepath.Join(subDir, ".hidden.go"):   "package subpkg\nfunc Hidden() {}",
 	}
 
 	for path, content := range files {
@@ -103,10 +103,10 @@ func TestFiles_Directory(t *testing.T) {
 
 	// Create files in directory
 	files := map[string]string{
-		filepath.Join(tmpDir, "a.go"):        "package test",
-		filepath.Join(tmpDir, "b.go"):        "package test",
-		filepath.Join(tmpDir, "a_test.go"):   "package test",
-		filepath.Join(tmpDir, ".hidden.go"):  "package test",
+		filepath.Join(tmpDir, "a.go"):       "package test",
+		filepath.Join(tmpDir, "b.go"):       "package test",
+		filepath.Join(tmpDir, "a_test.go"):  "package test",
+		filepath.Join(tmpDir, ".hidden.go"): "package test",
 	}
 
 	for path, content := range files {
@@ -178,11 +178,11 @@ func Test_recursiveDirFiles(t *testing.T) {
 
 	// Create test files
 	files := map[string]string{
-		filepath.Join(tmpDir, "root.go"):         "package root",
-		filepath.Join(level1, "l1.go"):           "package level1",
-		filepath.Join(level1, "l1_test.go"):      "package level1",
-		filepath.Join(level2, "l2.go"):           "package level2",
-		filepath.Join(hiddenDir, "hidden.go"):    "package hidden",
+		filepath.Join(tmpDir, "root.go"):      "package root",
+		filepath.Join(level1, "l1.go"):        "package level1",
+		filepath.Join(level1, "l1_test.go"):   "package level1",
+		filepath.Join(level2, "l2.go"):        "package level2",
+		filepath.Join(hiddenDir, "hidden.go"): "package hidden",
 	}
 
 	for path, content := range files {
