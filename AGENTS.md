@@ -15,7 +15,7 @@ rendering (`internal/render`), and output/import processing (`internal/output`).
 - Run `go test -race -count=1 -timeout=5m ./...` when changing concurrent behavior.
 - Run `node --test .github/scripts/*.test.cjs` when changing automation policy.
 - Build with `go build -o /tmp/gotests ./gotests` (the repository already has a `gotests` directory).
-- Live Ollama tests are opt-in: see CONTRIBUTING.md. They are not part of ordinary PR CI.
+- Live Ollama tests are for optional local debugging only: see CONTRIBUTING.md. Do not add them to CI or release validation.
 
 ## Changes and review
 
