@@ -84,6 +84,7 @@ type TypeParam struct {
 // Function represents a function or method signature with its parameters, results, and metadata.
 type Function struct {
 	Name         string
+	IsBenchmark  bool // First parameter is *testing.B, including benchmark helpers.
 	IsExported   bool
 	Receiver     *Receiver
 	Parameters   []*Field
