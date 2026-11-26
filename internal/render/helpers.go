@@ -231,7 +231,8 @@ func fieldType(data interface{}, field *models.Field) string {
 }
 
 // receiverType returns the type of a receiver value (not pointer), substituting type parameters
-// For generic receivers like *Set[T], this returns Set[string] (concrete instantiation)
+// For generic receivers like *Set[T], this returns Set[string] (concrete instantiation).
+// When rendering an external _test package, the type is qualified with the package name.
 func receiverType(data interface{}, receiver *models.Receiver) string {
 	if receiver == nil || receiver.Type == nil {
 		return ""
@@ -267,6 +268,13 @@ func receiverType(data interface{}, receiver *models.Receiver) string {
 						typeStr = strings.ReplaceAll(typeStr, paramName, concreteType)
 					}
 				}
+			}
+		}
+
+		// Tests in an external _test package must qualify the receiver type.
+		if pt := v.FieldByName("PackageTest"); pt.IsValid() && pt.Kind() == reflect.Bool && pt.Bool() {
+			if pn := v.FieldByName("PackageName"); pn.IsValid() && pn.Kind() == reflect.String && pn.String() != "" {
+				typeStr = pn.String() + "." + typeStr
 			}
 		}
 	}

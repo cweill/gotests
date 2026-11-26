@@ -25,6 +25,8 @@ type Result struct {
 	Header *models.Header
 	// All the functions and methods in a Go file.
 	Funcs []*models.Function
+	// Names of the types declared in the file's package.
+	TypeNames map[string]bool
 }
 
 // Parser parses Go source files into domain models for test generation.
@@ -56,7 +58,8 @@ func (p *Parser) Parse(srcPath string, files []models.Path) (*Result, error) {
 			Imports:  parseImports(f.Imports),
 			Code:     goCode(b, f),
 		},
-		Funcs: p.parseFunctions(fset, f, fs, b),
+		Funcs:     p.parseFunctions(fset, f, fs, b),
+		TypeNames: typeNames(append([]*ast.File{f}, fs...)),
 	}
 	for _, v := range fs {
 		result.Header.Imports = append(result.Header.Imports, parseImports(v.Imports)...)
@@ -145,6 +148,23 @@ func hasBenchmarkParameter(fn *models.Function, imports []*ast.ImportSpec) bool 
 		}
 	}
 	return false
+}
+
+// typeNames returns the names of the package-level types declared in files.
+func typeNames(files []*ast.File) map[string]bool {
+	names := make(map[string]bool)
+	for _, file := range files {
+		for _, d := range file.Decls {
+			genDecl, ok := d.(*ast.GenDecl)
+			if !ok || genDecl.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range genDecl.Specs {
+				names[spec.(*ast.TypeSpec).Name.Name] = true
+			}
+		}
+	}
+	return names
 }
 
 // parseTypeDecls extracts type parameters from type declarations

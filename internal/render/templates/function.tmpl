@@ -29,7 +29,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- if and .IsStruct .Fields}}
 				fields fields
 			{{- else}}
-				{{Receiver .}} {{FieldType $ .Field}}
+				{{Receiver .}} {{if $.PackageTest}}{{if .Type.IsStar}}*{{end}}{{ReceiverType $ .}}{{else}}{{FieldType $ .Field}}{{end}}
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}

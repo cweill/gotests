@@ -206,7 +206,7 @@ func TestE2E_OllamaGeneration_ValidatesStructure(t *testing.T) {
 
 				// Render test function with same parameters as CLI uses
 				// (printInputs=false, subtests=true, named=false, parallel=false, useGoCmp=false)
-				if err := r.TestFunction(&buf, targetFunc, false, true, false, false, false, nil, aiCases); err != nil {
+				if err := r.TestFunction(&buf, targetFunc, false, true, false, false, false, nil, aiCases, false, ""); err != nil {
 					t.Fatalf("Failed to render test function: %v", err)
 				}
 

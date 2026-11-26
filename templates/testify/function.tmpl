@@ -44,7 +44,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- if and .IsStruct .Fields}}
 				fields fields
 			{{- else}}
-				{{Receiver .}} {{.Type}}
+				{{Receiver .}} {{if $.PackageTest}}{{if .Type.IsStar}}*{{end}}{{ReceiverType $ .}}{{else}}{{.Type}}{{end}}
 			{{- end}}
 		{{- end}}
 		{{- if .TestParameters}}
@@ -66,7 +66,7 @@ func {{.TestName}}(t *testing.T) {
 		{{- end}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
-					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{if $.PackageTest}}{{ReceiverType $ .}}{{else}}{{.Type.Value}}{{end}}{
 					{{- range .Fields}}
 						{{.Name}}: tt.fields.{{Field .}},
 					{{- end}}
