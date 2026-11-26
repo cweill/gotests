@@ -11,11 +11,11 @@ import (
 
 func TestParser_Parse(t *testing.T) {
 	tests := []struct {
-		name       string
-		setupFn    func(t *testing.T) (string, []models.Path)
-		wantErr    bool
-		wantFuncs  int
-		wantPkg    string
+		name      string
+		setupFn   func(t *testing.T) (string, []models.Path)
+		wantErr   bool
+		wantFuncs int
+		wantPkg   string
 	}{
 		{
 			name: "simple function",

@@ -453,7 +453,7 @@ func TestOptions_Process_WithAI_ProviderCreationError(t *testing.T) {
 	options := &Options{
 		UseAI:      true,
 		AIModel:    "test-model",
-		AIEndpoint: "invalid://endpoint",  // Invalid URL will cause provider creation error
+		AIEndpoint: "invalid://endpoint", // Invalid URL will cause provider creation error
 		AIMinCases: 3,
 		AIMaxCases: 3,
 	}

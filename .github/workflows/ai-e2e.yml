@@ -1,0 +1,85 @@
+name: Live AI tests
+
+on:
+  schedule:
+    - cron: '23 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-ai-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.repository == 'cweill/gotests'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OLLAMA_VERSION: 0.40.18
+      GOTESTS_E2E: 'true'
+      GOTOOLCHAIN: local
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version: stable
+      - name: Install and start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh -o /tmp/install-ollama.sh
+          sh /tmp/install-ollama.sh
+          ollama serve > /tmp/ollama.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl -fsS http://localhost:11434/api/tags; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/ollama.log
+          exit 1
+      - run: ollama pull qwen2.5-coder:0.5b
+      - name: Test against the live model
+        run: |
+          set -o pipefail
+          go test -v -count=1 -tags=e2e -timeout=15m ./internal/ai 2>&1 | tee /tmp/ai-e2e.log
+      - name: Preserve diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ai-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            /tmp/ollama.log
+            /tmp/ai-e2e.log
+          retention-days: 14
+
+  report:
+    if: always() && github.event_name == 'schedule' && needs.test.result != 'skipped' && needs.test.result != 'cancelled'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Maintain one failure issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RESULT: ${{ needs.test.result }}
+        with:
+          script: |
+            const title = 'Live AI tests need attention';
+            const marker = '<!-- gotests-live-ai-monitor -->';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {...context.repo, state: 'all', creator: 'github-actions[bot]', per_page: 100});
+            const issue = issues.find(i => !i.pull_request && i.title === title && i.body?.includes(marker));
+            const failed = process.env.RESULT !== 'success';
+            if (!failed && (!issue || issue.state === 'closed')) return;
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `${marker}\nLatest scheduled result: **${process.env.RESULT}**.\n\n[Run and diagnostic artifacts](${url}).\n\nLive-model tests are separate from required deterministic CI. Inspect the failure before releasing; related model instability is tracked in #197.`;
+            if (issue) {
+              await github.rest.issues.update({...context.repo, issue_number: issue.number, body, state: failed ? 'open' : 'closed'});
+            } else if (failed) {
+              await github.rest.issues.create({...context.repo, title, body});
+            }
