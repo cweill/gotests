@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"sync"
 
 	"github.com/cweill/gotests"
 )
@@ -109,7 +110,16 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		}
 	}
 
+	// Tests for several files are generated concurrently.
+	var mu sync.Mutex
+	onSkip := func(s gotests.SkippedFunction) {
+		mu.Lock()
+		defer mu.Unlock()
+		fmt.Fprintf(out, "Skipped %s: %s\n", s.Name, s.Reason)
+	}
+
 	return &gotests.Options{
+		OnSkip:         onSkip,
 		Only:           onlyRE,
 		Exclude:        exclRE,
 		Exported:       opt.ExportedFuncs,
@@ -158,12 +168,6 @@ func generateTests(out io.Writer, path string, writeOutput bool, opt *gotests.Op
 }
 
 func outputTest(out io.Writer, t *gotests.GeneratedTest, writeOutput bool) {
-	for _, s := range t.Skipped {
-		fmt.Fprintf(out, "Skipped %s: %s\n", s.Name, s.Reason)
-	}
-	if len(t.Functions) == 0 {
-		return
-	}
 	if writeOutput {
 		if err := ioutil.WriteFile(t.Path, t.Output, newFilePerm); err != nil {
 			fmt.Fprintln(out, err)

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"sync"
 	"testing"
 )
 
@@ -60,27 +61,45 @@ func TestPackageTestOutputCompiles(t *testing.T) {
 }
 
 func TestPackageTestReportsSkipped(t *testing.T) {
-	gts, err := GenerateTests("testdata/packagetest/shapes/shapes.go", &Options{PackageTest: true})
+	const src = "testdata/packagetest/shapes/shapes.go"
+	var mu sync.Mutex
+	var skipped []SkippedFunction
+	onSkip := func(s SkippedFunction) {
+		mu.Lock()
+		defer mu.Unlock()
+		skipped = append(skipped, s)
+	}
+
+	gts, err := GenerateTests(src, &Options{PackageTest: true, OnSkip: onSkip})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(gts) != 1 {
 		t.Fatalf("GenerateTests() returned %d tests, want 1", len(gts))
 	}
-	want := []SkippedFunction{
-		{Name: "Configure", Reason: "uses unexported type config"},
-		{Name: "server.Start", Reason: "receiver type server is unexported"},
-	}
-	if !reflect.DeepEqual(gts[0].Skipped, want) {
-		t.Errorf("Skipped = %+v, want %+v", gts[0].Skipped, want)
-	}
-
-	// When every selected function is skipped, only the skip list comes back.
-	gts, err = GenerateTests("testdata/packagetest/shapes/shapes.go", &Options{PackageTest: true, Only: regexp.MustCompile(`^Configure$`)})
+	abs, err := filepath.Abs(src)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(gts) != 1 || gts[0].Output != nil || len(gts[0].Functions) != 0 || len(gts[0].Skipped) != 1 {
-		t.Errorf("all functions skipped: got %+v, want only a Skipped entry", gts)
+	want := []SkippedFunction{
+		{Path: abs, Name: "Configure", Reason: "uses unexported type config"},
+		{Path: abs, Name: "server.Start", Reason: "receiver type server is unexported"},
+	}
+	if !reflect.DeepEqual(skipped, want) {
+		t.Errorf("skipped = %+v, want %+v", skipped, want)
+	}
+
+	// When every selected function is skipped, no result is returned, so
+	// callers that write each result's Output never empty a test file.
+	skipped = nil
+	gts, err = GenerateTests(src, &Options{PackageTest: true, Only: regexp.MustCompile(`^Configure$`), OnSkip: onSkip})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(gts) != 0 {
+		t.Errorf("all functions skipped: GenerateTests() returned %d results, want 0", len(gts))
+	}
+	if len(skipped) != 1 {
+		t.Errorf("all functions skipped: OnSkip called %d times, want 1", len(skipped))
 	}
 }

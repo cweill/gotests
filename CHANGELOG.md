@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implies `-exported`, since an external package can only reach exported identifiers
   - Calls and types from the package under test are qualified, including inside composite types (`[]*pkg.Bar`, `map[string]pkg.Point`, `func(pkg.Point) error`), receivers and generic instantiations
   - Supported by the default and `testify` template sets; custom templates can use the new `PackageTest` and `PackageName` template fields
-  - New `GeneratedTest.Skipped` lists selected functions that no test could be generated for, and the CLI prints them as `Skipped <func>: <reason>`
+  - New optional `Options.OnSkip` callback reports selected functions that no test could be generated for; the CLI prints them as `Skipped <func>: <reason>`. When every selected function is skipped, no `GeneratedTest` is returned for the file, as before
 
 ### Changed
 - **Existing `<pkg>_test` test files are now extended in black-box mode automatically**, even without `-package_test`. Previously gotests added unqualified calls and types to these files, which did not compile. Output for such files changes: calls and types are qualified, only exported functions get tests, and the rules below apply.

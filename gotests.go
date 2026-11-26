@@ -39,20 +39,23 @@ type Options struct {
 	AIEndpoint     string                 // AI API endpoint
 	AIMinCases     int                    // Minimum number of test cases to generate
 	AIMaxCases     int                    // Maximum number of test cases to generate
+	// OnSkip, if set, is called for each selected function that no test could
+	// be generated for. It may be called concurrently from several goroutines.
+	OnSkip func(SkippedFunction)
 }
 
 // A GeneratedTest contains information about a test file with generated tests.
 type GeneratedTest struct {
 	Path      string             // The test file's absolute path.
 	Functions []*models.Function // The functions with new test methods.
-	Output    []byte             // The contents of the test file. Nil when every function was skipped.
-	Skipped   []SkippedFunction  // Selected functions that no test could be generated for.
+	Output    []byte             // The contents of the test file.
 }
 
 // SkippedFunction is a function selected for testing that gotests could not
 // generate a test for, such as one whose signature uses an unexported type
 // when generating tests in an external _test package.
 type SkippedFunction struct {
+	Path   string // The source file's absolute path.
 	Name   string // The function's name, qualified by its receiver type for methods.
 	Reason string // Why no test was generated.
 }
@@ -150,7 +153,6 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		return nil, nil
 	}
 	qualifier := srcPkg
-	var skipped []SkippedFunction
 	if packageTest {
 		importPath, err := gomod.GetFullImportPath(string(src))
 		if err != nil {
@@ -161,14 +163,16 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		var testable []*models.Function
 		for _, fn := range funcs {
 			if reason := goparser.QualifyTypes(fn, qualifier, sr.TypeNames); reason != "" {
-				skipped = append(skipped, SkippedFunction{Name: displayName(fn), Reason: reason})
+				if opt.OnSkip != nil {
+					opt.OnSkip(SkippedFunction{Path: string(src), Name: displayName(fn), Reason: reason})
+				}
 				continue
 			}
 			testable = append(testable, fn)
 		}
 		funcs = testable
 		if len(funcs) == 0 {
-			return &GeneratedTest{Path: testPath, Skipped: skipped}, nil
+			return nil, nil
 		}
 	}
 
@@ -199,7 +203,6 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Path:      testPath,
 		Functions: funcs,
 		Output:    b,
-		Skipped:   skipped,
 	}, nil
 }
 
