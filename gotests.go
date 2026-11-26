@@ -194,7 +194,7 @@ func isInvalid(f *models.Function) bool {
 	// Benchmark functions are not test candidates. Detect them by their
 	// signature rather than their name so that helper functions taking a
 	// *testing.B are also skipped.
-	if len(f.Parameters) > 0 && f.Parameters[0].Type != nil && f.Parameters[0].Type.String() == "*testing.B" {
+	if f.IsBenchmark {
 		return true
 	}
 	return false

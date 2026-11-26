@@ -19,7 +19,8 @@ import (
 
 func TestIsInvalidSkipsBenchmarks(t *testing.T) {
 	benchmark := &models.Function{
-		Name: "BenchmarkGetState",
+		Name:        "BenchmarkGetState",
+		IsBenchmark: true,
 		Parameters: []*models.Field{
 			{Name: "b", Type: &models.Expression{Value: "testing.B", IsStar: true}},
 		},
@@ -36,6 +37,35 @@ func TestIsInvalidSkipsBenchmarks(t *testing.T) {
 	}
 	if isInvalid(regular) {
 		t.Error("expected regular function not to be skipped")
+	}
+}
+
+func TestGenerateTestsBenchmarkImports(t *testing.T) {
+	for _, tt := range []struct {
+		name, source string
+		wantTests    bool
+	}{
+		{"default", `import "testing"; func BenchmarkExample(b *testing.B) {}`, false},
+		{"alias", `import bench "testing"; func BenchmarkExample(b *bench.B) {}`, false},
+		{"dot", `import . "testing"; func BenchmarkExample(b *B) {}`, false},
+		{"helper", `import bench "testing"; func helper(b *bench.B) {}`, false},
+		{"other package", `import testing "example.com/testing"; func Example(b *testing.B) {}`, true},
+		{"local type", `type B struct{}; func Example(b *B) {}`, true},
+		{"regular function", `func Example(s string) {}`, true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			srcPath := filepath.Join(t.TempDir(), "bench.go")
+			if err := ioutil.WriteFile(srcPath, []byte("package example\n\n"+tt.source+"\n"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			generated, err := GenerateTests(srcPath, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := len(generated) > 0; got != tt.wantTests {
+				t.Fatalf("generated tests = %v, want %v", got, tt.wantTests)
+			}
+		})
 	}
 }
 
