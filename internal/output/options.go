@@ -20,7 +20,8 @@ import (
 type Options struct {
 	PrintInputs    bool
 	Subtests       bool
-	PackageTest    bool
+	PackageTest    bool   // Render calls and receiver types qualified with PackageName.
+	PackageName    string // Name of the package under test.
 	Parallel       bool
 	Named          bool
 	UseGoCmp       bool
@@ -154,7 +155,7 @@ func (o *Options) writeTests(w io.Writer, head *models.Header, funcs []*models.F
 			}
 		}
 
-		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams, aiCases, o.PackageTest, head.Package)
+		err := o.render.TestFunction(b, fun, o.PrintInputs, o.Subtests, o.Named, o.Parallel, o.UseGoCmp, o.TemplateParams, aiCases, o.PackageTest, o.PackageName)
 		if err != nil {
 			return fmt.Errorf("render.TestFunction: %v", err)
 		}

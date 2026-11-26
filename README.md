@@ -54,6 +54,9 @@ Available options:
   -only                 regexp. generate tests for functions and methods that match only.
                          Takes precedence over -all
 
+  -package_test         generate black-box tests in the external <pkg>_test package.
+                         Implies -exported
+
   -nosubtests           disable subtest generation when >= Go 1.7
 
   -parallel             enable parallel subtest generation when >= Go 1.7.
@@ -272,6 +275,14 @@ $ gotests -all -exported -w .
 ```
 
 This generates tests for all exported functions in the current directory.
+
+### Generate black-box tests in a `_test` package
+
+```sh
+$ gotests -package_test -w .
+```
+
+This writes tests in the external `<pkg>_test` package, so they exercise only the package's exported API. Calls and types from the package under test are qualified (`shapes.NewRect`, `*shapes.Rect`), unexported struct fields are left out of receiver setup, and functions whose signatures use unexported types are skipped and listed as `Skipped <func>: <reason>`. If an existing test file is already in the `_test` package, new tests are added there automatically, even without the flag.
 
 ### Generate tests recursively
 

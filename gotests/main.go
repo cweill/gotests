@@ -24,6 +24,9 @@
 //   -only                 regexp. generate tests for functions and methods that match only.
 //                         Takes precedence over -all
 //
+//   -package_test         generate black-box tests in the external <pkg>_test package.
+//                         Implies -exported
+//
 //   -nosubtests           disable generating tests using the Go 1.7 subtests feature
 //
 //   -parallel             enable generating parallel subtests using the Go 1.7 feature
@@ -56,6 +59,7 @@ var (
 	exclFuncs          = flag.String("excl", "", `regexp. generate tests for functions and methods that don't match. Takes precedence over -only, -exported, and -all`)
 	exportedFuncs      = flag.Bool("exported", false, `generate tests for exported functions and methods. Takes precedence over -only and -all`)
 	allFuncs           = flag.Bool("all", false, "generate tests for all functions and methods")
+	packageTest        = flag.Bool("package_test", false, "generate black-box tests in the external <pkg>_test package. Implies -exported")
 	printInputs        = flag.Bool("i", false, "print test inputs in error messages")
 	writeOutput        = flag.Bool("w", false, "write output to (test) files instead of stdout")
 	templateDir        = flag.String("template_dir", "", `optional. Path to a directory containing custom test code templates. Takes precedence over -template. This can also be set via environment variable GOTESTS_TEMPLATE_DIR`)
@@ -123,6 +127,7 @@ func main() {
 		ExclFuncs:          *exclFuncs,
 		ExportedFuncs:      *exportedFuncs,
 		AllFuncs:           *allFuncs,
+		PackageTest:        *packageTest,
 		PrintInputs:        *printInputs,
 		Subtests:           !nosubtests,
 		Parallel:           parallel,

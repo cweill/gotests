@@ -8,6 +8,7 @@ import (
 	"path"
 	"regexp"
 	"sort"
+	"strconv"
 	"sync"
 
 	"github.com/cweill/gotests/internal/gomod"
@@ -22,7 +23,7 @@ type Options struct {
 	Only           *regexp.Regexp         // Includes only functions that match.
 	Exclude        *regexp.Regexp         // Excludes functions that match.
 	Exported       bool                   // Include only exported methods
-	PackageTest    bool                   // Adds _test package suffix for tests
+	PackageTest    bool                   // Generate black-box tests in the <pkg>_test package. Implies Exported.
 	PrintInputs    bool                   // Print function parameters in error messages
 	Subtests       bool                   // Print tests using Go 1.7 subtests
 	Parallel       bool                   // Print tests that runs the subtests in parallel.
@@ -44,7 +45,16 @@ type Options struct {
 type GeneratedTest struct {
 	Path      string             // The test file's absolute path.
 	Functions []*models.Function // The functions with new test methods.
-	Output    []byte             // The contents of the test file.
+	Output    []byte             // The contents of the test file. Nil when every function was skipped.
+	Skipped   []SkippedFunction  // Selected functions that no test could be generated for.
+}
+
+// SkippedFunction is a function selected for testing that gotests could not
+// generate a test for, such as one whose signature uses an unexported type
+// when generating tests in an external _test package.
+type SkippedFunction struct {
+	Name   string // The function's name, qualified by its receiver type for methods.
+	Reason string // Why no test was generated.
 }
 
 // GenerateTests generates table-driven tests for the function and method
@@ -118,30 +128,55 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 	}
 	h := sr.Header
 	h.Code = nil // Code is only needed from parsed test files.
+	srcPkg := h.Package
 	testPath := src.TestPath()
 	h, tf, err := parseTestFile(p, testPath, h)
 	if err != nil {
 		return nil, err
 	}
-	if opt.PackageTest && opt.Exported {
-		fullImportPath, fullImportPathErr := gomod.GetFullImportPath(string(src))
-		if fullImportPathErr != nil {
-			return nil, fullImportPathErr
-		}
-		h.Imports = append(h.Imports, &models.Import{
-			Name: h.Package,
-			Path: fmt.Sprintf("%q", fullImportPath),
-		})
+	// parseTestFile returns the source header when there is no test file to extend.
+	extendsTestFile := h != sr.Header
+	packageTest := opt.PackageTest
+	switch {
+	case h.Package == srcPkg+"_test":
+		// Tests added to an existing external test file must be external too.
+		packageTest = true
+	case packageTest && extendsTestFile:
+		return nil, fmt.Errorf("%s is in package %s; generating tests in package %s_test would break its existing tests", testPath, h.Package, srcPkg)
 	}
-	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported, tf)
+	// An external test package can only reach exported identifiers.
+	funcs := testableFuncs(sr.Funcs, opt.Only, opt.Exclude, opt.Exported || packageTest, tf)
 	if len(funcs) == 0 {
 		return nil, nil
+	}
+	qualifier := srcPkg
+	var skipped []SkippedFunction
+	if packageTest {
+		importPath, err := gomod.GetFullImportPath(string(src))
+		if err != nil {
+			return nil, fmt.Errorf("resolving import path for package %s_test: %v", srcPkg, err)
+		}
+		h.Package = srcPkg + "_test"
+		qualifier = importPackage(h, srcPkg, importPath)
+		var testable []*models.Function
+		for _, fn := range funcs {
+			if reason := goparser.QualifyTypes(fn, qualifier, sr.TypeNames); reason != "" {
+				skipped = append(skipped, SkippedFunction{Name: displayName(fn), Reason: reason})
+				continue
+			}
+			testable = append(testable, fn)
+		}
+		funcs = testable
+		if len(funcs) == 0 {
+			return &GeneratedTest{Path: testPath, Skipped: skipped}, nil
+		}
 	}
 
 	options := output.Options{
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
-		PackageTest:    opt.PackageTest,
+		PackageTest:    packageTest,
+		PackageName:    qualifier,
 		Parallel:       opt.Parallel,
 		Named:          opt.Named,
 		UseGoCmp:       opt.UseGoCmp,
@@ -155,9 +190,6 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		AIMinCases:     opt.AIMinCases,
 		AIMaxCases:     opt.AIMaxCases,
 	}
-	if opt.PackageTest {
-		h.PackageTest = true
-	}
 
 	b, err := options.Process(h, funcs)
 	if err != nil {
@@ -167,7 +199,38 @@ func generateTest(src models.Path, files []models.Path, opt *Options) (*Generate
 		Path:      testPath,
 		Functions: funcs,
 		Output:    b,
+		Skipped:   skipped,
 	}, nil
+}
+
+// displayName names fn as it appears in source, e.g. "Configure" or "server.Start".
+func displayName(fn *models.Function) string {
+	if fn.Receiver != nil {
+		return fn.Receiver.Type.Value + "." + fn.Name
+	}
+	return fn.Name
+}
+
+// importPackage makes sure h imports the package under test and returns the
+// name to qualify its identifiers with. An existing test file may already
+// import it, possibly under an alias; importing it again would not compile.
+func importPackage(h *models.Header, pkgName, importPath string) string {
+	quoted := strconv.Quote(importPath)
+	for _, imp := range h.Imports {
+		if imp.Path != quoted {
+			continue
+		}
+		switch imp.Name {
+		case "":
+			return pkgName
+		case "_", ".":
+			// Not usable as a qualifier; add a named import alongside it.
+		default:
+			return imp.Name
+		}
+	}
+	h.Imports = append(h.Imports, &models.Import{Name: pkgName, Path: quoted})
+	return pkgName
 }
 
 func parseTestFile(p *goparser.Parser, testPath string, h *models.Header) (*models.Header, []string, error) {

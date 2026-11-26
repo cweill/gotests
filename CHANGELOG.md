@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Black-box tests in an external `_test` package** (fixes #33, based on #199 by @IlyasYOY)
+  - New `-package_test` flag (`Options.PackageTest` in the library) generates tests in `package <pkg>_test` that import the package under test
+  - Implies `-exported`, since an external package can only reach exported identifiers
+  - Calls and types from the package under test are qualified, including inside composite types (`[]*pkg.Bar`, `map[string]pkg.Point`, `func(pkg.Point) error`), receivers and generic instantiations
+  - Supported by the default and `testify` template sets; custom templates can use the new `PackageTest` and `PackageName` template fields
+  - New `GeneratedTest.Skipped` lists selected functions that no test could be generated for, and the CLI prints them as `Skipped <func>: <reason>`
+
+### Changed
+- **Existing `<pkg>_test` test files are now extended in black-box mode automatically**, even without `-package_test`. Previously gotests added unqualified calls and types to these files, which did not compile. Output for such files changes: calls and types are qualified, only exported functions get tests, and the rules below apply.
+- In black-box mode, gotests:
+  - skips functions whose signatures use an unexported type, and methods on unexported types, and reports each one as skipped
+  - leaves unexported struct fields out of the receiver setup, since an external package cannot set them
+  - reuses an existing import of the package under test, including its alias, instead of importing it twice
+  - refuses to add `-package_test` tests to an existing internal (`package <pkg>`) test file, which would break its tests
+
 ## [1.8.0] - 2025-10-21
 
 ### Added

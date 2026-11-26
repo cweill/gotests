@@ -1,11 +1,12 @@
 package gomod
 
 import (
-	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
-	"strings"
+
+	"golang.org/x/mod/modfile"
 )
 
 // GetFullImportPath resolves the full Go import path for any file or directory
@@ -50,7 +51,8 @@ func GetFullImportPath(startAt string) (string, error) {
 		return modulePath, nil
 	}
 
-	return filepath.Join(modulePath, relPath), nil
+	// Import paths always use forward slashes, whatever the OS.
+	return path.Join(modulePath, filepath.ToSlash(relPath)), nil
 }
 
 // findGoMod walks up the directory tree from startDir to find a go.mod file.
@@ -79,28 +81,13 @@ func findGoMod(startDir string) (string, error) {
 // Returns the module path or an error if parsing fails.
 func parseModulePath(modRoot string) (string, error) {
 	modFile := filepath.Join(modRoot, "go.mod")
-
-	file, err := os.Open(modFile)
+	data, err := os.ReadFile(modFile)
 	if err != nil {
 		return "", fmt.Errorf("failed to open go.mod at %s: %w", modFile, err)
 	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "module ") {
-			modulePath := strings.TrimSpace(line[7:]) // Remove "module " prefix
-			if modulePath == "" {
-				return "", fmt.Errorf("empty module path in %s", modFile)
-			}
-			return modulePath, nil
-		}
+	modulePath := modfile.ModulePath(data)
+	if modulePath == "" {
+		return "", fmt.Errorf("module directive not found in %s", modFile)
 	}
-
-	if err := scanner.Err(); err != nil {
-		return "", fmt.Errorf("error reading go.mod at %s: %w", modFile, err)
-	}
-
-	return "", fmt.Errorf("module directive not found in %s", modFile)
+	return modulePath, nil
 }

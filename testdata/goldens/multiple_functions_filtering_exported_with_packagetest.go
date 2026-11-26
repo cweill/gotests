@@ -14,23 +14,24 @@ func TestFooFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []*Bar
+		want    []*testdata.Bar
 		wantErr bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		got, err := testdata.FooFilter(tt.args.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-			continue
-		}
-		if tt.wantErr {
-			return
-		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := testdata.FooFilter(tt.args.strs)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("FooFilter() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FooFilter() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -47,9 +48,11 @@ func TestBar_BarFilter(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
-		b := &testdata.Bar{}
-		if err := b.BarFilter(tt.args.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			b := &testdata.Bar{}
+			if err := b.BarFilter(tt.args.i); (err != nil) != tt.wantErr {
+				t.Errorf("Bar.BarFilter() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
 	}
 }
