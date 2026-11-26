@@ -1,0 +1,3 @@
+package orphan
+
+func DoSomething() {}

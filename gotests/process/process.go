@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"sync"
 
 	"github.com/cweill/gotests"
 )
@@ -17,7 +18,7 @@ import (
 const newFilePerm os.FileMode = 0644
 
 const (
-	specifyFlagMessage = "Please specify either the -only, -excl, -exported, or -all flag"
+	specifyFlagMessage = "Please specify either the -only, -excl, -exported, -package_test, or -all flag"
 	specifyFileMessage = "Please specify a file or directory containing the source"
 )
 
@@ -27,6 +28,7 @@ type Options struct {
 	ExclFuncs          string   // Regexp string for excluding matches.
 	ExportedFuncs      bool     // Only include exported functions.
 	AllFuncs           bool     // Include all non-tested functions.
+	PackageTest        bool     // Generate black-box tests in the <pkg>_test package.
 	PrintInputs        bool     // Print function parameters as part of error messages.
 	Subtests           bool     // Print tests using Go 1.7 subtests
 	Parallel           bool     // Print tests that runs the subtests in parallel.
@@ -66,7 +68,7 @@ func Run(out io.Writer, args []string, opts *Options) {
 }
 
 func parseOptions(out io.Writer, opt *Options) *gotests.Options {
-	if opt.OnlyFuncs == "" && opt.ExclFuncs == "" && !opt.ExportedFuncs && !opt.AllFuncs {
+	if opt.OnlyFuncs == "" && opt.ExclFuncs == "" && !opt.ExportedFuncs && !opt.AllFuncs && !opt.PackageTest {
 		fmt.Fprintln(out, specifyFlagMessage)
 		return nil
 	}
@@ -108,10 +110,20 @@ func parseOptions(out io.Writer, opt *Options) *gotests.Options {
 		}
 	}
 
+	// Tests for several files are generated concurrently.
+	var mu sync.Mutex
+	onSkip := func(s gotests.SkippedFunction) {
+		mu.Lock()
+		defer mu.Unlock()
+		fmt.Fprintf(out, "Skipped %s: %s\n", s.Name, s.Reason)
+	}
+
 	return &gotests.Options{
+		OnSkip:         onSkip,
 		Only:           onlyRE,
 		Exclude:        exclRE,
 		Exported:       opt.ExportedFuncs,
+		PackageTest:    opt.PackageTest,
 		PrintInputs:    opt.PrintInputs,
 		Subtests:       opt.Subtests,
 		Parallel:       opt.Parallel,

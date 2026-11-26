@@ -102,11 +102,16 @@ func (r *Render) TestFunction(
 	parallel bool,
 	useGoCmp bool,
 	params map[string]interface{},
-	aiCases []interface{}) error {
+	aiCases []interface{},
+	packageTest bool,
+	packageName string,
+) error {
 	return r.tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
 		PrintInputs      bool
 		Subtests         bool
+		PackageName      string
+		PackageTest      bool
 		Parallel         bool
 		Named            bool
 		UseGoCmp         bool
@@ -121,5 +126,7 @@ func (r *Render) TestFunction(
 		UseGoCmp:         useGoCmp,
 		TemplateParams:   params,
 		AIGeneratedCases: aiCases,
+		PackageTest:      packageTest,
+		PackageName:      packageName,
 	})
 }

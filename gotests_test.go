@@ -75,6 +75,7 @@ func TestGenerateTests(t *testing.T) {
 		only               *regexp.Regexp
 		excl               *regexp.Regexp
 		exported           bool
+		packageTest        bool
 		printInputs        bool
 		subtests           bool
 		parallel           bool
@@ -490,6 +491,54 @@ func TestGenerateTests(t *testing.T) {
 				exported: true,
 			},
 			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported.go"),
+		},
+		{
+			name: "Multiple functions filtering exported and _test package",
+			args: args{
+				srcPath:     `testdata/test_filter.go`,
+				exported:    true,
+				packageTest: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/multiple_functions_filtering_exported_with_packagetest.go"),
+		},
+		{
+			name: "_test package qualifies local types and skips untestable functions",
+			args: args{
+				srcPath:     `testdata/packagetest/shapes/shapes.go`,
+				packageTest: true,
+				subtests:    true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_shapes.go"),
+		},
+		{
+			name: "_test package with testify template",
+			args: args{
+				srcPath:     `testdata/packagetest/shapes/shapes.go`,
+				excl:        regexp.MustCompile(`^Max$`), // testify templates do not support generics.
+				packageTest: true,
+				subtests:    true,
+				template:    "testify",
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_shapes_testify.go"),
+		},
+		{
+			name: "Existing _test package test file is extended in the same package",
+			args: args{
+				srcPath:  `testdata/packagetest/external/external.go`,
+				exported: true,
+				subtests: true,
+			},
+			want: mustReadAndFormatGoFile(t, "testdata/goldens/package_test_extends_external.go"),
+		},
+		{
+			name: "_test package refuses to convert an existing internal test file",
+			args: args{
+				srcPath:     `testdata/packagetest/internal/internal.go`,
+				packageTest: true,
+			},
+			wantNoTests: true,
+			wantErr:     true,
 		},
 		{
 			name: "Multiple functions filtering exported with only",
@@ -944,6 +993,7 @@ func TestGenerateTests(t *testing.T) {
 				Only:           tt.args.only,
 				Exclude:        tt.args.excl,
 				Exported:       tt.args.exported,
+				PackageTest:    tt.args.packageTest,
 				PrintInputs:    tt.args.printInputs,
 				Subtests:       tt.args.subtests,
 				Parallel:       tt.args.parallel,
@@ -1001,7 +1051,7 @@ func mustReadAndFormatGoFile(t *testing.T, filename string) string {
 
 func outputResult(t *testing.T, tmpDir, testName string, got []byte) {
 	tmpResult := path.Join(tmpDir, toSnakeCase(testName)+".go")
-	if err := ioutil.WriteFile(tmpResult, got, 0644); err != nil {
+	if err := ioutil.WriteFile(tmpResult, got, 0o644); err != nil {
 		t.Errorf("ioutil.WriteFile: %v", err)
 	}
 	t.Logf("%s", tmpResult)
