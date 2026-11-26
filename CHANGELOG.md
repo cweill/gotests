@@ -10,25 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 
-* generate black-box tests in a _test package (-package_test) ([#206](https://github.com/cweill/gotests/issues/206)) ([3325c5e](https://github.com/cweill/gotests/commit/3325c5e678aa1a29c4702fabf68b7f37e6800ced)), closes [#33](https://github.com/cweill/gotests/issues/33)
+* generate black-box tests in a _test package (-package_test) ([#206](https://github.com/cweill/gotests/issues/206)) ([3325c5e](https://github.com/cweill/gotests/commit/3325c5e678aa1a29c4702fabf68b7f37e6800ced)), closes [#33](https://github.com/cweill/gotests/issues/33). Based on [#199](https://github.com/cweill/gotests/pull/199) by @IlyasYOY.
+  * The new `-package_test` flag (`Options.PackageTest`) generates tests in `package <pkg>_test` that import the package under test. It implies `-exported`.
+  * Calls and types from the package under test are qualified, including inside composite types, receivers and generic instantiations. Works with the default and `testify` templates; custom templates can use the `PackageTest` and `PackageName` fields.
+  * Functions whose signatures use unexported types, and methods on unexported types, are skipped and reported (`Skipped <func>: <reason>`, or the new `Options.OnSkip` callback). Unexported struct fields are left out of receiver setup.
 
-## [Unreleased]
+### Bug Fixes
 
-### Added
-- **Black-box tests in an external `_test` package** (fixes #33, based on #199 by @IlyasYOY)
-  - New `-package_test` flag (`Options.PackageTest` in the library) generates tests in `package <pkg>_test` that import the package under test
-  - Implies `-exported`, since an external package can only reach exported identifiers
-  - Calls and types from the package under test are qualified, including inside composite types (`[]*pkg.Bar`, `map[string]pkg.Point`, `func(pkg.Point) error`), receivers and generic instantiations
-  - Supported by the default and `testify` template sets; custom templates can use the new `PackageTest` and `PackageName` template fields
-  - New optional `Options.OnSkip` callback reports selected functions that no test could be generated for; the CLI prints them as `Skipped <func>: <reason>`. When every selected function is skipped, no `GeneratedTest` is returned for the file, as before
+* skip benchmark functions when generating tests ([#205](https://github.com/cweill/gotests/issues/205)) ([22dadae](https://github.com/cweill/gotests/commit/22dadae1a5bfcdbd5850b69e1dea688df0449a66)), closes [#93](https://github.com/cweill/gotests/issues/93). Functions taking `*testing.B` no longer produce a test that calls the benchmark.
 
-### Changed
-- **Existing `<pkg>_test` test files are now extended in black-box mode automatically**, even without `-package_test`. Previously gotests added unqualified calls and types to these files, which did not compile. Output for such files changes: calls and types are qualified, only exported functions get tests, and the rules below apply.
-- In black-box mode, gotests:
-  - skips functions whose signatures use an unexported type, and methods on unexported types, and reports each one as skipped
-  - leaves unexported struct fields out of the receiver setup, since an external package cannot set them
-  - reuses an existing import of the package under test, including its alias, instead of importing it twice
-  - refuses to add `-package_test` tests to an existing internal (`package <pkg>`) test file, which would break its tests
+### Behavior changes
+
+* **Existing `<pkg>_test` test files are now extended in black-box mode automatically**, even without `-package_test` ([#206](https://github.com/cweill/gotests/issues/206)). Previously gotests added unqualified calls and types to these files, which did not compile. Output for such files changes: calls and types are qualified, only exported functions get tests, and the black-box rules above apply. An existing import of the package, including its alias, is reused.
+* Adding `-package_test` tests to an existing internal (`package <pkg>`) test file is refused with an error, since it would break that file's tests.
+
+## [1.9.0](https://github.com/cweill/gotests/compare/v1.8.0...v1.9.0) (2025-10-28)
+
+### Features
+
+* **AI-powered test case generation** using local LLMs via Ollama ([#194](https://github.com/cweill/gotests/issues/194))
+  * New `-ai` flag fills generated tests with realistic test cases, edge cases and error conditions derived from the function's implementation. Code is sent only to the configured Ollama endpoint.
+  * New flags: `-ai-model` (default `qwen2.5-coder:0.5b`), `-ai-endpoint` (default `http://localhost:11434`), `-ai-min-cases` and `-ai-max-cases`
+
+### Other
+
+* Godoc comments for all exported functions ([#195](https://github.com/cweill/gotests/issues/195))
+* Test coverage raised from 28.1% to 84.6% ([#196](https://github.com/cweill/gotests/issues/196))
 
 ## [1.8.0] - 2025-10-21
 
