@@ -13,8 +13,31 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/cweill/gotests/internal/models"
 	"golang.org/x/tools/imports"
 )
+
+func TestIsInvalidSkipsBenchmarks(t *testing.T) {
+	benchmark := &models.Function{
+		Name: "BenchmarkGetState",
+		Parameters: []*models.Field{
+			{Name: "b", Type: &models.Expression{Value: "testing.B", IsStar: true}},
+		},
+	}
+	if !isInvalid(benchmark) {
+		t.Error("expected benchmark function to be skipped")
+	}
+
+	regular := &models.Function{
+		Name: "GetState",
+		Parameters: []*models.Field{
+			{Name: "name", Type: &models.Expression{Value: "string"}},
+		},
+	}
+	if isInvalid(regular) {
+		t.Error("expected regular function not to be skipped")
+	}
+}
 
 func TestGenerateTests(t *testing.T) {
 	type args struct {
