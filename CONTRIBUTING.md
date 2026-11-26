@@ -47,11 +47,11 @@ Use a conventional PR title: `fix:` for a bug fix, `feat:` for a feature, or
 `docs:`, `test:`, `ci:`, and `chore:` for maintenance. Use `!` for breaking changes.
 Squash-merge titles become the input for release notes.
 
-### Live AI tests
+### Optional local AI tests
 
-Ordinary PR checks use deterministic tests with mocked providers. Live-model
-checks run weekly, on demand, and when Release Please creates or updates a release
-PR. To reproduce locally, install Ollama and run:
+CI and release validation use deterministic tests with mocked providers. No
+live-model tests run in GitHub Actions. For optional local debugging, install
+Ollama and run:
 
 ```sh
 ollama serve
@@ -60,9 +60,8 @@ ollama pull qwen2.5-coder:0.5b
 GOTESTS_E2E=true go test -v -count=1 -tags=e2e -timeout=15m ./internal/ai
 ```
 
-The live suite has known model-dependent failures (see #197). It is advisory,
-with logs retained as workflow artifacts and one tracking issue updated after
-scheduled runs. A maintainer must inspect its latest result before a release.
+The local live suite has known model-dependent failures (see #197) and is not
+a release requirement.
 
 ### Maintenance automation
 
@@ -73,7 +72,7 @@ scheduled runs. A maintainer must inspect its latest result before a release.
   auto-merge after required CI. Actions updates, minor/major updates, and
   compatibility changes require maintainer review.
 - Release Please maintains a release PR on `develop`, starting from v1.9.0.
-  Review its changelog and live-AI result, then merge it to publish the tag and
+  Review its changelog and required CI, then merge it to publish the tag and
   GitHub release. Release PRs are never auto-merged.
 - Release automation uses `GITHUB_TOKEN`, with explicit workflow dispatches for
   release PR validation; no personal token is needed. Actions must be allowed to
