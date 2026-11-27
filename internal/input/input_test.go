@@ -142,6 +142,25 @@ func TestFiles_NonGoFile(t *testing.T) {
 	}
 }
 
+func TestFiles_IgnoresGoDirectories(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.Mkdir(filepath.Join(dir, "nested.go"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	src := filepath.Join(dir, "source.go")
+	if err := os.WriteFile(src, []byte("package example\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	files, err := Files(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) != 1 || string(files[0]) != src {
+		t.Fatalf("Files() = %v, want [%s]", files, src)
+	}
+}
+
 func Test_recursiveDirFiles(t *testing.T) {
 	tmpDir := t.TempDir()
 

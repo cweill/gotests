@@ -5,6 +5,7 @@ import (
 	"errors"
 	"go/types"
 	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -16,6 +17,36 @@ import (
 	"github.com/cweill/gotests/internal/models"
 	"golang.org/x/tools/imports"
 )
+
+func TestGenerateTests_GoDirectory(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "foo.go")
+	if err := os.Mkdir(dir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	src := filepath.Join(dir, "foo.go")
+	if err := os.WriteFile(src, []byte("package foo\nfunc Add(a, b int) int { return a + b }\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Directories matching *.go must not be parsed as source files, whether
+	// discovered as the target's parent entry or alongside a source file.
+	if err := os.Mkdir(filepath.Join(dir, "nested.go"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	for name, target := range map[string]string{"directory": dir, "source file": src} {
+		t.Run(name, func(t *testing.T) {
+			gts, err := GenerateTests(target, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(gts) != 1 || len(gts[0].Functions) != 1 || gts[0].Functions[0].Name != "Add" {
+				t.Fatalf("GenerateTests() = %v, want one test for Add", gts)
+			}
+			if !strings.Contains(string(gts[0].Output), "func TestAdd(t *testing.T)") {
+				t.Fatalf("missing TestAdd in generated output:\n%s", gts[0].Output)
+			}
+		})
+	}
+}
 
 func TestIsInvalidSkipsBenchmarks(t *testing.T) {
 	benchmark := &models.Function{
